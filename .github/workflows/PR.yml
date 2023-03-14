@@ -1,0 +1,21 @@
+name: Pull request workflow
+
+on:
+  - pull_request
+  - workflow_dispatch
+
+env:
+  FLUTTER_PROJ_DIR: client/
+
+jobs:
+  test_flutter:
+    uses: ./.github/flutter_tests.yml
+    with:
+      path_to_project: $FLUTTER_PROJ_DIR
+
+
+  try_build_proj:
+    uses: ./.github/flutter_try_build.yml
+    with:
+      path_to_project: $FLUTTER_PROJ_DIR
+
