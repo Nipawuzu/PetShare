@@ -7,17 +7,19 @@ using System;
 
 namespace DatabaseContextLibrary
 {
-    public class DataContext : DbContext
+    internal class DataContext : DbContext
     {
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
         }
 
         public DbSet<Shelter> Shelters => Set<Shelter>();
+        public DbSet<Announcement> Announcements => Set<Announcement>();
+        public DbSet<Pet> Pets => Set<Pet>();
     }
 
 
-    public class DataContextFactory : IDesignTimeDbContextFactory<DataContext>
+    internal class DataContextFactory : IDesignTimeDbContextFactory<DataContext>
     {
         public DataContextFactory()
         {
