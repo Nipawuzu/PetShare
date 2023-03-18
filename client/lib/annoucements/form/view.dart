@@ -2,9 +2,11 @@ import 'package:bottom_picker/bottom_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:pet_share/address.dart';
 import 'package:pet_share/annoucements/announcement.dart';
 import 'package:pet_share/annoucements/form/cubit.dart';
 import 'package:pet_share/annoucements/pet.dart';
+import 'package:pet_share/shelter.dart';
 
 class NewAnnoucementForm extends StatefulWidget {
   const NewAnnoucementForm({super.key});
@@ -74,8 +76,8 @@ class _PetFormPageState extends State<PetFormPage> {
   }
 
   Widget _buildPetList(BuildContext context) {
-    return Column(
-      children: const [],
+    return const Column(
+      children: [],
     );
   }
 
@@ -106,10 +108,10 @@ class _PetFormPageState extends State<PetFormPage> {
     return TextFormField(
       initialValue: widget.state.pet?.name,
       onSaved: (newValue) => pet.name = newValue.toString(),
-      decoration: InputDecoration(
+      decoration: const InputDecoration(
         label: Row(
           mainAxisSize: MainAxisSize.min,
-          children: const [
+          children: [
             Text("Imię zwierzątka"),
             SizedBox(width: 1),
             Text('*', style: TextStyle(color: Colors.red)),
@@ -129,9 +131,9 @@ class _PetFormPageState extends State<PetFormPage> {
       readOnly: true,
       controller: _datePickerController,
       decoration: InputDecoration(
-          label: Row(
+          label: const Row(
             mainAxisSize: MainAxisSize.min,
-            children: const [
+            children: [
               Text("Data urodzenia"),
               SizedBox(width: 1),
               Text('*', style: TextStyle(color: Colors.red)),
@@ -160,10 +162,10 @@ class _PetFormPageState extends State<PetFormPage> {
     return TextFormField(
       initialValue: widget.state.pet?.species,
       onSaved: (newValue) => pet.species = newValue.toString().trim(),
-      decoration: InputDecoration(
+      decoration: const InputDecoration(
         label: Row(
           mainAxisSize: MainAxisSize.min,
-          children: const [
+          children: [
             Text("Gatunek"),
             SizedBox(width: 1),
             Text('*', style: TextStyle(color: Colors.red)),
@@ -378,8 +380,26 @@ class _AnnoucementFormPageState extends State<AnnoucementFormPage> {
             onPressed: () {
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
-                context.read<AnnoucementFormCubit>().submit(Announcement(
-                    pet: widget.state.pet!, title: '', description: ''));
+                context.read<AnnoucementFormCubit>().submit(
+                      Announcement(
+                        pet: widget.state.pet!,
+                        title: '',
+                        description: '',
+                        shelter: Shelter(
+                          userName: "",
+                          phoneNumber: "",
+                          email: "",
+                          address: Address(
+                            city: "",
+                            street: "",
+                            postalCode: "",
+                            province: "",
+                            country: "",
+                          ),
+                          fullShelterName: "",
+                        ),
+                      ),
+                    );
               }
             },
             child: const Text(
