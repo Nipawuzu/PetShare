@@ -1,7 +1,7 @@
 using DatabaseContextLibrary;
 using DatabaseContextLibrary.models;
 using Microsoft.EntityFrameworkCore;
-
+using ShelterAPI;
 
 const string ConnectionString = "Server=tcp:petshareserver.database.windows.net,1433;Initial Catalog=PetShareDatabase;Persist Security Info=False;User ID=azureuser;Password=kotysathebest123!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
 

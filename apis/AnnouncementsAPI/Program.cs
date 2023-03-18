@@ -1,5 +1,7 @@
 
+using AnnouncementsAPI;
 using DatabaseContextLibrary;
+using DatabaseContextLibrary.models;
 using Microsoft.EntityFrameworkCore;
 
 const string ConnectionString = "Server=tcp:petshareserver.database.windows.net,1433;Initial Catalog=PetShareDatabase;Persist Security Info=False;User ID=azureuser;Password=kotysathebest123!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
@@ -24,24 +26,105 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapGet("/announcements", () =>
+app.MapGet("/announcements", async (DataContext context, string[]? species, string[]? breeds, string[]? locations, int? minAge, int? maxAge, string[]? shelterNames) =>
 {
-    throw new NotImplementedException();
+    var announcements = context.Announcements.Include("Pet").AsQueryable();
+
+    if (species != null && species.Any())
+        announcements = announcements.Where(a => species.Contains(a.Pet.Species));
+
+    if (breeds != null && breeds.Any())
+        announcements = announcements.Where(a => breeds.Contains(a.Pet.Breed));
+
+    if (locations != null && locations.Any())
+        announcements = announcements.Where(a => locations.Contains(a.Pet.Shelter.Address.City));
+
+    announcements = announcements.Where(
+        a =>   (minAge == null || a.Pet.Birthday <= DateTime.Now.AddDays(-(double)minAge)) 
+            && (maxAge == null || a.Pet.Birthday >= DateTime.Now.AddDays(-(double)maxAge)));
+
+    if (shelterNames != null && shelterNames.Any())
+        announcements = announcements.Where(a => shelterNames.Contains(a.Pet.Shelter.FullShelterName));
+
+    return await announcements.ToListAsync();
 });
 
-app.MapPost("/announcements", () =>
+app.MapPost("/announcements", async (DataContext context, Announcement announcement) =>
 {
-    throw new NotImplementedException();
+    context.Announcements.Add(announcement);
+    await context.SaveChangesAsync();
+    return Results.Ok();
 });
 
-app.MapGet("/announcements/{announcementId}", (int announcementId) =>
+app.MapGet("/announcements/{announcementId}", async (DataContext context, Guid announcementId) =>
 {
-    throw new NotImplementedException();
+    var announcement = await context.Announcements.Include("Pet").FirstOrDefaultAsync(a => a.Id == announcementId);
+
+    if (announcement is null)
+        return Results.NotFound("Announcement doesn't exist.");
+
+    return Results.Ok(announcement);
 });
 
-app.MapPut("/announcements/{announcementId}", (int announcementId) =>
+app.MapPut("/announcements/{announcementId}", async (DataContext context, Announcement updatedAnnouncement, Guid announcementId) =>
 {
-    throw new NotImplementedException();
+    var announcement = await context.Announcements.FirstOrDefaultAsync(a => a.Id == announcementId);
+
+    if (announcement is null)
+        return Results.NotFound("Announcement doesn't exist.");
+
+    announcement.Title = updatedAnnouncement.Title;
+    announcement.Description = updatedAnnouncement.Description;
+    announcement.CreationDate = updatedAnnouncement.CreationDate;
+    announcement.ClosingDate = updatedAnnouncement.ClosingDate;
+    announcement.LastUpdateDate = updatedAnnouncement.LastUpdateDate;
+    announcement.Status = updatedAnnouncement.Status;
+    announcement.PetId = updatedAnnouncement.PetId;
+    announcement.Pet = updatedAnnouncement.Pet;
+
+    await context.SaveChangesAsync();
+
+    return Results.Ok();
+});
+
+app.MapGet("/pet", () =>
+{
+
+});
+
+app.MapPost("/pet", async (DataContext context, Pet pet) =>
+{
+    context.Pets.Add(pet);
+    await context.SaveChangesAsync();
+    return Results.Ok();
+});
+
+app.MapGet("/pet/{petId}", async (DataContext context, Guid petId) =>
+{
+    var pet = await context.Pets.FirstOrDefaultAsync(p => p.Id == petId);
+    if (pet is null)
+        return Results.NotFound("Pet doesn't exist.");
+    return Results.Ok(pet);
+});
+
+app.MapPut("/pet/{petId}", async (DataContext context, Pet updatedPet, Guid petId) =>
+{
+    var pet = await context.Pets.FirstOrDefaultAsync(p => p.Id == petId);
+    if (pet is null)
+        return Results.NotFound("Pet doesn't exist.");
+
+    pet.Name = updatedPet.Name;
+    pet.ShelterId = updatedPet.ShelterId;
+    pet.Shelter = updatedPet.Shelter;
+    pet.Species = updatedPet.Species;
+    pet.Breed = updatedPet.Breed;
+    pet.Birthday = updatedPet.Birthday;
+    pet.Description = updatedPet.Description;
+    pet.Photo = updatedPet.Photo;
+
+    await context.SaveChangesAsync();
+
+    return Results.Ok();
 });
 
 app.Run();
