@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:pet_share/address.dart';
+import 'package:pet_share/annoucements/added_announcements/view.dart';
+import 'package:pet_share/annoucements/announcement.dart';
 import 'package:pet_share/annoucements/form/view.dart';
+import 'package:pet_share/annoucements/pet.dart';
+import 'package:pet_share/shelter.dart';
 
 class AllViews extends StatelessWidget {
   const AllViews({super.key});
@@ -9,12 +14,65 @@ class AllViews extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(12),
       child: ListView(
-        children: const [
-          ViewsListTile(
+        children: [
+          const ViewsListTile(
             text: "Dodaj nowe ogłoszenie",
             image: AssetImage("images/new_announcement.png"),
             child: NewAnnoucementForm(),
-          )
+          ),
+          ViewsListTile(
+            text: "Dodane ogłoszenia",
+            child: AddedAnnouncements(
+              announcements: [
+                Announcement(
+                  description:
+                      "AlaMaKota taki mega mega mega mega mega mega mega mega mega mega mega mega długi opis",
+                  pet: Pet(
+                      name: "Nola",
+                      species: "kotek",
+                      breed: "szara",
+                      description: "Jest super",
+                      photo: null),
+                  title: "Zajebista kotka, nie oddam",
+                  shelter: Shelter(
+                    address: Address(
+                        country: 'Polsza',
+                        city: "Warszawka",
+                        postalCode: "02-656",
+                        street: "Kotkowa",
+                        province: "Mazowwieckie"),
+                    email: 'loloo',
+                    fullShelterName: 'szelterek',
+                    userName: 'sada',
+                    phoneNumber: '21213',
+                  ),
+                ),
+                Announcement(
+                  description:
+                      "chce kotkaaaaaaaa, długi opis bo można, a czemu by nie",
+                  pet: Pet(
+                      name: "Mela",
+                      species: "kotek",
+                      breed: "ruda",
+                      description: "Jest super",
+                      photo: null),
+                  title: "Zajebista druga kotka, nie oddam",
+                  shelter: Shelter(
+                    address: Address(
+                        country: 'Polsza',
+                        city: "Warszawka",
+                        postalCode: "02-656",
+                        street: "Kotkowa",
+                        province: "Mazowwieckie"),
+                    email: 'loloo',
+                    fullShelterName: 'szelterek taka długa nazwa szelterka',
+                    userName: 'sada',
+                    phoneNumber: '21213',
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
