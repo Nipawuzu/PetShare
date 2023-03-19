@@ -1,8 +1,14 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:pet_share/all_views.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:pet_share/app_gate.dart';
+import 'package:pet_share/environment.dart';
 import 'package:pet_share/theme.dart';
 
-void main() {
+Future main() async {
+  await dotenv.load(fileName: Environment.filename);
+  HttpOverrides.global = PetShareHttpOverrides();
   runApp(const PetShare());
 }
 
@@ -15,8 +21,17 @@ class PetShare extends StatelessWidget {
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
       home: const Scaffold(
-        body: SafeArea(child: AllViews()),
+        body: SafeArea(child: AppMainGate()),
       ),
     );
+  }
+}
+
+class PetShareHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
   }
 }

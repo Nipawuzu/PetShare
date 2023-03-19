@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pet_share/address.dart';
 import 'package:pet_share/annoucements/added_announcements/view.dart';
 import 'package:pet_share/annoucements/announcement.dart';
@@ -15,10 +16,10 @@ class AllViews extends StatelessWidget {
       padding: const EdgeInsets.all(12),
       child: ListView(
         children: [
-          const ViewsListTile(
+          ViewsListTile(
             text: "Dodaj nowe ogłoszenie",
-            image: AssetImage("images/new_announcement.png"),
-            child: NewAnnoucementForm(),
+            image: const AssetImage("images/new_announcement.png"),
+            child: NewAnnoucementForm(context.read()),
           ),
           ViewsListTile(
             text: "Dodane ogłoszenia",

@@ -1,5 +1,6 @@
 
 using AnnouncementsAPI;
+using AnnouncementsAPI.Requests;
 using DatabaseContextLibrary;
 using DatabaseContextLibrary.models;
 using Microsoft.EntityFrameworkCore;
@@ -49,9 +50,29 @@ app.MapGet("/announcements", async (DataContext context, string[]? species, stri
     return await announcements.ToListAsync();
 });
 
-app.MapPost("/announcements", async (DataContext context, Announcement announcement) =>
+app.MapPost("/announcements", async (DataContext context, PostAnnouncementRequest announcement) =>
 {
-    context.Announcements.Add(announcement);
+
+    var newAnnouncement = announcement.Map();
+    if (announcement.PetId.HasValue)
+    {
+        var pet = await context.Pets.FindAsync(announcement.PetId);
+        if (pet == null)
+            return Results.BadRequest("Announcement's pet doesn't exist");
+
+        newAnnouncement.PetId = announcement.PetId.Value;
+    }
+    else if(announcement.Pet != null)
+    {
+        var pet = announcement.Pet.Map();
+#warning Póki nie ma autoyzacji i claimów
+        pet.ShelterId = new Guid("3fa85f64-5717-4562-b3fc-2c963f66afa6");
+        context.Pets.Add(pet);
+        await context.SaveChangesAsync();
+        newAnnouncement.PetId = pet.Id;
+    }
+
+    context.Announcements.Add(newAnnouncement);
     await context.SaveChangesAsync();
     return Results.Ok();
 });
