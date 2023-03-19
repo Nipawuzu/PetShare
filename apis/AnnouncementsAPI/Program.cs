@@ -58,7 +58,7 @@ app.MapPost("/announcements", async (DataContext context, PostAnnouncementReques
     {
         var pet = await context.Pets.FindAsync(announcement.PetId);
         if (pet == null)
-            return Results.Problem();
+            return Results.BadRequest("Announcement's pet doesn't exist");
 
         newAnnouncement.PetId = announcement.PetId.Value;
     }
