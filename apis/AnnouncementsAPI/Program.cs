@@ -1,5 +1,6 @@
 
 using AnnouncementsAPI;
+using AnnouncementsAPI.Requests;
 using DatabaseContextLibrary;
 using DatabaseContextLibrary.models;
 using Microsoft.EntityFrameworkCore;
@@ -28,7 +29,7 @@ app.UseHttpsRedirection();
 
 app.MapGet("/announcements", async (DataContext context, string[]? species, string[]? breeds, string[]? locations, int? minAge, int? maxAge, string[]? shelterNames) =>
 {
-    var announcements = context.Announcements.Include("Pet").AsQueryable();
+    var announcements = context.Announcements.Include("NewPet").AsQueryable();
 
     if (species != null && species.Any())
         announcements = announcements.Where(a => species.Contains(a.Pet.Species));
@@ -49,16 +50,36 @@ app.MapGet("/announcements", async (DataContext context, string[]? species, stri
     return await announcements.ToListAsync();
 });
 
-app.MapPost("/announcements", async (DataContext context, Announcement announcement) =>
+app.MapPost("/announcements", async (DataContext context, PostAnnouncementRequest announcement) =>
 {
-    context.Announcements.Add(announcement);
+
+    var newAnnouncement = announcement.Map();
+    if (announcement.PetId.HasValue)
+    {
+        var pet = await context.Pets.FindAsync(announcement.PetId);
+        if (pet == null)
+            return Results.Problem();
+
+        newAnnouncement.PetId = announcement.PetId.Value;
+    }
+    else if(announcement.Pet != null)
+    {
+        var pet = announcement.Pet.Map();
+#warning Póki nie ma autoyzacji i claimów
+        pet.ShelterId = new Guid("3fa85f64-5717-4562-b3fc-2c963f66afa6");
+        context.Pets.Add(pet);
+        await context.SaveChangesAsync();
+        newAnnouncement.PetId = pet.Id;
+    }
+
+    context.Announcements.Add(newAnnouncement);
     await context.SaveChangesAsync();
     return Results.Ok();
 });
 
 app.MapGet("/announcements/{announcementId}", async (DataContext context, Guid announcementId) =>
 {
-    var announcement = await context.Announcements.Include("Pet").FirstOrDefaultAsync(a => a.Id == announcementId);
+    var announcement = await context.Announcements.Include("NewPet").FirstOrDefaultAsync(a => a.Id == announcementId);
 
     if (announcement is null)
         return Results.NotFound("Announcement doesn't exist.");
@@ -103,7 +124,7 @@ app.MapGet("/pet/{petId}", async (DataContext context, Guid petId) =>
 {
     var pet = await context.Pets.FirstOrDefaultAsync(p => p.Id == petId);
     if (pet is null)
-        return Results.NotFound("Pet doesn't exist.");
+        return Results.NotFound("NewPet doesn't exist.");
     return Results.Ok(pet);
 });
 
@@ -111,7 +132,7 @@ app.MapPut("/pet/{petId}", async (DataContext context, Pet updatedPet, Guid petI
 {
     var pet = await context.Pets.FirstOrDefaultAsync(p => p.Id == petId);
     if (pet is null)
-        return Results.NotFound("Pet doesn't exist.");
+        return Results.NotFound("NewPet doesn't exist.");
 
     pet.Name = updatedPet.Name;
     pet.ShelterId = updatedPet.ShelterId;
