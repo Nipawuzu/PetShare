@@ -29,7 +29,7 @@ app.UseHttpsRedirection();
 
 app.MapGet("/announcements", async (DataContext context, string[]? species, string[]? breeds, string[]? locations, int? minAge, int? maxAge, string[]? shelterNames) =>
 {
-    var announcements = context.Announcements.Include("NewPet").AsQueryable();
+    var announcements = context.Announcements.Include("Pet").AsQueryable();
 
     if (species != null && species.Any())
         announcements = announcements.Where(a => species.Contains(a.Pet.Species));
@@ -79,7 +79,7 @@ app.MapPost("/announcements", async (DataContext context, PostAnnouncementReques
 
 app.MapGet("/announcements/{announcementId}", async (DataContext context, Guid announcementId) =>
 {
-    var announcement = await context.Announcements.Include("NewPet").FirstOrDefaultAsync(a => a.Id == announcementId);
+    var announcement = await context.Announcements.Include("Pet").FirstOrDefaultAsync(a => a.Id == announcementId);
 
     if (announcement is null)
         return Results.NotFound("Announcement doesn't exist.");
@@ -124,7 +124,7 @@ app.MapGet("/pet/{petId}", async (DataContext context, Guid petId) =>
 {
     var pet = await context.Pets.FirstOrDefaultAsync(p => p.Id == petId);
     if (pet is null)
-        return Results.NotFound("NewPet doesn't exist.");
+        return Results.NotFound("Pet doesn't exist.");
     return Results.Ok(pet);
 });
 
@@ -132,7 +132,7 @@ app.MapPut("/pet/{petId}", async (DataContext context, Pet updatedPet, Guid petI
 {
     var pet = await context.Pets.FirstOrDefaultAsync(p => p.Id == petId);
     if (pet is null)
-        return Results.NotFound("NewPet doesn't exist.");
+        return Results.NotFound("Pet doesn't exist.");
 
     pet.Name = updatedPet.Name;
     pet.ShelterId = updatedPet.ShelterId;
