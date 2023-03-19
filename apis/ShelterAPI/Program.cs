@@ -63,3 +63,6 @@ app.MapPut("/shelter/{shelterId}", async (DataContext context, Guid shelterId, P
 });
 
 app.Run();
+
+// For testing purposes
+public partial class ProgramShelterAPI { }

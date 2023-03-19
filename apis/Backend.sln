@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShelterAPI", "ShelterAPI\Sh
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AnnouncementsAPI", "AnnouncementsAPI\AnnouncementsAPI.csproj", "{9E72B769-CB83-421D-8104-7ADD0ECDBAAF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API_tests", "API_tests\API_tests.csproj", "{C6AB1AE0-D491-4602-B9FE-CA411827A3A4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "APIs_tests", "API_tests\APIs_tests.csproj", "{C6AB1AE0-D491-4602-B9FE-CA411827A3A4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
