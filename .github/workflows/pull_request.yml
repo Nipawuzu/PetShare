@@ -15,3 +15,9 @@ jobs:
     uses: ./.github/workflows/flutter_try_build.yml
     with:
       path_to_project: client/
+
+
+  test_apis:
+    uses: ./.github/workflows/APIs_tests.yml
+    with:
+      path_to_project: apis/
