@@ -7,7 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DatabaseContextLibrary", "D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShelterAPI", "ShelterAPI\ShelterAPI.csproj", "{EFB0A1A3-42CF-4D52-9A53-8D9C7588701C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnnouncementsAPI", "AnnouncementsAPI\AnnouncementsAPI.csproj", "{9E72B769-CB83-421D-8104-7ADD0ECDBAAF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AnnouncementsAPI", "AnnouncementsAPI\AnnouncementsAPI.csproj", "{9E72B769-CB83-421D-8104-7ADD0ECDBAAF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClaimsManagementLibrary", "ClaimsManagementLibrary\ClaimsManagementLibrary.csproj", "{0025CE05-CBAA-4611-A8C6-850BC530148E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{9E72B769-CB83-421D-8104-7ADD0ECDBAAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9E72B769-CB83-421D-8104-7ADD0ECDBAAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9E72B769-CB83-421D-8104-7ADD0ECDBAAF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0025CE05-CBAA-4611-A8C6-850BC530148E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0025CE05-CBAA-4611-A8C6-850BC530148E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0025CE05-CBAA-4611-A8C6-850BC530148E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0025CE05-CBAA-4611-A8C6-850BC530148E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
