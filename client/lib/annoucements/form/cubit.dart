@@ -22,8 +22,8 @@ class SendingFormState extends AnnouncementFormState {}
 
 class FormSentState extends AnnouncementFormState {}
 
-class AnnoucementFormCubit extends Cubit<AnnouncementFormState> {
-  AnnoucementFormCubit(this._service)
+class AnnouncementFormCubit extends Cubit<AnnouncementFormState> {
+  AnnouncementFormCubit(this._service)
       : super(PetFormState(announcement: NewAnnouncement()));
 
   AnnouncementService _service;
