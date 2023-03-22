@@ -1,8 +1,8 @@
 ﻿using System.Security.Claims;
 
-namespace ClaimsManagementLibrary
+namespace APIAuthCommonLibrary
 {
-    public static class ClaimsGetExtensionClass
+    public static class ClaimsGetExtensions
     {
         public static string? GetIssuer(this ClaimsIdentity identity)
         {

@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShelterAPI", "ShelterAPI\Sh
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AnnouncementsAPI", "AnnouncementsAPI\AnnouncementsAPI.csproj", "{9E72B769-CB83-421D-8104-7ADD0ECDBAAF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClaimsManagementLibrary", "ClaimsManagementLibrary\ClaimsManagementLibrary.csproj", "{0025CE05-CBAA-4611-A8C6-850BC530148E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "APIAuthCommonLibrary", "APIAuthCommonLibrary\APIAuthCommonLibrary.csproj", "{0025CE05-CBAA-4611-A8C6-850BC530148E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

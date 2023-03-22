@@ -1,3 +1,4 @@
+using APIAuthCommonLibrary;
 using DatabaseContextLibrary;
 using DatabaseContextLibrary.models;
 using Microsoft.EntityFrameworkCore;
@@ -10,27 +11,33 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+builder.Services.AddSwaggerGenWithSecurity();
+
 builder.Services.AddDbContext<DataContext>(opt => opt.UseSqlServer(ConnectionString));
+
+builder.Services.AddCustomAuthentication(builder.Configuration["Auth0:Secret"]!);
+builder.Services.AddCustomAuthorization();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseHttpsRedirection();
 
 app.MapGet("/shelter", async (DataContext context) =>
-    Results.Ok(await context.Shelters.Include("Address").ToListAsync()));
+    Results.Ok(await context.Shelters.Include("Address").ToListAsync()))
+    .RequireAuthorization("Auth");
 
 app.MapGet("/shelter/{shelterId}", async (DataContext context, Guid shelterId) =>
     await context.Shelters.Include("Address").FirstOrDefaultAsync(s => s.Id == shelterId) is Shelter shelter ?
         Results.Ok(shelter) :
-        Results.BadRequest("Sorry, shelter not found"));
+        Results.BadRequest("Sorry, shelter not found"))
+    .RequireAuthorization("Auth");
 
 app.MapPost("/shelter", async (DataContext context, Shelter shelter) =>
 {
@@ -39,7 +46,7 @@ app.MapPost("/shelter", async (DataContext context, Shelter shelter) =>
     context.Shelters.Add(shelter);
     await context.SaveChangesAsync();
     return Results.Ok();
-});
+}).RequireAuthorization("Auth");
 
 app.MapPut("/shelter/{shelterId}", async (DataContext context, Guid shelterId, Shelter updatedShelter) =>
 {
@@ -62,6 +69,6 @@ app.MapPut("/shelter/{shelterId}", async (DataContext context, Guid shelterId, S
     await context.SaveChangesAsync();
 
     return Results.Ok(await context.Shelters.Include("Address").FirstOrDefaultAsync(s => s.Id == shelterId));
-});
+}).RequireAuthorization("Admin");
 
 app.Run();

@@ -1,8 +1,10 @@
 
 using AnnouncementsAPI;
 using AnnouncementsAPI.Requests;
-using ClaimsManagementLibrary;
+using APIAuthCommonLibrary;
+using DatabaseContextLibrary.models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -18,67 +20,18 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Title = "AnnouncementsAPI",
-        Version = "v1"
-    });
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
-    {
-        Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer",
-        BearerFormat = "JWT",
-        In = ParameterLocation.Header,
-        Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 1safsfsdfdfd\"",
-    });
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement {
-        {
-            new OpenApiSecurityScheme {
-                Reference = new OpenApiReference {
-                    Type = ReferenceType.SecurityScheme,
-                        Id = "Bearer"
-                }
-            },
-            new string[] {}
-        }
-    });
-});
+builder.Services.AddSwaggerGenWithSecurity();
 
 builder.Services.AddDbContext<DataContext>(opt => opt.UseSqlServer(ConnectionString));
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-     .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, c =>
-     {
-#warning tym zakomentowanym bêdziemy siê przejmowaæ po zrobieniu Auth0
-         //c.Authority = $"https://{builder.Configuration["Auth0:Domain"]}";
-         c.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
-         {
-             ValidateAudience = false,
-             ValidateIssuer = false,
-             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Auth0:Secret"]!)),
-             //ValidAudience = builder.Configuration["Auth0:Audience"],
-             //ValidIssuer = $"{builder.Configuration["Auth0:Domain"]}"
-         };
-     });
+builder.Services.AddCustomAuthentication(builder.Configuration["Auth0:Secret"]!);
 
-builder.Services.AddAuthorization(o =>
-{
-    o.AddPolicy("Shelter", p => p.
-        RequireAuthenticatedUser().
-        RequireRole("Shelter"));
-    o.AddPolicy("ShelterOrAdmin", p => p.
-        RequireAuthenticatedUser().
-        RequireRole("Shelter", "Admin"));
-});
+builder.Services.AddCustomAuthorization();
 
 var app = builder.Build();
 
 app.UseSwagger();
 app.UseSwaggerUI();
-
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -106,7 +59,12 @@ app.MapGet("/announcements", async (DataContext context, string[]? species, stri
         announcements = announcements.Where(a => shelterNames.Contains(a.Pet.Shelter.FullShelterName));
 
     return await announcements.ToListAsync();
-});
+})
+.WithOpenApi()
+.RequireAuthorization("Auth")
+.WithSummary("Gets all announcements filtered with query parameters")
+.Produces(200)
+.Produces(401);
 
 app.MapPost("/announcements", async (DataContext context, PostAnnouncementRequest announcement, HttpContext httpContext) =>
 {
@@ -144,7 +102,13 @@ app.MapPost("/announcements", async (DataContext context, PostAnnouncementReques
     context.Announcements.Add(newAnnouncement);
     await context.SaveChangesAsync();
     return Results.Ok();
-}).RequireAuthorization("Shelter");
+})
+.WithOpenApi()
+.RequireAuthorization("Shelter")
+.WithSummary("Post new announcement. Shelter role required. Gets shelterId of pet from auth claims.")
+.Produces(200)
+.Produces(400)
+.Produces(401);
 
 app.MapGet("/announcements/{announcementId}", async (DataContext context, Guid announcementId) =>
 {
@@ -154,11 +118,17 @@ app.MapGet("/announcements/{announcementId}", async (DataContext context, Guid a
         return Results.NotFound("Announcement doesn't exist.");
 
     return Results.Ok(announcement);
-});
+})
+.WithOpenApi()
+.RequireAuthorization("Auth")
+.WithSummary("Gets announcement by id.")
+.Produces(200)
+.Produces(404)
+.Produces(401);
 
 app.MapPut("/announcements/{announcementId}", async (DataContext context, PutAnnouncementRequest announcementRequest, Guid announcementId, HttpContext httpContext) =>
 {
-    var announcement = await context.Announcements.FirstOrDefaultAsync(a => a.Id == announcementId);
+    var announcement = await context.Announcements.Include("Pet").FirstOrDefaultAsync(a => a.Id == announcementId);
 
     if (announcement is null)
         return Results.NotFound("Announcement doesn't exist.");
@@ -172,16 +142,20 @@ app.MapPut("/announcements/{announcementId}", async (DataContext context, PutAnn
 
     var shelterId = Guid.Parse(issuerClaim);
 
+    Pet announcementPet;
     if (announcementRequest.PetId != null)
     {
-        var pet = await context.Pets.FirstOrDefaultAsync(p => p.Id == announcementRequest.PetId);
+        announcementPet = await context.Pets.FirstOrDefaultAsync(p => p.Id == announcementRequest.PetId);
 
-        if (pet is null)
-            return Results.NotFound("Announcement's pet doesn't exist.");
-
-        if (roleClaim == "Shelter" && pet.ShelterId != shelterId)
-            return Results.Unauthorized();
+        if (announcementPet is null)
+            return Results.BadRequest("Announcement's pet doesn't exist.");
     }
+    else
+        announcementPet = announcement.Pet;
+
+
+    if (roleClaim == "Shelter" && announcementPet.ShelterId != shelterId)
+        return Results.Unauthorized();
 
     if (announcementRequest.Title != null)
         announcement.Title = announcementRequest.Title;
@@ -196,7 +170,13 @@ app.MapPut("/announcements/{announcementId}", async (DataContext context, PutAnn
     await context.SaveChangesAsync();
 
     return Results.Ok();
-}).RequireAuthorization("ShelterOrAdmin");
+})
+.WithOpenApi()
+.RequireAuthorization("ShelterOrAdmin")
+.WithSummary("Updates announcements. Null values are omitted. Requires admin (any announcement) or shelter (only matching shelterId) role. ")
+.Produces(StatusCodes.Status200OK)
+.Produces(StatusCodes.Status400BadRequest)
+.Produces(StatusCodes.Status401Unauthorized);
 
 app.MapGet("/pet", async (DataContext context, HttpContext httpContext) =>
 {
@@ -211,7 +191,12 @@ app.MapGet("/pet", async (DataContext context, HttpContext httpContext) =>
     var pets = await context.Pets.Where(p => p.ShelterId == shelterId).ToListAsync();
 
     return Results.Ok(pets);
-}).RequireAuthorization("Shelter");
+})
+.WithOpenApi()
+.RequireAuthorization("Shelter")
+.WithSummary("Gets all pets for shelter. Requires shelter role. Gets shelter id from auth claims.")
+.Produces(200)
+.Produces(401);
 
 app.MapPost("/pet", async (DataContext context, PostPetRequest petRequest, HttpContext httpContext) =>
 {
@@ -228,7 +213,12 @@ app.MapPost("/pet", async (DataContext context, PostPetRequest petRequest, HttpC
     context.Pets.Add(pet);
     await context.SaveChangesAsync();
     return Results.Ok();
-}).RequireAuthorization("Shelter");
+})
+.WithOpenApi()
+.RequireAuthorization("Shelter")
+.WithSummary("Posts new pet. Requires shelter role. Gets shelter id from auth claims.")
+.Produces(200)
+.Produces(401);
 
 app.MapGet("/pet/{petId}", async (DataContext context, Guid petId) =>
 {
@@ -236,7 +226,12 @@ app.MapGet("/pet/{petId}", async (DataContext context, Guid petId) =>
     if (pet is null)
         return Results.NotFound("Pet doesn't exist.");
     return Results.Ok(pet);
-});
+})
+.WithOpenApi()
+.RequireAuthorization("Auth")
+.WithSummary("Gets pet by id.")
+.Produces(200)
+.Produces(404);
 
 app.MapPut("/pet/{petId}", async (DataContext context, PutPetRequest petRequest, Guid petId, HttpContext httpContext) =>
 {
@@ -274,6 +269,12 @@ app.MapPut("/pet/{petId}", async (DataContext context, PutPetRequest petRequest,
     await context.SaveChangesAsync();
 
     return Results.Ok();
-}).RequireAuthorization("ShelterOrAdmin");
+})
+.WithOpenApi()
+.RequireAuthorization("ShelterOrAdmin")
+.WithSummary("Updates pet. Null values are omitted. Requires admin (any pet) or shelter (only matching shelterId) role. ")
+.Produces(200)
+.Produces(404)
+.Produces(401);
 
 app.Run();
