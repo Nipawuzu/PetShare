@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:pet_share/annoucements/pet.dart';
+import 'package:pet_share/announcements/pet.dart';
 import 'package:pet_share/shelter.dart';
 
 @JsonSerializable()

@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:http_status_code/http_status_code.dart';
-import 'package:pet_share/annoucements/requests/new_announcement.dart';
+import 'package:pet_share/announcements/requests/new_announcement.dart';
 
 class AnnouncementService {
   AnnouncementService(this._url);

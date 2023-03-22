@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:pet_share/address.dart';
-import 'package:pet_share/annoucements/pet.dart';
+import 'package:pet_share/announcements/pet.dart';
 
 @JsonSerializable()
 class User {

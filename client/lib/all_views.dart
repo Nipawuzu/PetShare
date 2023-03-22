@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pet_share/address.dart';
-import 'package:pet_share/annoucements/added_announcements/view.dart';
-import 'package:pet_share/annoucements/announcement.dart';
-import 'package:pet_share/annoucements/form/view.dart';
-import 'package:pet_share/annoucements/pet.dart';
+import 'package:pet_share/announcements/added_announcements/view.dart';
+import 'package:pet_share/announcements/announcement.dart';
+import 'package:pet_share/announcements/form/view.dart';
+import 'package:pet_share/announcements/pet.dart';
 import 'package:pet_share/shelter.dart';
 
 class AllViews extends StatelessWidget {
