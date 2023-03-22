@@ -44,7 +44,7 @@ class AnnouncementFormCubit extends Cubit<AnnouncementFormState> {
   }
 
   void choosePet(NewAnnouncement announcement, Pet pet) {
-    announcement.petId = pet.Id;
+    announcement.petId = pet.id;
     announcement.pet = NewPet(
       birthday: pet.birthday,
       breed: pet.breed,

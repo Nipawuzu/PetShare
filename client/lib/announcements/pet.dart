@@ -11,7 +11,7 @@ class Pet {
       this.description = "",
       this.photo});
 
-  String? Id;
+  String? id;
   String name;
   String species;
   String breed;
