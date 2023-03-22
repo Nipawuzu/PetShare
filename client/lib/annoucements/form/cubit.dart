@@ -26,7 +26,7 @@ class AnnouncementFormCubit extends Cubit<AnnouncementFormState> {
   AnnouncementFormCubit(this._service)
       : super(PetFormState(announcement: NewAnnouncement()));
 
-  AnnouncementService _service;
+  final AnnouncementService _service;
 
   List<Pet> getPets() {
     return [];
