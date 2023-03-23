@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\APIAuthCommonLibrary\APIAuthCommonLibrary.csproj" />
     <ProjectReference Include="..\DatabaseContextLibrary\DatabaseContextLibrary.csproj" />
   </ItemGroup>
 

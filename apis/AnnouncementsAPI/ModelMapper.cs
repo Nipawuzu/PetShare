@@ -28,5 +28,18 @@ namespace AnnouncementsAPI
                 Photo = pet.Photo, 
             };
         }
+
+        public static Pet Map(this PostPetRequest petRequest)
+        {
+            return new Pet()
+            {
+                Name = petRequest.Name,
+                Birthday = petRequest.Birthday,
+                Species = petRequest.Species,
+                Breed = petRequest.Breed,
+                Description = petRequest.Description,
+                Photo = petRequest.Photo
+            };
+        }
     }
 }

@@ -3,15 +3,20 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestPlatform.TestHost;
+using Newtonsoft.Json;
 using ShelterAPI;
 using System.Net;
 using System.Net.Http.Json;
 using System.Reflection;
+using System.Text;
+using System.Text.Json;
 
 namespace API_tests
 {
     public class SchelterAPI_tests
     {
+        private const string SHELTER_AUTH = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiIzZmE4NWY2NC01NzE3LTQ1NjItYjNmYy0yYzk2M2Y2NmFmYTYiLCJleHAiOjE5MTYyMzkwMjIsImF1ZCI6WyJBQUEiXSwicm9sZXMiOlsiU2hlbHRlciJdfQ.E2872Rdzn0qvJnjXn_rJA-IHSQm4Nqu49OHlkfhUbe8";
+
         WebApplicationFactory<ProgramShelterAPI> application;
         HttpClient client;
 
@@ -39,14 +44,18 @@ namespace API_tests
         [MemberData(nameof(TestData))]
         public async void SchelterApiAnablesAddNewSchelterWithPostRequest(Shelter shelter)
         {
-            var result = await client.PostAsJsonAsync("/shelter", shelter);
+            var postRequest = CreateRequest(HttpMethod.Post, "/shelter", JsonConvert.SerializeObject(shelter), SHELTER_AUTH);
+            var postResult = await client.SendAsync(postRequest);
 
-            Assert.Equal(HttpStatusCode.OK, result.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, postResult.StatusCode);
 
-            var returned_data = await client.GetFromJsonAsync<List<Shelter>>("/shelter");
-            Assert.NotNull(returned_data);
+            var getRequest = CreateRequest(HttpMethod.Get, "/shelter", authToken: SHELTER_AUTH);
+            var getResult = await client.SendAsync(getRequest);
 
-            var found_shelter = returned_data.Find(sh => sh.HaveSameValues(shelter));
+            Assert.Equal(HttpStatusCode.OK, getResult.StatusCode);
+
+            var returnedData = await getResult.Content.ReadFromJsonAsync<List<Shelter>>();
+            var found_shelter = returnedData.Find(sh => sh.HaveSameValues(shelter));
             Assert.NotNull(found_shelter);
         }
 
@@ -71,6 +80,15 @@ namespace API_tests
                     }
                 }
             };
+        }
+
+        private HttpRequestMessage CreateRequest(HttpMethod method, string url, string? body = null, string? authToken = null)
+        {
+            var postRequest = new HttpRequestMessage(method, url);
+            if(authToken != null) postRequest.Headers.Add("Authorization", SHELTER_AUTH);
+            if(body != null) postRequest.Content = new StringContent(body, Encoding.UTF8, "application/json");
+
+            return postRequest;
         }
     }
 }
