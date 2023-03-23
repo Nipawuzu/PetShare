@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pet_share/annoucements/added_announcements/cubit.dart';
-import 'package:pet_share/annoucements/announcement.dart';
-import 'package:pet_share/annoucements/details/view.dart';
+import 'package:pet_share/announcements/added_announcements/cubit.dart';
+import 'package:pet_share/announcements/announcement.dart';
+import 'package:pet_share/announcements/details/view.dart';
 
 class AddedAnnouncements extends StatefulWidget {
   const AddedAnnouncements({super.key, required this.announcements});
