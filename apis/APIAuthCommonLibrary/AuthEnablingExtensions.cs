@@ -12,14 +12,14 @@ namespace APIAuthCommonLibrary
 {
     public static class AuthEnablingExtensions
     {
-        public static void AddSwaggerGenWithSecurity(this IServiceCollection services)
+        public static void AddSwaggerGenWithSecurity(this IServiceCollection services, string apiName, string apiVersion)
         {
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo
+                c.SwaggerDoc(apiVersion, new OpenApiInfo
                 {
-                    Title = "AnnouncementsAPI",
-                    Version = "v1"
+                    Title = apiName,
+                    Version = apiVersion
                 });
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
                 {
