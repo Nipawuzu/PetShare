@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AnnouncementsAPI", "Announc
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "APIAuthCommonLibrary", "APIAuthCommonLibrary\APIAuthCommonLibrary.csproj", "{0025CE05-CBAA-4611-A8C6-850BC530148E}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "APIs_tests", "API_tests\APIs_tests.csproj", "{C6AB1AE0-D491-4602-B9FE-CA411827A3A4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{0025CE05-CBAA-4611-A8C6-850BC530148E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0025CE05-CBAA-4611-A8C6-850BC530148E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0025CE05-CBAA-4611-A8C6-850BC530148E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6AB1AE0-D491-4602-B9FE-CA411827A3A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6AB1AE0-D491-4602-B9FE-CA411827A3A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6AB1AE0-D491-4602-B9FE-CA411827A3A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6AB1AE0-D491-4602-B9FE-CA411827A3A4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

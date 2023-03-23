@@ -86,3 +86,6 @@ app.MapPut("/shelter/{shelterId}", async (DataContext context, Guid shelterId, P
 .Produces(StatusCodes.Status400BadRequest);
 
 app.Run();
+
+// For testing purposes
+public partial class ProgramShelterAPI { }
