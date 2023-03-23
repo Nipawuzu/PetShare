@@ -1,10 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pet_share/annoucements/announcement.dart';
-import 'package:pet_share/annoucements/form/view.dart';
-import 'package:pet_share/annoucements/pet.dart';
-import 'package:pet_share/annoucements/requests/new_announcement.dart';
-import 'package:pet_share/annoucements/requests/new_pet.dart';
-import 'package:pet_share/annoucements/service.dart';
+import 'package:pet_share/announcements/pet.dart';
+import 'package:pet_share/announcements/requests/new_announcement.dart';
+import 'package:pet_share/announcements/requests/new_pet.dart';
+import 'package:pet_share/announcements/service.dart';
 
 class AnnouncementFormState {}
 
@@ -24,11 +22,11 @@ class SendingFormState extends AnnouncementFormState {}
 
 class FormSentState extends AnnouncementFormState {}
 
-class AnnoucementFormCubit extends Cubit<AnnouncementFormState> {
-  AnnoucementFormCubit(this._service)
+class AnnouncementFormCubit extends Cubit<AnnouncementFormState> {
+  AnnouncementFormCubit(this._service)
       : super(PetFormState(announcement: NewAnnouncement()));
 
-  AnnouncementService _service;
+  final AnnouncementService _service;
 
   List<Pet> getPets() {
     return [];
@@ -46,7 +44,7 @@ class AnnoucementFormCubit extends Cubit<AnnouncementFormState> {
   }
 
   void choosePet(NewAnnouncement announcement, Pet pet) {
-    announcement.petId = pet.Id;
+    announcement.petId = pet.id;
     announcement.pet = NewPet(
       birthday: pet.birthday,
       breed: pet.breed,

@@ -2,10 +2,10 @@ import 'package:bottom_picker/bottom_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:pet_share/annoucements/form/cubit.dart';
-import 'package:pet_share/annoucements/requests/new_announcement.dart';
-import 'package:pet_share/annoucements/requests/new_pet.dart';
-import 'package:pet_share/annoucements/service.dart';
+import 'package:pet_share/announcements/form/cubit.dart';
+import 'package:pet_share/announcements/requests/new_announcement.dart';
+import 'package:pet_share/announcements/requests/new_pet.dart';
+import 'package:pet_share/announcements/service.dart';
 
 class NewAnnoucementForm extends StatefulWidget {
   const NewAnnoucementForm(this.announcementService, {super.key});
@@ -20,8 +20,8 @@ class _NewAnnoucementFormState extends State<NewAnnoucementForm> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => AnnoucementFormCubit(widget.announcementService),
-      child: BlocBuilder<AnnoucementFormCubit, AnnouncementFormState>(
+      create: (_) => AnnouncementFormCubit(widget.announcementService),
+      child: BlocBuilder<AnnouncementFormCubit, AnnouncementFormState>(
         builder: (context, state) {
           if (state is PetFormState) {
             return PetFormPage(state: state);
@@ -264,7 +264,7 @@ class _PetFormPageState extends State<PetFormPage> {
                 _formKey.currentState!.save();
                 widget.state.announcement.pet = _pet;
                 context
-                    .read<AnnoucementFormCubit>()
+                    .read<AnnouncementFormCubit>()
                     .createPet(widget.state.announcement);
               }
             },
@@ -425,7 +425,7 @@ class _AnnoucementFormPageState extends State<AnnoucementFormPage> {
             onPressed: () {
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
-                context.read<AnnoucementFormCubit>().submit(_announcement);
+                context.read<AnnouncementFormCubit>().submit(_announcement);
               }
             },
             child: const Text(
@@ -481,7 +481,7 @@ class _AnnoucementFormPageState extends State<AnnoucementFormPage> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        context.read<AnnoucementFormCubit>().goBack();
+        context.read<AnnouncementFormCubit>().goBack();
         return false;
       },
       child: Scaffold(
