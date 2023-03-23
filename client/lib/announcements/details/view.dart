@@ -32,10 +32,21 @@ class AnnouncementAndPetDetails extends StatelessWidget {
     );
   }
 
+  FloatingActionButton _buildActionButton(BuildContext context) {
+    return FloatingActionButton(
+      onPressed: () {
+        announcement.status = AnnouncementStatus.removed;
+        context.read<ListOfAnnouncementsCubit>().goBack();
+      },
+      child: const Icon(Icons.delete_outline_rounded),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _buildAppBar(context),
+      floatingActionButton: _buildActionButton(context),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: _buildInputs(context),
