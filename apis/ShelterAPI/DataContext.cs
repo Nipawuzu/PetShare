@@ -10,5 +10,6 @@ namespace ShelterAPI
         }
 
         public DbSet<Shelter> Shelters => Set<Shelter>();
+        public DbSet<Address> Address => Set<Address>();
     }
 }
