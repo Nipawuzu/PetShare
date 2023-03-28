@@ -1,6 +1,9 @@
+import 'dart:typed_data';
+
 import 'package:bottom_picker/bottom_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:pet_share/announcements/form/cubit.dart';
 import 'package:pet_share/announcements/requests/new_announcement.dart';
@@ -92,6 +95,7 @@ class _PetFormPageState extends State<PetFormPage> {
     _pet = widget.state.announcement.pet ?? _pet;
     _datePickerController.text =
         _formatDate(widget.state.announcement.pet?.birthday);
+    _pickedPhoto = widget.state.announcement.pet?.photo;
   }
 
   String _formatDate(DateTime? date) {
@@ -114,6 +118,8 @@ class _PetFormPageState extends State<PetFormPage> {
     );
   }
 
+  Uint8List? _pickedPhoto;
+
   Widget _buildImage(BuildContext context) {
     return Center(
       child: DecoratedBox(
@@ -124,12 +130,23 @@ class _PetFormPageState extends State<PetFormPage> {
             ),
             borderRadius: BorderRadius.circular(20)),
         child: InkWell(
-          onTap: () {},
-          child: const SizedBox.square(
+          onTap: () async {
+            var img = await ImagePicker().pickImage(
+              source: ImageSource.gallery,
+            );
+            _pickedPhoto = await img?.readAsBytes();
+            setState(() {});
+          },
+          child: SizedBox.square(
             dimension: 250,
-            child: Icon(
-              Icons.camera_alt_outlined,
-              size: 64,
+            child: Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: _pickedPhoto == null
+                  ? const Icon(
+                      Icons.camera_alt_outlined,
+                      size: 64,
+                    )
+                  : Image.memory(_pickedPhoto!),
             ),
           ),
         ),
@@ -262,6 +279,7 @@ class _PetFormPageState extends State<PetFormPage> {
             onPressed: () {
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
+                _pet.photo = _pickedPhoto;
                 widget.state.announcement.pet = _pet;
                 context
                     .read<AnnouncementFormCubit>()
@@ -382,9 +400,17 @@ class _AnnoucementFormPageState extends State<AnnoucementFormPage> {
                     width: 4,
                   ),
                   borderRadius: BorderRadius.circular(20)),
-              child: const Icon(
-                Icons.camera_alt_outlined,
-                size: 64,
+              child: SizedBox.square(
+                dimension: 250,
+                child: Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: _announcement.pet?.photo != null
+                      ? Image.memory(_announcement.pet!.photo!)
+                      : const Icon(
+                          Icons.camera_alt_outlined,
+                          size: 64,
+                        ),
+                ),
               ),
             ),
           ),
