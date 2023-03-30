@@ -36,6 +36,12 @@ jobs:
           GOOGLE_CLOUD_SECRET: ${{ secrets.GOOGLE_CLOUD_SECRET }}
         run: dotnet user-secrets -p FileStorageService set "GoogleCloud:Secret" "$GOOGLE_CLOUD_SECRET"
       - name: Build APIs
+        env:
+          "GoogleCloud:BucketName": ${{ secrets.GOOGLE_CLOUD_BUCKET_NAME }}
+          "GoogleCloud:Secret": ${{ secrets.GOOGLE_CLOUD_SECRET }}
         run: dotnet build --no-restore Backend.sln
       - name: Test APIs
-        run: dotnet test --no-restore --verbosity normal
+        env:
+          "GoogleCloud:BucketName": ${{ secrets.GOOGLE_CLOUD_BUCKET_NAME }}
+          "GoogleCloud:Secret": ${{ secrets.GOOGLE_CLOUD_SECRET }}
+        run: dotnet test --no-restore --no-build --verbosity normal
