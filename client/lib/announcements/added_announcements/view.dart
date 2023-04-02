@@ -37,9 +37,19 @@ class AddedAnnouncementsList extends StatelessWidget {
   const AddedAnnouncementsList({super.key, required this.announcements});
   final List<Announcement> announcements;
 
+  PreferredSizeWidget _buildAppBar(BuildContext context) {
+    return AppBar(
+      leading: IconButton(
+          onPressed: () => Navigator.of(context).pop(),
+          icon: const Icon(Icons.arrow_back)),
+      title: const Text('Ogłoszenia'),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: _buildAppBar(context),
       body: ListView.builder(
         itemCount: announcements.length,
         itemBuilder: (context, index) => GestureDetector(
