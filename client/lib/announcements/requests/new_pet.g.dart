@@ -14,7 +14,7 @@ NewPet _$NewPetFromJson(Map<String, dynamic> json) => NewPet(
           : DateTime.parse(json['birthday'] as String),
       breed: json['breed'] as String? ?? "",
       description: json['description'] as String? ?? "",
-      photo: _$JsonConverterFromJson<List<int>, Uint8List>(
+      photo: _$JsonConverterFromJson<String, Uint8List>(
           json['photo'], const Uint8ListConverter().fromJson),
     );
 
@@ -24,7 +24,7 @@ Map<String, dynamic> _$NewPetToJson(NewPet instance) => <String, dynamic>{
       'breed': instance.breed,
       'birthday': instance.birthday?.toIso8601String(),
       'description': instance.description,
-      'photo': _$JsonConverterToJson<List<int>, Uint8List>(
+      'photo': _$JsonConverterToJson<String, Uint8List>(
           instance.photo, const Uint8ListConverter().toJson),
     };
 

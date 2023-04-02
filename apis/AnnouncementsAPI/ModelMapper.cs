@@ -1,4 +1,5 @@
-﻿using AnnouncementsAPI.Requests;
+﻿using AnnouncementsAPI.Data;
+using AnnouncementsAPI.Requests;
 using DatabaseContextLibrary.models;
 
 namespace AnnouncementsAPI
@@ -25,7 +26,6 @@ namespace AnnouncementsAPI
                 Birthday = pet.Birthday,
                 Breed = pet.Breed,
                 Description = pet.Description,
-                Photo = pet.Photo, 
             };
         }
 
@@ -38,7 +38,35 @@ namespace AnnouncementsAPI
                 Species = petRequest.Species,
                 Breed = petRequest.Breed,
                 Description = petRequest.Description,
-                Photo = petRequest.Photo
+            };
+        }
+
+        public static PetDTO MapDTO(this Pet pet)
+        {
+            return new PetDTO()
+            {
+                Id = pet.Id,
+                Name = pet.Name,
+                Species = pet.Species,
+                Birthday = pet.Birthday,
+                Breed = pet.Breed,
+                Description = pet.Description,
+                Shelter = pet.Shelter,
+            };
+        }
+
+        public static AnnouncementDTO MapDTO(this Announcement announcement)
+        {
+            return new AnnouncementDTO()
+            {
+                Title = announcement.Title,
+                Description = announcement.Description,
+                ClosingDate = announcement.ClosingDate,
+                CreationDate = announcement.CreationDate,
+                Id = announcement.Id,
+                LastUpdateDate = announcement.LastUpdateDate,
+                Pet = announcement.Pet.MapDTO(),
+                Status = announcement.Status
             };
         }
     }
