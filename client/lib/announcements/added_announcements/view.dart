@@ -1,10 +1,11 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pet_share/announcements/added_announcements/cubit.dart';
 import 'package:pet_share/announcements/announcement.dart';
 import 'package:pet_share/announcements/details/view.dart';
 import 'package:pet_share/announcements/service.dart';
+import 'package:pet_share/common_widgets/custom_text_field.dart';
+import 'package:pet_share/common_widgets/image.dart';
 
 class AddedAnnouncements extends StatefulWidget {
   const AddedAnnouncements({super.key, required this.announcementService});
@@ -187,40 +188,5 @@ Color statusToColor(AnnouncementStatus status) {
       return Colors.brown;
     case AnnouncementStatus.inVerification:
       return Colors.blue;
-  }
-}
-
-class ImageWidget extends StatelessWidget {
-  const ImageWidget({super.key, required this.size, required this.image});
-
-  final double size;
-  final String? image;
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-            border: Border.all(
-              color: Colors.black,
-              width: 2,
-            ),
-            borderRadius: BorderRadius.circular(20)),
-        child: SizedBox.square(
-          dimension: size,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: image != null
-                ? CachedNetworkImage(
-                    imageUrl: image!,
-                    fit: BoxFit.cover,
-                  )
-                : const Icon(
-                    Icons.camera_alt_outlined,
-                    size: 64,
-                  ),
-          ),
-        ),
-      ),
-    );
   }
 }
