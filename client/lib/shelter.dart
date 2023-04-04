@@ -16,6 +16,9 @@ class User {
   String phoneNumber;
   String email;
   Address address;
+
+  Map<String, dynamic> toJson() => _$UserToJson(this);
+  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 }
 
 @JsonSerializable()
@@ -30,6 +33,8 @@ class Shelter extends User {
 
   bool isAuthorized = false;
   String fullShelterName;
+
+  @override
   Map<String, dynamic> toJson() => _$ShelterToJson(this);
   factory Shelter.fromJson(Map<String, dynamic> json) =>
       _$ShelterFromJson(json);
