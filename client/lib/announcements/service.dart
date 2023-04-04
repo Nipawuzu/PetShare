@@ -11,8 +11,10 @@ class AnnouncementService {
     var response = await Dio().post(
       "$_url/announcements",
       data: announcement.toJson(),
-      options: Options(
-          headers: {"HttpHeaders.contentTypeHeader": "application/json"}),
+      options: Options(headers: {
+        "Authorization": "",
+        "HttpHeaders.contentTypeHeader": "application/json",
+      }),
     );
 
     return response.statusCode == StatusCode.OK;
