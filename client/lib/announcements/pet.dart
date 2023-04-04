@@ -1,5 +1,7 @@
-import 'dart:typed_data';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:pet_share/shelter.dart';
+
+part 'pet.g.dart';
 
 @JsonSerializable()
 class Pet {
@@ -9,7 +11,8 @@ class Pet {
       this.birthday,
       this.breed = "",
       this.description = "",
-      this.photo});
+      this.photoUrl,
+      required this.shelter});
 
   String? id;
   String name;
@@ -17,5 +20,9 @@ class Pet {
   String breed;
   DateTime? birthday;
   String description;
-  Uint8List? photo;
+  String? photoUrl;
+  Shelter shelter;
+
+  Map<String, dynamic> toJson() => _$PetToJson(this);
+  factory Pet.fromJson(Map<String, dynamic> json) => _$PetFromJson(json);
 }

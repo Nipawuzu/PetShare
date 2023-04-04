@@ -50,7 +50,7 @@ class AnnouncementFormCubit extends Cubit<AnnouncementFormState> {
       breed: pet.breed,
       description: pet.description,
       name: pet.name,
-      photo: pet.photo,
+      photo: null,
       species: pet.species,
     );
     emit(DetailsFormState(announcement: announcement));
