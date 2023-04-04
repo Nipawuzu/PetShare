@@ -31,5 +31,6 @@ class Shelter extends User {
   bool isAuthorized = false;
   String fullShelterName;
   Map<String, dynamic> toJson() => _$ShelterToJson(this);
-  factory Shelter.fromJson(Map<String, dynamic> json) => _$ShelterFromJson(json);
+  factory Shelter.fromJson(Map<String, dynamic> json) =>
+      _$ShelterFromJson(json);
 }
