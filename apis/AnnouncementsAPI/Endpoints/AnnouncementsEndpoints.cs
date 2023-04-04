@@ -11,16 +11,17 @@ namespace AnnouncementsAPI.Endpoints
     public class AnnouncementsEndpoints
     {
         public static async Task<IResult> GetWithFilters(
-            DataContext context, 
-            IStorage storage    ,
-            string[]? species, 
-            string[]? breeds, 
-            string[]? locations, 
-            int? minAge, 
-            int? maxAge, 
+            DataContext context,
+            IStorage storage,
+            string[]? species,
+            string[]? breeds,
+            string[]? locations,
+            int? minAge,
+            int? maxAge,
             string[]? shelterNames)
         {
-            var announcements = context.Announcements.Include("Pet").AsQueryable();
+            var announcements = context.Announcements.Include(x => x.Pet)
+                .ThenInclude(x => x.Shelter).ThenInclude(x => x.Address).AsQueryable();
 
             if (species != null && species.Any())
                 announcements = announcements.Where(a => species.Contains(a.Pet.Species));
@@ -39,14 +40,18 @@ namespace AnnouncementsAPI.Endpoints
                 announcements = announcements.Where(a => shelterNames.Contains(a.Pet.Shelter.FullShelterName));
 
             var res = await announcements.Select(a => a.MapDTO()).ToListAsync();
-            res.ForEach(a => a.Pet.AttachPhotoUrl(storage));
 
-            return Results.Ok();
+            foreach (var a in res)
+            {
+                await a.Pet.AttachPhotoUrl(storage);
+            }
+
+            return Results.Ok(res);
         }
 
         public static async Task<IResult> GetById(
-            DataContext context, 
-            IStorage storage, 
+            DataContext context,
+            IStorage storage,
             Guid announcementId)
         {
             var announcement = await context.Announcements.Include("Pet").FirstOrDefaultAsync(a => a.Id == announcementId);
@@ -62,9 +67,9 @@ namespace AnnouncementsAPI.Endpoints
 
 
         public static async Task<IResult> Post(
-            DataContext context, 
-            IStorage storage, 
-            PostAnnouncementRequest announcement, 
+            DataContext context,
+            IStorage storage,
+            PostAnnouncementRequest announcement,
             HttpContext httpContext)
         {
             var newAnnouncement = announcement.Map();
@@ -105,9 +110,9 @@ namespace AnnouncementsAPI.Endpoints
         }
 
         public static async Task<IResult> Put(
-            DataContext context, 
-            PutAnnouncementRequest announcementRequest, 
-            Guid announcementId, 
+            DataContext context,
+            PutAnnouncementRequest announcementRequest,
+            Guid announcementId,
             HttpContext httpContext)
         {
             var announcement = await context.Announcements.Include("Pet").FirstOrDefaultAsync(a => a.Id == announcementId);

@@ -24,6 +24,11 @@ class AppTheme {
       ),
       textTheme: ButtonTextTheme.primary,
     ),
+    textTheme: const TextTheme().apply(
+      bodyColor: Colors.black,
+      displayColor: Colors.black,
+      fontFamily: "Quicksand",
+    ),
     primaryTextTheme: const TextTheme(
       labelLarge: TextStyle(
         fontFamily: "Quicksand",

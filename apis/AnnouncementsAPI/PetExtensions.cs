@@ -14,14 +14,14 @@ namespace AnnouncementsAPI
             await storage.UploadFileAsync(image, photoName);
         }
 
-        public static string GetPhotoUrl(this Pet pet, IStorage storage)
+        public static async Task<string?> GetPhotoUrl(this Pet pet, IStorage storage)
         {
-            return storage.GetDownloadUrl(pet.Id.ToString());
+            return await storage.CheckIfExists(pet.Id.ToString()) ? storage.GetDownloadUrl(pet.Id.ToString()) : null;
         }
 
-        public static void AttachPhotoUrl(this PetDTO pet, IStorage storage)
+        public static async Task AttachPhotoUrl(this PetDTO pet, IStorage storage)
         {
-            pet.PhotoUrl = storage.GetDownloadUrl(pet.Id.ToString());
+            pet.PhotoUrl = await storage.CheckIfExists(pet.Id.ToString()) ? storage.GetDownloadUrl(pet.Id.ToString()) : null;
         }
     }
 }

@@ -29,7 +29,7 @@ namespace AnnouncementsAPI.Endpoints
             if (pet is null)
                 return Results.NotFound("Pet doesn't exist.");
 
-            var res = new GetPetResponse(pet, pet.GetPhotoUrl(storage));
+            var res = new GetPetResponse(pet, await pet.GetPhotoUrl(storage));
             return Results.Ok(res);
         }
 

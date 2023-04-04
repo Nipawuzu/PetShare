@@ -9,7 +9,7 @@ namespace FileStorageLibrary
     {
         private const string _secretKeyName = "GoogleCloud:Secret";
         private const string _bucketKeyName = "GoogleCloud:BucketName";
-        private const string _hostUrl = "https://storage.cloud.google.com";
+        private const string _hostUrl = "https://storage.googleapis.com";
         private const int _urlDurationInHours = 12;
 
         private readonly IConfiguration _config;

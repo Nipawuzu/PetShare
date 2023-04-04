@@ -1,35 +1,56 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pet_share/announcements/added_announcements/cubit.dart';
 import 'package:pet_share/announcements/announcement.dart';
 import 'package:pet_share/announcements/details/view.dart';
+import 'package:pet_share/announcements/service.dart';
 
 class AddedAnnouncements extends StatefulWidget {
-  const AddedAnnouncements({super.key, required this.announcements});
-  final List<Announcement> announcements;
+  const AddedAnnouncements({super.key, required this.announcementService});
+  final AnnouncementService announcementService;
 
   @override
   State<AddedAnnouncements> createState() => _AddedAnnouncementsState();
 }
 
 class _AddedAnnouncementsState extends State<AddedAnnouncements> {
+  late List<Announcement> announcements;
+
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => ListOfAnnouncementsCubit(),
-      child: BlocBuilder<ListOfAnnouncementsCubit, ListOfAnnouncementsState>(
-        builder: (context, state) {
-          if (state is ListViewState) {
-            return AddedAnnouncementsList(
-              announcements: widget.announcements,
+    return FutureBuilder(
+        future: widget.announcementService.getAnnouncements(),
+        builder: (((context, snapshot) {
+          if (snapshot.hasData) {
+            announcements = snapshot.data!;
+            return BlocProvider(
+              create: (_) =>
+                  ListOfAnnouncementsCubit(widget.announcementService),
+              child: BlocBuilder<ListOfAnnouncementsCubit,
+                  ListOfAnnouncementsState>(
+                builder: (context, state) {
+                  if (state is ListViewState) {
+                    return AddedAnnouncementsList(
+                      announcements: announcements,
+                    );
+                  } else if (state is AnnouncementDetailsState) {
+                    return AnnouncementAndPetDetails(
+                        announcement: state.announcement);
+                  }
+                  return Container();
+                },
+              ),
             );
-          } else if (state is AnnouncementDetailsState) {
-            return AnnouncementAndPetDetails(announcement: state.announcement);
+          } else if (snapshot.hasError) {
+            return Text(snapshot.error.toString());
           }
-          return Container();
-        },
-      ),
-    );
+          return const Center(
+            child: CircularProgressIndicator(
+              color: Colors.orange,
+            ),
+          );
+        })));
   }
 }
 
@@ -110,9 +131,7 @@ class AnnouncementTile extends StatelessWidget {
                       padding: const EdgeInsets.all(8.0),
                       child: ImageWidget(
                         size: 150,
-                        image: announcement.pet.photo != null
-                            ? Image.memory(announcement.pet.photo!)
-                            : null,
+                        image: announcement.pet.photoUrl,
                       ),
                     ),
                     Flexible(
@@ -121,7 +140,8 @@ class AnnouncementTile extends StatelessWidget {
                         children: [
                           CustomTextField(
                             firstText: "Schronisko: ",
-                            secondText: announcement.shelter.fullShelterName,
+                            secondText:
+                                announcement.pet.shelter.fullShelterName,
                             isFirstTextInBold: true,
                           ),
                           CustomTextField(
@@ -167,5 +187,40 @@ Color statusToColor(AnnouncementStatus status) {
       return Colors.brown;
     case AnnouncementStatus.inVerification:
       return Colors.blue;
+  }
+}
+
+class ImageWidget extends StatelessWidget {
+  const ImageWidget({super.key, required this.size, required this.image});
+
+  final double size;
+  final String? image;
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+            border: Border.all(
+              color: Colors.black,
+              width: 2,
+            ),
+            borderRadius: BorderRadius.circular(20)),
+        child: SizedBox.square(
+          dimension: size,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: image != null
+                ? CachedNetworkImage(
+                    imageUrl: image!,
+                    fit: BoxFit.cover,
+                  )
+                : const Icon(
+                    Icons.camera_alt_outlined,
+                    size: 64,
+                  ),
+          ),
+        ),
+      ),
+    );
   }
 }
