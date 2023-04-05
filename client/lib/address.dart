@@ -21,4 +21,9 @@ class Address {
   Map<String, dynamic> toJson() => _$AddressToJson(this);
   factory Address.fromJson(Map<String, dynamic> json) =>
       _$AddressFromJson(json);
+
+  @override
+  String toString() {
+    return "$country, $province, $city - $street";
+  }
 }
