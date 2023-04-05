@@ -10,16 +10,16 @@ import 'package:pet_share/announcements/requests/new_announcement.dart';
 import 'package:pet_share/announcements/requests/new_pet.dart';
 import 'package:pet_share/announcements/service.dart';
 
-class NewAnnoucementForm extends StatefulWidget {
-  const NewAnnoucementForm(this.announcementService, {super.key});
+class NewAnnouncementForm extends StatefulWidget {
+  const NewAnnouncementForm(this.announcementService, {super.key});
 
   final AnnouncementService announcementService;
 
   @override
-  State<NewAnnoucementForm> createState() => _NewAnnoucementFormState();
+  State<NewAnnouncementForm> createState() => _NewAnnouncementFormState();
 }
 
-class _NewAnnoucementFormState extends State<NewAnnoucementForm> {
+class _NewAnnouncementFormState extends State<NewAnnouncementForm> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -29,7 +29,7 @@ class _NewAnnoucementFormState extends State<NewAnnoucementForm> {
           if (state is PetFormState) {
             return PetFormPage(state: state);
           } else if (state is DetailsFormState) {
-            return AnnoucementFormPage(state: state);
+            return AnnouncementFormPage(state: state);
           } else if (state is SendingFormState) {
             return Scaffold(
               body: Center(
@@ -345,16 +345,16 @@ class _PetFormPageState extends State<PetFormPage> {
   }
 }
 
-class AnnoucementFormPage extends StatefulWidget {
-  const AnnoucementFormPage({super.key, required this.state});
+class AnnouncementFormPage extends StatefulWidget {
+  const AnnouncementFormPage({super.key, required this.state});
 
   final DetailsFormState state;
 
   @override
-  State<AnnoucementFormPage> createState() => _AnnoucementFormPageState();
+  State<AnnouncementFormPage> createState() => _AnnouncementFormPageState();
 }
 
-class _AnnoucementFormPageState extends State<AnnoucementFormPage> {
+class _AnnouncementFormPageState extends State<AnnouncementFormPage> {
   final _formKey = GlobalKey<FormState>();
   late NewAnnouncement _announcement;
 
