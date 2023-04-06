@@ -108,9 +108,6 @@ namespace DatabaseContextLibrary.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("PhotoUrl")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<Guid>("ShelterId")
                         .HasColumnType("uniqueidentifier");
 
