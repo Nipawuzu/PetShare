@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DatabaseContextLibrary.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230316140041_Initial")]
-    partial class Initial
+    [Migration("20230406192136_NewDatabase")]
+    partial class NewDatabase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -56,6 +56,75 @@ namespace DatabaseContextLibrary.Migrations
                     b.ToTable("Address");
                 });
 
+            modelBuilder.Entity("DatabaseContextLibrary.models.Announcement", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ClosingDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("LastUpdateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("PetId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PetId");
+
+                    b.ToTable("Announcements");
+                });
+
+            modelBuilder.Entity("DatabaseContextLibrary.models.Pet", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("Birthday")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Breed")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ShelterId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Species")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ShelterId");
+
+                    b.ToTable("Pets");
+                });
+
             modelBuilder.Entity("DatabaseContextLibrary.models.Shelter", b =>
                 {
                     b.Property<Guid>("Id")
@@ -89,6 +158,28 @@ namespace DatabaseContextLibrary.Migrations
                     b.HasIndex("AddressId");
 
                     b.ToTable("Shelters");
+                });
+
+            modelBuilder.Entity("DatabaseContextLibrary.models.Announcement", b =>
+                {
+                    b.HasOne("DatabaseContextLibrary.models.Pet", "Pet")
+                        .WithMany()
+                        .HasForeignKey("PetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Pet");
+                });
+
+            modelBuilder.Entity("DatabaseContextLibrary.models.Pet", b =>
+                {
+                    b.HasOne("DatabaseContextLibrary.models.Shelter", "Shelter")
+                        .WithMany()
+                        .HasForeignKey("ShelterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Shelter");
                 });
 
             modelBuilder.Entity("DatabaseContextLibrary.models.Shelter", b =>
