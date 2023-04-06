@@ -89,3 +89,5 @@ app.MapPut("/pet/{petId}", PetEndpoints.Put)
 .Produces(401);
 
 app.Run();
+
+public partial class ProgramAnnouncementsAPI { }
