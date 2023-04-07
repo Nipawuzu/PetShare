@@ -29,12 +29,9 @@ namespace FileStorageLibrary
             _urlSigner = UrlSigner.FromCredential(credentials);
         }
 
-        public async Task UploadFileAsync(byte[] image, string fileName)
+        public async Task UploadFileAsync(Stream stream, string fileName)
         {
-            using (var stream = new MemoryStream(image))
-            {
-                await _client.UploadObjectAsync(_bucketName, fileName, "text/plain", stream);
-            }
+            await _client.UploadObjectAsync(_bucketName, fileName, "text/plain", stream);
         }
 
         public async Task<byte[]?> DownloadFileAsync(string fileName)

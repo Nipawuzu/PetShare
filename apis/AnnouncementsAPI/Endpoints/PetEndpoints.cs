@@ -83,9 +83,13 @@ namespace AnnouncementsAPI.Endpoints
             if (petRequest.Birthday != null)
                 pet.Birthday = petRequest.Birthday.Value;
 
-            await pet.UploadPhoto(petRequest.Photo, storage);
             await context.SaveChangesAsync();
+            return Results.Ok();
+        }
 
+        public static async Task<IResult> UploadPhoto(IStorage storage, HttpContext context, Guid petId, IFormFile file)
+        {
+            await storage.UploadFileAsync(file.OpenReadStream(), petId.ToString());
             return Results.Ok();
         }
     }

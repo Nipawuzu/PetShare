@@ -17,18 +17,6 @@ namespace AnnouncementsAPI
             };
         }
 
-        public static Pet Map(this NewPet pet)
-        {
-            return new Pet()
-            {
-                Name = pet.Name,
-                Species = pet.Species,
-                Birthday = pet.Birthday,
-                Breed = pet.Breed,
-                Description = pet.Description,
-            };
-        }
-
         public static Pet Map(this PostPetRequest petRequest)
         {
             return new Pet()

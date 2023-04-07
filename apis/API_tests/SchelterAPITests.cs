@@ -1,6 +1,5 @@
 using APIs_tests;
 using DatabaseContextLibrary.models;
-using Newtonsoft.Json;
 using ShelterAPI;
 using System.Net;
 using System.Net.Http.Json;
@@ -15,7 +14,7 @@ namespace API_tests
         [MemberData(nameof(TestData))]
         public async void SchelterApiAnablesAddNewSchelterWithPostRequest(Shelter shelter)
         {
-            var postRequest = CreateRequest(HttpMethod.Post, "/shelter", JsonConvert.SerializeObject(shelter), SHELTER_AUTH);
+            var postRequest = CreateRequest(HttpMethod.Post, "/shelter", shelter, SHELTER_AUTH);
             var postResult = await client.SendAsync(postRequest);
 
             Assert.Equal(HttpStatusCode.OK, postResult.StatusCode);
