@@ -25,6 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AnnouncementsAPI\AnnouncementsAPI.csproj" />
     <ProjectReference Include="..\ShelterAPI\ShelterAPI.csproj" />
   </ItemGroup>
 
