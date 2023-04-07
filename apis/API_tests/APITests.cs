@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc.Testing;
+﻿using AnnouncementsAPI.Responses;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using System.Net;
 using System.Text;
+using System.Text.Json;
 
 namespace APIs_tests
 {
@@ -31,13 +34,29 @@ namespace APIs_tests
             client = application.CreateClient();
         }
 
-        protected HttpRequestMessage CreateRequest(HttpMethod method, string url, string? body = null, string? authToken = null)
+        protected HttpRequestMessage CreateRequest(HttpMethod method, string url, object? body = null, string? authToken = null)
         {
             var postRequest = new HttpRequestMessage(method, url);
             if (authToken != null) postRequest.Headers.Add("Authorization", authToken);
-            if (body != null) postRequest.Content = new StringContent(body, Encoding.UTF8, "application/json");
-
+            if (body != null)
+            {
+                var content = JsonSerializer.Serialize(body);
+                postRequest.Content = new StringContent(content, Encoding.UTF8, "application/json");
+            }
             return postRequest;
+        }
+
+        protected async Task<T> SendRequest<T>(HttpRequestMessage request)
+        {
+            var res = await client.SendAsync(request);
+
+            Assert.Equal(HttpStatusCode.OK, res.StatusCode);
+            var content = await res.Content.ReadAsStringAsync();
+            var serializationOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            var resObj = JsonSerializer.Deserialize(content, typeof(T), serializationOptions);
+            Assert.NotNull(resObj);
+
+            return (T)resObj;
         }
     }
 }

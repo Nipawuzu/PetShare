@@ -47,7 +47,9 @@ namespace AnnouncementsAPI.Endpoints
             pet.ShelterId = shelterId;
             context.Pets.Add(pet);
             await context.SaveChangesAsync();
-            return Results.Ok();
+
+            var res = new PostPetResponse() { Id = pet.Id };
+            return Results.Ok(res);
         }
 
         public static async Task<IResult> Put(DataContext context, IStorage storage, PutPetRequest petRequest, Guid petId, HttpContext httpContext)

@@ -106,7 +106,9 @@ namespace AnnouncementsAPI.Endpoints
 
             context.Announcements.Add(newAnnouncement);
             await context.SaveChangesAsync();
-            return Results.Ok();
+
+            var res = new PostAnnouncementResponse() { Id = newAnnouncement.Id };
+            return Results.Ok(res);
         }
 
         public static async Task<IResult> Put(
