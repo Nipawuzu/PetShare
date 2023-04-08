@@ -1,14 +1,15 @@
-﻿namespace DatabaseContextLibrary.models
+﻿using DatabaseContextLibrary.models;
+
+namespace ShelterAPI.Data
 {
-    public class Shelter
+    public class ShelterDTO
     {
         public Guid Id { get; set; }
         public string UserName { get; set; }
         public string PhoneNumber { get; set; }
         public string Email { get; set; }
-        public Guid AddressId { get; set; }
         public string FullShelterName { get; set; }
-        public bool IsAuthorized { get; set; } = false;
-        public Address Address { get; set; }
+        public bool IsAuthorized { get; set; }
+        public AddressDTO Address { get; set; }
     }
 }
