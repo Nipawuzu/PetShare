@@ -14,7 +14,8 @@ class AnnouncementService {
       "$_url/announcements",
       data: announcement.toJson(),
       options: Options(headers: {
-        "Authorization": "",
+        "Authorization":
+            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiIzZmE4NWY2NC01NzE3LTQ1NjItYjNmYy0yYzk2M2Y2NmFmYTYiLCJleHAiOjE5MTYyMzkwMjIsImF1ZCI6WyJBQUEiXSwicm9sZXMiOlsiU2hlbHRlciJdfQ.E2872Rdzn0qvJnjXn_rJA-IHSQm4Nqu49OHlkfhUbe8",
         "HttpHeaders.contentTypeHeader": "application/json",
       }),
     );
@@ -27,7 +28,8 @@ class AnnouncementService {
       "$_url/announcements",
       options: Options(headers: {
         "HttpHeaders.contentTypeHeader": "application/json",
-        "Authorization": ""
+        "Authorization":
+            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiIzZmE4NWY2NC01NzE3LTQ1NjItYjNmYy0yYzk2M2Y2NmFmYTYiLCJleHAiOjE5MTYyMzkwMjIsImF1ZCI6WyJBQUEiXSwicm9sZXMiOlsiQWRtaW4iXX0.1SnWaA5brkWD2l4yG3ZWczqfvH07tTHWQs9Bmn70q4Q"
       }),
     );
 
@@ -52,7 +54,8 @@ class AnnouncementService {
       "$_url/announcements/$announcementId",
       data: announcement.toJson(),
       options: Options(headers: {
-        "Authorization": "",
+        "Authorization":
+            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiIzZmE4NWY2NC01NzE3LTQ1NjItYjNmYy0yYzk2M2Y2NmFmYTYiLCJleHAiOjE5MTYyMzkwMjIsImF1ZCI6WyJBQUEiXSwicm9sZXMiOlsiQWRtaW4iXX0.1SnWaA5brkWD2l4yG3ZWczqfvH07tTHWQs9Bmn70q4Q",
         "HttpHeaders.contentTypeHeader": "application/json",
       }),
     );
