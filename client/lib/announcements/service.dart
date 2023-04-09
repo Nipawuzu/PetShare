@@ -1,25 +1,71 @@
+import 'dart:typed_data';
+
 import 'package:dio/dio.dart';
 import 'package:http_status_code/http_status_code.dart';
 import 'package:pet_share/announcements/announcement.dart';
-import 'package:pet_share/announcements/requests/new_announcement.dart';
+import 'package:pet_share/announcements/new_announcement.dart';
+import 'package:pet_share/announcements/new_pet.dart';
+import 'package:pet_share/announcements/requests/post_announcement_request.dart';
+import 'package:pet_share/announcements/requests/post_pet_request.dart';
 import 'package:pet_share/announcements/requests/put_announcement.dart';
+import 'package:pet_share/announcements/responses/post_announcement_response.dart';
+import 'package:pet_share/announcements/responses/post_pet_response.dart';
 
 class AnnouncementService {
   AnnouncementService(this._url);
 
   final String _url;
+  final String _token = "";
 
-  Future<bool> sendAnnouncement(NewAnnouncement announcement) async {
+  Future<String> sendPet(NewPet pet) async {
     var response = await Dio().post(
-      "$_url/announcements",
-      data: announcement.toJson(),
+      "$_url/pet",
+      data: PostPetRequest(
+        name: pet.name,
+        birthday: pet.birthday,
+        breed: pet.breed,
+        description: pet.description,
+        species: pet.species,
+      ).toJson(),
       options: Options(headers: {
-        "Authorization": "",
+        "Authorization": _token,
         "HttpHeaders.contentTypeHeader": "application/json",
       }),
     );
 
+    var res = PostPetResponse.fromJson(response.data);
+    return response.statusCode == StatusCode.OK ? res.id : "";
+  }
+
+  Future<bool> uploadPetPhoto(String petId, Uint8List photo) async {
+    FormData formData = FormData.fromMap({
+      "file": MultipartFile.fromBytes(photo, filename: petId),
+    });
+
+    var response = await Dio().post(
+      "$_url/pet/$petId/photo",
+      data: formData,
+    );
+
     return response.statusCode == StatusCode.OK;
+  }
+
+  Future<String> sendAnnouncement(NewAnnouncement announcement) async {
+    var response = await Dio().post(
+      "$_url/announcements",
+      data: PostAnnouncementRequest(
+        title: announcement.title,
+        description: announcement.description,
+        petId: announcement.petId,
+      ).toJson(),
+      options: Options(headers: {
+        "Authorization": _token,
+        "HttpHeaders.contentTypeHeader": "application/json",
+      }),
+    );
+
+    var res = PostAnnouncementResponse.fromJson(response.data);
+    return response.statusCode == StatusCode.OK ? res.id : "";
   }
 
   Future<List<Announcement>> getAnnouncements() async {
@@ -27,7 +73,7 @@ class AnnouncementService {
       "$_url/announcements",
       options: Options(headers: {
         "HttpHeaders.contentTypeHeader": "application/json",
-        "Authorization": ""
+        "Authorization": _token
       }),
     );
 
@@ -52,7 +98,7 @@ class AnnouncementService {
       "$_url/announcements/$announcementId",
       data: announcement.toJson(),
       options: Options(headers: {
-        "Authorization": "",
+        "Authorization": _token,
         "HttpHeaders.contentTypeHeader": "application/json",
       }),
     );

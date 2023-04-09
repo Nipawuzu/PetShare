@@ -1,12 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'new_pet.dart';
+part of 'post_pet_request.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-NewPet _$NewPetFromJson(Map<String, dynamic> json) => NewPet(
+PostPetRequest _$PostPetRequestFromJson(Map<String, dynamic> json) =>
+    PostPetRequest(
       name: json['name'] as String? ?? "",
       species: json['species'] as String? ?? "",
       birthday: json['birthday'] == null
@@ -14,28 +15,13 @@ NewPet _$NewPetFromJson(Map<String, dynamic> json) => NewPet(
           : DateTime.parse(json['birthday'] as String),
       breed: json['breed'] as String? ?? "",
       description: json['description'] as String? ?? "",
-      photo: _$JsonConverterFromJson<String, Uint8List>(
-          json['photo'], const Uint8ListConverter().fromJson),
     );
 
-Map<String, dynamic> _$NewPetToJson(NewPet instance) => <String, dynamic>{
+Map<String, dynamic> _$PostPetRequestToJson(PostPetRequest instance) =>
+    <String, dynamic>{
       'name': instance.name,
       'species': instance.species,
       'breed': instance.breed,
       'birthday': instance.birthday?.toIso8601String(),
       'description': instance.description,
-      'photo': _$JsonConverterToJson<String, Uint8List>(
-          instance.photo, const Uint8ListConverter().toJson),
     };
-
-Value? _$JsonConverterFromJson<Json, Value>(
-  Object? json,
-  Value? Function(Json json) fromJson,
-) =>
-    json == null ? null : fromJson(json as Json);
-
-Json? _$JsonConverterToJson<Json, Value>(
-  Value? value,
-  Json? Function(Value value) toJson,
-) =>
-    value == null ? null : toJson(value);
