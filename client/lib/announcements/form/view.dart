@@ -438,8 +438,8 @@ class _AnnouncementFormPageState extends State<AnnouncementFormPage> {
               color: Colors.grey.shade200,
             ),
             child: ConstrainedBox(
-              constraints:
-                  BoxConstraints(maxHeight: 250, minWidth: double.maxFinite),
+              constraints: const BoxConstraints(
+                  maxHeight: 250, minWidth: double.maxFinite),
               child: _announcement.pet?.photo != null
                   ? Image.memory(_announcement.pet!.photo!, fit: BoxFit.cover)
                   : const Icon(
@@ -462,6 +462,10 @@ class _AnnouncementFormPageState extends State<AnnouncementFormPage> {
               Chip(label: Text("Gatunek: ${_announcement.pet!.species}")),
             if (_announcement.pet?.breed.isNotEmpty ?? false)
               Chip(label: Text("Rasa: ${_announcement.pet!.breed}")),
+            if (_announcement.pet?.birthday != null)
+              Chip(
+                  label:
+                      Text("Wiek: ${_formatAge(_announcement.pet!.birthday!)}"))
           ],
         )
       ],
