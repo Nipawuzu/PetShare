@@ -12,13 +12,14 @@ import 'package:pet_share/announcements/responses/post_announcement_response.dar
 import 'package:pet_share/announcements/responses/post_pet_response.dart';
 
 class AnnouncementService {
-  AnnouncementService(this._url);
+  AnnouncementService(this._dio, this._url);
 
+  final Dio _dio;
   final String _url;
   final String _token = "";
 
   Future<String> sendPet(NewPet pet) async {
-    var response = await Dio().post(
+    var response = await _dio.post(
       "$_url/pet",
       data: PostPetRequest(
         name: pet.name,
@@ -42,7 +43,7 @@ class AnnouncementService {
       "file": MultipartFile.fromBytes(photo, filename: petId),
     });
 
-    var response = await Dio().post(
+    var response = await _dio.post(
       "$_url/pet/$petId/photo",
       data: formData,
     );
@@ -51,7 +52,7 @@ class AnnouncementService {
   }
 
   Future<String> sendAnnouncement(NewAnnouncement announcement) async {
-    var response = await Dio().post(
+    var response = await _dio.post(
       "$_url/announcements",
       data: PostAnnouncementRequest(
         title: announcement.title,
@@ -69,7 +70,7 @@ class AnnouncementService {
   }
 
   Future<List<Announcement>> getAnnouncements() async {
-    var response = await Dio().get(
+    var response = await _dio.get(
       "$_url/announcements",
       options: Options(headers: {
         "HttpHeaders.contentTypeHeader": "application/json",
@@ -94,7 +95,7 @@ class AnnouncementService {
       title: null,
       description: null,
     );
-    var response = await Dio().put(
+    var response = await _dio.put(
       "$_url/announcements/$announcementId",
       data: announcement.toJson(),
       options: Options(headers: {
