@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:pet_share/all_views.dart';
 import 'package:pet_share/announcements/service.dart';
@@ -14,7 +15,7 @@ class AppMainGate extends StatelessWidget {
       providers: [
         Provider(
             create: (context) =>
-                AnnouncementService(Environment.announcementsApiUrl)),
+                AnnouncementService(Dio(), Environment.announcementsApiUrl)),
         Provider(create: (context) => ApplicationService()),
       ],
       child: const AllViews(),
