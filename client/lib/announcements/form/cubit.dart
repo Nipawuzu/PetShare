@@ -63,7 +63,9 @@ class AnnouncementFormCubit extends Cubit<AnnouncementFormState> {
     try {
       var petId = await _service.sendPet(announcement.pet!);
       announcement.petId = petId;
-      await _service.uploadPetPhoto(petId, announcement.pet!.photo!);
+      if (announcement.pet!.photo != null) {
+        await _service.uploadPetPhoto(petId, announcement.pet!.photo!);
+      }
       await _service
           .sendAnnouncement(announcement)
           .whenComplete(() => emit(FormSentState()));
