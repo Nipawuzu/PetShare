@@ -186,6 +186,7 @@ class _PetFormPageState extends State<PetFormPage> {
 
   Widget _buildNameField(BuildContext context) {
     return TextFormField(
+      key: const Key('name'),
       initialValue: _pet.name,
       onSaved: (newValue) => _pet.name = newValue.toString(),
       decoration: InputDecoration(
@@ -206,6 +207,7 @@ class _PetFormPageState extends State<PetFormPage> {
   final TextEditingController _datePickerController = TextEditingController();
   Widget _buildBirthdayField(BuildContext context) {
     return TextFormField(
+      key: const Key('birthday'),
       validator: (value) =>
           value?.isEmpty ?? false ? "Wybierz datę urodzenia zwierzątka" : null,
       readOnly: true,
@@ -240,6 +242,7 @@ class _PetFormPageState extends State<PetFormPage> {
 
   Widget _buildSpeciesField(BuildContext context) {
     return TextFormField(
+      key: const Key('species'),
       initialValue: _pet.species,
       onSaved: (newValue) => _pet.species = newValue?.trim() ?? '',
       decoration: InputDecoration(
@@ -259,6 +262,7 @@ class _PetFormPageState extends State<PetFormPage> {
 
   Widget _buildBreedField(BuildContext context) {
     return TextFormField(
+      key: const Key('breed'),
       initialValue: _pet.breed,
       onSaved: (newValue) => _pet.breed = newValue?.trim() ?? '',
       decoration: const InputDecoration(
@@ -271,6 +275,7 @@ class _PetFormPageState extends State<PetFormPage> {
     return ConstrainedBox(
       constraints: const BoxConstraints(maxHeight: 216),
       child: TextFormField(
+        key: const Key('description'),
         initialValue: _pet.description,
         onSaved: (newValue) => _pet.description = newValue?.trim() ?? '',
         minLines: 5,
@@ -311,6 +316,7 @@ class _PetFormPageState extends State<PetFormPage> {
               child: Padding(
                 padding: const EdgeInsets.all(4.0),
                 child: ElevatedButton(
+                  key: const Key('next'),
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       _formKey.currentState!.save();
@@ -483,6 +489,7 @@ class _AnnouncementFormPageState extends State<AnnouncementFormPage> {
               child: Padding(
                 padding: const EdgeInsets.all(4.0),
                 child: ElevatedButton(
+                  key: const Key('submit'),
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       _formKey.currentState!.save();
@@ -512,6 +519,7 @@ class _AnnouncementFormPageState extends State<AnnouncementFormPage> {
               height: 24,
             ),
             TextFormField(
+              key: const Key("title"),
               onSaved: (newValue) =>
                   _announcement.title = newValue?.trim() ?? '',
               decoration: const InputDecoration(
@@ -524,6 +532,7 @@ class _AnnouncementFormPageState extends State<AnnouncementFormPage> {
             ConstrainedBox(
               constraints: const BoxConstraints(maxHeight: 216),
               child: TextFormField(
+                key: const Key('description'),
                 onSaved: (newValue) =>
                     _announcement.description = newValue?.trim() ?? '',
                 minLines: 5,
