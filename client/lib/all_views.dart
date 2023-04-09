@@ -15,7 +15,6 @@ class AllViews extends StatelessWidget {
         children: [
           ViewsListTile(
             text: "Dodaj nowe ogłoszenie",
-            image: const AssetImage("images/new_announcement.png"),
             child: NewAnnouncementForm(context.read()),
           ),
           ViewsListTile(

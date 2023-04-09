@@ -2,9 +2,53 @@ import 'package:flutter/material.dart';
 
 class AppTheme {
   static ThemeData light = ThemeData(
+    chipTheme: ChipThemeData(backgroundColor: Colors.orange.shade300),
     inputDecorationTheme: InputDecorationTheme(
-      border: OutlineInputBorder(
+      filled: true,
+      fillColor: MaterialStateColor.resolveWith((Set<MaterialState> states) {
+        if (states.contains(MaterialState.focused)) {
+          return Colors.white;
+        }
+
+        return Colors.grey.shade100;
+      }),
+      labelStyle: TextStyle(
+          fontFamily: "Quicksand",
+          fontWeight: FontWeight.bold,
+          color: Colors.grey.shade600),
+      floatingLabelStyle: TextStyle(
+        fontFamily: "Quicksand",
+        fontWeight: FontWeight.bold,
+        color: Colors.grey.shade600,
+      ),
+      enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),
+        borderSide: BorderSide(
+          color: Colors.grey.shade200,
+          width: 1,
+        ),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: const BorderSide(
+          color: Colors.orange,
+          width: 2,
+          strokeAlign: 1,
+        ),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: const BorderSide(
+          color: Colors.red,
+          width: 2,
+        ),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: const BorderSide(
+          color: Colors.red,
+          width: 2,
+        ),
       ),
     ),
     primaryColor: Colors.orange,
@@ -12,17 +56,13 @@ class AppTheme {
     brightness: Brightness.light,
     primaryColorDark: Colors.black,
     canvasColor: Colors.white,
-    buttonTheme: const ButtonThemeData(
-      shape: OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(20))),
-      disabledColor: Colors.orange,
-      hoverColor: Colors.orange,
-      focusColor: Colors.orange,
-      buttonColor: Colors.orange,
-      colorScheme: ColorScheme.light(
-        background: Colors.orange,
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.orange.shade400,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+        ),
       ),
-      textTheme: ButtonTextTheme.primary,
     ),
     textTheme: const TextTheme().apply(
       bodyColor: Colors.black,
