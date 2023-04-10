@@ -13,12 +13,12 @@ namespace DatabaseContextLibrary.models
         public DateTime CreationDate { get; set; }
         public DateTime? ClosingDate { get; set; }
         public DateTime LastUpdateDate { get; set; }
-        public Status Status { get; set; }
+        public AnnouncementStatus Status { get; set; }
         public Guid PetId { get; set; }
         public Pet Pet { get; set; }
     }
 
-    public enum Status
+    public enum AnnouncementStatus
     {
         Open,
         Closed,

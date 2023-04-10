@@ -16,6 +16,9 @@ namespace DatabaseContextLibrary
         public DbSet<Shelter> Shelters => Set<Shelter>();
         public DbSet<Announcement> Announcements => Set<Announcement>();
         public DbSet<Pet> Pets => Set<Pet>();
+        public DbSet<Adopter> Adopters => Set<Adopter>();
+        public DbSet<AdopterShelterLinkingTable> AdopterShelterLinkingTable => Set<AdopterShelterLinkingTable>();
+        public DbSet<Application> Applications => Set<Application>();
     }
 
 

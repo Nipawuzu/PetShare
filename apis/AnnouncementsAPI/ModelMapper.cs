@@ -13,7 +13,7 @@ namespace AnnouncementsAPI
                 Title = announcementRequest.Title,
                 Description = announcementRequest.Description,
                 CreationDate = DateTime.Now,
-                Status = Status.Open,
+                Status = AnnouncementStatus.Open,
             };
         }
 
