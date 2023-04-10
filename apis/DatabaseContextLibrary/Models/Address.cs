@@ -15,14 +15,5 @@ namespace DatabaseContextLibrary.models
         public string Province { get; set; }
         public string PostalCode { get; set; }
         public string Country { get; set; }
-
-        public bool HaveSameValues(Address a)
-        {
-            return Street == a.Street &&
-                City == a.City &&
-                Province == a.Province &&
-                PostalCode == a.PostalCode &&
-                Country == a.Country;
-        }
     }
 }

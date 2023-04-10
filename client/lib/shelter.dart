@@ -1,6 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:pet_share/address.dart';
-import 'package:pet_share/announcements/pet.dart';
+
+part 'shelter.g.dart';
 
 @JsonSerializable()
 class User {
@@ -15,6 +16,9 @@ class User {
   String phoneNumber;
   String email;
   Address address;
+
+  Map<String, dynamic> toJson() => _$UserToJson(this);
+  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 }
 
 @JsonSerializable()
@@ -29,5 +33,9 @@ class Shelter extends User {
 
   bool isAuthorized = false;
   String fullShelterName;
-  List<Pet> pets = List.empty();
+
+  @override
+  Map<String, dynamic> toJson() => _$ShelterToJson(this);
+  factory Shelter.fromJson(Map<String, dynamic> json) =>
+      _$ShelterFromJson(json);
 }

@@ -1,6 +1,8 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:pet_share/all_views.dart';
 import 'package:pet_share/announcements/service.dart';
+import 'package:pet_share/applications/service.dart';
 import 'package:pet_share/environment.dart';
 import 'package:provider/provider.dart';
 
@@ -9,9 +11,14 @@ class AppMainGate extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Provider(
-        create: (context) =>
-            AnnouncementService(Environment.announcementsApiUrl),
-        child: const AllViews());
+    return MultiProvider(
+      providers: [
+        Provider(
+            create: (context) =>
+                AnnouncementService(Dio(), Environment.announcementsApiUrl)),
+        Provider(create: (context) => ApplicationService()),
+      ],
+      child: const AllViews(),
+    );
   }
 }

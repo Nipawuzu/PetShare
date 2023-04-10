@@ -11,16 +11,17 @@ namespace AnnouncementsAPI.Endpoints
     public class AnnouncementsEndpoints
     {
         public static async Task<IResult> GetWithFilters(
-            DataContext context, 
-            IStorage storage    ,
-            string[]? species, 
-            string[]? breeds, 
-            string[]? locations, 
-            int? minAge, 
-            int? maxAge, 
+            DataContext context,
+            IStorage storage,
+            string[]? species,
+            string[]? breeds,
+            string[]? locations,
+            int? minAge,
+            int? maxAge,
             string[]? shelterNames)
         {
-            var announcements = context.Announcements.Include("Pet").AsQueryable();
+            var announcements = context.Announcements.Include(x => x.Pet)
+                .ThenInclude(x => x.Shelter).ThenInclude(x => x.Address).AsQueryable();
 
             if (species != null && species.Any())
                 announcements = announcements.Where(a => species.Contains(a.Pet.Species));
@@ -39,14 +40,18 @@ namespace AnnouncementsAPI.Endpoints
                 announcements = announcements.Where(a => shelterNames.Contains(a.Pet.Shelter.FullShelterName));
 
             var res = await announcements.Select(a => a.MapDTO()).ToListAsync();
-            res.ForEach(a => a.Pet.AttachPhotoUrl(storage));
 
-            return Results.Ok();
+            foreach (var a in res)
+            {
+                await a.Pet.AttachPhotoUrl(storage);
+            }
+
+            return Results.Ok(res);
         }
 
         public static async Task<IResult> GetById(
-            DataContext context, 
-            IStorage storage, 
+            DataContext context,
+            IStorage storage,
             Guid announcementId)
         {
             var announcement = await context.Announcements.Include("Pet").FirstOrDefaultAsync(a => a.Id == announcementId);
@@ -55,20 +60,17 @@ namespace AnnouncementsAPI.Endpoints
                 return Results.NotFound("Announcement doesn't exist.");
 
             var res = new GetAnnouncementResponse(announcement);
-            res.Pet.AttachPhotoUrl(storage);
-
-            return Results.Ok(announcement);
+            await res.Pet.AttachPhotoUrl(storage);
+            return Results.Ok(res);
         }
 
 
         public static async Task<IResult> Post(
-            DataContext context, 
-            IStorage storage, 
-            PostAnnouncementRequest announcement, 
+            DataContext context,
+            PostAnnouncementRequest announcement,
             HttpContext httpContext)
         {
             var newAnnouncement = announcement.Map();
-
 
             var identity = httpContext.User.Identity as ClaimsIdentity;
             var issuerClaim = identity?.GetIssuer();
@@ -78,36 +80,23 @@ namespace AnnouncementsAPI.Endpoints
 
             var shelterId = Guid.Parse(issuerClaim);
 
-            if (announcement.PetId.HasValue)
-            {
-                var pet = await context.Pets.FindAsync(announcement.PetId);
-                if (pet == null)
-                    return Results.BadRequest("Announcement's pet doesn't exist");
+            var pet = await context.Pets.FindAsync(announcement.PetId);
+            
+            if (pet == null) return Results.BadRequest("Announcement's pet doesn't exist");
+            if (pet.ShelterId != shelterId) return Results.Unauthorized();
 
-                if (pet.ShelterId != shelterId)
-                    return Results.Unauthorized();
-
-                newAnnouncement.PetId = announcement.PetId.Value;
-            }
-            else if (announcement.Pet != null)
-            {
-                var pet = announcement.Pet.Map();
-                pet.ShelterId = shelterId;
-                context.Pets.Add(pet);
-                await context.SaveChangesAsync();
-                await pet.UploadPhoto(announcement.Pet.Photo, storage);
-                newAnnouncement.PetId = pet.Id;
-            }
-
+            newAnnouncement.PetId = announcement.PetId;
             context.Announcements.Add(newAnnouncement);
             await context.SaveChangesAsync();
-            return Results.Ok();
+
+            var res = new PostAnnouncementResponse() { Id = newAnnouncement.Id };
+            return Results.Ok(res);
         }
 
         public static async Task<IResult> Put(
-            DataContext context, 
-            PutAnnouncementRequest announcementRequest, 
-            Guid announcementId, 
+            DataContext context,
+            PutAnnouncementRequest announcementRequest,
+            Guid announcementId,
             HttpContext httpContext)
         {
             var announcement = await context.Announcements.Include("Pet").FirstOrDefaultAsync(a => a.Id == announcementId);

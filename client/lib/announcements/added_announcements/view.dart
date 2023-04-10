@@ -3,33 +3,55 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pet_share/announcements/added_announcements/cubit.dart';
 import 'package:pet_share/announcements/announcement.dart';
 import 'package:pet_share/announcements/details/view.dart';
+import 'package:pet_share/announcements/service.dart';
+import 'package:pet_share/common_widgets/custom_text_field.dart';
+import 'package:pet_share/common_widgets/image.dart';
 
 class AddedAnnouncements extends StatefulWidget {
-  const AddedAnnouncements({super.key, required this.announcements});
-  final List<Announcement> announcements;
+  const AddedAnnouncements({super.key, required this.announcementService});
+  final AnnouncementService announcementService;
 
   @override
   State<AddedAnnouncements> createState() => _AddedAnnouncementsState();
 }
 
 class _AddedAnnouncementsState extends State<AddedAnnouncements> {
+  late List<Announcement> announcements;
+
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => ListOfAnnouncementsCubit(),
-      child: BlocBuilder<ListOfAnnouncementsCubit, ListOfAnnouncementsState>(
-        builder: (context, state) {
-          if (state is ListViewState) {
-            return AddedAnnouncementsList(
-              announcements: widget.announcements,
+    return FutureBuilder(
+        future: widget.announcementService.getAnnouncements(),
+        builder: (((context, snapshot) {
+          if (snapshot.hasData) {
+            announcements = snapshot.data!;
+            return BlocProvider(
+              create: (_) =>
+                  ListOfAnnouncementsCubit(widget.announcementService),
+              child: BlocBuilder<ListOfAnnouncementsCubit,
+                  ListOfAnnouncementsState>(
+                builder: (context, state) {
+                  if (state is ListViewState) {
+                    return AddedAnnouncementsList(
+                      announcements: announcements,
+                    );
+                  } else if (state is AnnouncementDetailsState) {
+                    return AnnouncementAndPetDetails(
+                        announcement: state.announcement);
+                  }
+                  return Container();
+                },
+              ),
             );
-          } else if (state is AnnouncementDetailsState) {
-            return AnnouncementAndPetDetails(announcement: state.announcement);
+          } else if (snapshot.hasError) {
+            return Text(snapshot.error.toString());
           }
-          return Container();
-        },
-      ),
-    );
+          return const Center(
+            child: CircularProgressIndicator(
+              color: Colors.orange,
+            ),
+          );
+        })));
   }
 }
 
@@ -110,9 +132,7 @@ class AnnouncementTile extends StatelessWidget {
                       padding: const EdgeInsets.all(8.0),
                       child: ImageWidget(
                         size: 150,
-                        image: announcement.pet.photo != null
-                            ? Image.memory(announcement.pet.photo!)
-                            : null,
+                        image: announcement.pet.photoUrl,
                       ),
                     ),
                     Flexible(
@@ -121,7 +141,8 @@ class AnnouncementTile extends StatelessWidget {
                         children: [
                           CustomTextField(
                             firstText: "Schronisko: ",
-                            secondText: announcement.shelter.fullShelterName,
+                            secondText:
+                                announcement.pet.shelter.fullShelterName,
                             isFirstTextInBold: true,
                           ),
                           CustomTextField(

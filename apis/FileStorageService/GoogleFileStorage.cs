@@ -9,7 +9,7 @@ namespace FileStorageLibrary
     {
         private const string _secretKeyName = "GoogleCloud:Secret";
         private const string _bucketKeyName = "GoogleCloud:BucketName";
-        private const string _hostUrl = "https://storage.cloud.google.com";
+        private const string _hostUrl = "https://storage.googleapis.com";
         private const int _urlDurationInHours = 12;
 
         private readonly IConfiguration _config;
@@ -29,12 +29,9 @@ namespace FileStorageLibrary
             _urlSigner = UrlSigner.FromCredential(credentials);
         }
 
-        public async Task UploadFileAsync(byte[] image, string fileName)
+        public async Task UploadFileAsync(Stream stream, string fileName)
         {
-            using (var stream = new MemoryStream(image))
-            {
-                await _client.UploadObjectAsync(_bucketName, fileName, "text/plain", stream);
-            }
+            await _client.UploadObjectAsync(_bucketName, fileName, "text/plain", stream);
         }
 
         public async Task<byte[]?> DownloadFileAsync(string fileName)

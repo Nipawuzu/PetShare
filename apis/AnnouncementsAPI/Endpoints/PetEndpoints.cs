@@ -29,7 +29,7 @@ namespace AnnouncementsAPI.Endpoints
             if (pet is null)
                 return Results.NotFound("Pet doesn't exist.");
 
-            var res = new GetPetResponse(pet, pet.GetPhotoUrl(storage));
+            var res = new GetPetResponse(pet, await pet.GetPhotoUrl(storage));
             return Results.Ok(res);
         }
 
@@ -47,7 +47,9 @@ namespace AnnouncementsAPI.Endpoints
             pet.ShelterId = shelterId;
             context.Pets.Add(pet);
             await context.SaveChangesAsync();
-            return Results.Ok();
+
+            var res = new PostPetResponse() { Id = pet.Id };
+            return Results.Ok(res);
         }
 
         public static async Task<IResult> Put(DataContext context, IStorage storage, PutPetRequest petRequest, Guid petId, HttpContext httpContext)
@@ -81,9 +83,13 @@ namespace AnnouncementsAPI.Endpoints
             if (petRequest.Birthday != null)
                 pet.Birthday = petRequest.Birthday.Value;
 
-            await pet.UploadPhoto(petRequest.Photo, storage);
             await context.SaveChangesAsync();
+            return Results.Ok();
+        }
 
+        public static async Task<IResult> UploadPhoto(IStorage storage, HttpContext context, Guid petId, IFormFile file)
+        {
+            await storage.UploadFileAsync(file.OpenReadStream(), petId.ToString());
             return Results.Ok();
         }
     }

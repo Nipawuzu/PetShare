@@ -6,22 +6,14 @@ namespace AnnouncementsAPI
 {
     public static class PetExtensions
     {
-        public static async Task UploadPhoto(this Pet pet, byte[]? image, IStorage storage)
+        public static async Task<string?> GetPhotoUrl(this Pet pet, IStorage storage)
         {
-            if (image is null) return;
-
-            var photoName = pet.Id.ToString();
-            await storage.UploadFileAsync(image, photoName);
+            return await storage.CheckIfExists(pet.Id.ToString()) ? storage.GetDownloadUrl(pet.Id.ToString()) : null;
         }
 
-        public static string GetPhotoUrl(this Pet pet, IStorage storage)
+        public static async Task AttachPhotoUrl(this PetDTO pet, IStorage storage)
         {
-            return storage.GetDownloadUrl(pet.Id.ToString());
-        }
-
-        public static void AttachPhotoUrl(this PetDTO pet, IStorage storage)
-        {
-            pet.PhotoUrl = storage.GetDownloadUrl(pet.Id.ToString());
+            pet.PhotoUrl = await storage.CheckIfExists(pet.Id.ToString()) ? storage.GetDownloadUrl(pet.Id.ToString()) : null;
         }
     }
 }

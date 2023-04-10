@@ -20,7 +20,8 @@ namespace ImageStorageTests
         public async void UploadSingleFile()
         {
             var content = Encoding.UTF8.GetBytes(testingFileContent);
-            await _storage.UploadFileAsync(content, testingFileName);
+            using(var stream = new MemoryStream(content))
+            await _storage.UploadFileAsync(stream, testingFileName);
         }
 
         [Fact, Order(20)]

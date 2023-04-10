@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pet_share/announcements/announcement.dart';
+import 'package:pet_share/announcements/service.dart';
 
 class ListOfAnnouncementsState {}
 
@@ -11,8 +12,9 @@ class AnnouncementDetailsState extends ListOfAnnouncementsState {
 }
 
 class ListOfAnnouncementsCubit extends Cubit<ListOfAnnouncementsState> {
-  ListOfAnnouncementsCubit() : super(ListViewState());
+  ListOfAnnouncementsCubit(this._service) : super(ListViewState());
 
+  final AnnouncementService _service;
   void goBack() {
     if (state is AnnouncementDetailsState) {
       emit(ListViewState());
@@ -21,5 +23,11 @@ class ListOfAnnouncementsCubit extends Cubit<ListOfAnnouncementsState> {
 
   void seeDetails(Announcement announcement) {
     emit(AnnouncementDetailsState(announcement: announcement));
+  }
+
+  void deleteAnnouncement(Announcement announcement) {
+    announcement.status = AnnouncementStatus.removed;
+    _service.updateStatus(announcement.id, announcement.status);
+    emit(ListViewState());
   }
 }

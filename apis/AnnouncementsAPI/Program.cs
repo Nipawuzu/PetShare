@@ -80,6 +80,13 @@ app.MapPost("/pet", PetEndpoints.Post)
 .Produces(200)
 .Produces(401);
 
+app.MapPost("/pet/{petId}/photo", PetEndpoints.UploadPhoto)
+.WithOpenApi()
+.RequireAuthorization("Shelter")
+.WithSummary("Uploads new photo for pet. Requires shelter role. Gets shelter id from auth claims.")
+.Produces(200)
+.Produces(401);
+
 app.MapPut("/pet/{petId}", PetEndpoints.Put)
 .WithOpenApi()
 .RequireAuthorization("ShelterOrAdmin")
@@ -89,3 +96,5 @@ app.MapPut("/pet/{petId}", PetEndpoints.Put)
 .Produces(401);
 
 app.Run();
+
+public partial class ProgramAnnouncementsAPI { }
