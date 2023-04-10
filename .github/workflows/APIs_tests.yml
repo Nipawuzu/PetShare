@@ -23,18 +23,23 @@ jobs:
           dotnet-version: '7.0.x'
       - name: Install dependencies
         run: dotnet restore
-      - name: Init user secrets
-        run: dotnet user-secrets -p FileStorageService init
-      - name: Add Google Cloud Bucket name
-        shell: bash
-        env:
-          GOOGLE_CLOUD_BUCKET_NAME: ${{ secrets.GOOGLE_CLOUD_BUCKET_NAME }}
-        run: dotnet user-secrets -p FileStorageService set "GoogleCloud:BucketName" "$GOOGLE_CLOUD_BUCKET_NAME"
-      - name: Add Google Cloud secrets
-        shell: bash
-        env:
-          GOOGLE_CLOUD_SECRET: ${{ secrets.GOOGLE_CLOUD_SECRET }}
-        run: dotnet user-secrets -p FileStorageService set "GoogleCloud:Secret" "$GOOGLE_CLOUD_SECRET"
+      - name: Secrets set up
+        uses: ./.github/actions/set_up_apis_secrets
+        with:
+          google_cloud_bucket_name: ${{ secrets.GOOGLE_CLOUD_BUCKET_NAME }}
+          google_cloud_secret: ${{ secrets.GOOGLE_CLOUD_SECRET }}
+      # - name: Init user secrets
+      #   run: dotnet user-secrets -p FileStorageService init
+      # - name: Add Google Cloud Bucket name
+      #   shell: bash
+      #   env:
+      #     GOOGLE_CLOUD_BUCKET_NAME: ${{ secrets.GOOGLE_CLOUD_BUCKET_NAME }}
+      #   run: dotnet user-secrets -p FileStorageService set "GoogleCloud:BucketName" "$GOOGLE_CLOUD_BUCKET_NAME"
+      # - name: Add Google Cloud secrets
+      #   shell: bash
+      #   env:
+      #     GOOGLE_CLOUD_SECRET: ${{ secrets.GOOGLE_CLOUD_SECRET }}
+      #   run: dotnet user-secrets -p FileStorageService set "GoogleCloud:Secret" "$GOOGLE_CLOUD_SECRET"
       - name: Build APIs
         run: dotnet build --no-restore Backend.sln
       - name: Test APIs
