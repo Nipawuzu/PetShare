@@ -140,7 +140,7 @@ namespace APIs_tests.AnnouncementAPTests
             {
                 Description = "Opis nowego ogłoszenia testowego",
                 Title = "Testowe ogłoszenie",
-                Status = DatabaseContextLibrary.models.Status.Closed,
+                Status = DatabaseContextLibrary.models.AnnouncementStatus.Closed,
             };
 
             var req = CreateRequest(HttpMethod.Get, $"{Urls.Announcements}/{announcementId}", body: putAnnouncementRequest, authToken: SHELTER_TOKEN);

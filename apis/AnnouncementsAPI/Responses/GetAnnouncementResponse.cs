@@ -11,7 +11,7 @@ namespace AnnouncementsAPI.Responses
         public DateTime CreationDate { get; set; }
         public DateTime? ClosingDate { get; set; }
         public DateTime LastUpdateDate { get; set; }
-        public Status Status { get; set; }
+        public AnnouncementStatus Status { get; set; }
         public PetDTO Pet { get; set; }
 
         public GetAnnouncementResponse(Announcement announcement)

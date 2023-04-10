@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "APIAuthCommonLibrary": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:58675;http://localhost:58676"
+    }
+  }
+}
