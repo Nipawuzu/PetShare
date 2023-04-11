@@ -6,19 +6,11 @@ on:
 
 jobs:
   test_flutter:
-    uses: ./.github/workflows/flutter_tests.yml
-    with:
-      path_to_project: client/
-
+    uses: ./.github/workflows/test_flutter.yml
 
   try_build_proj:
-    uses: ./.github/workflows/flutter_try_build.yml
-    with:
-      path_to_project: client/
-
+    uses: ./.github/workflows/try_build_flutter.yml
 
   test_apis:
-    uses: ./.github/workflows/APIs_tests.yml
-    with:
-      path_to_project: apis/
+    uses: ./.github/workflows/test_APIs.yml
     secrets: inherit
