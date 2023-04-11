@@ -1,0 +1,60 @@
+name: Build and deploy backed API
+
+on:
+  workflow_call:
+    inputs:
+      path_to_project:
+        default: apis/
+        type: string
+      project_name:
+        required: true
+        type: string
+    secrets:
+      azure_app_service_publish_profile:
+        required: true
+
+jobs:
+  build:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: ${{inputs.path_to_project}}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '7.0.x'
+          include-prerelease: false
+      - name: Build with dotnet
+        run: dotnet build --configuration Release ${{inputs.project_name}}
+      - name: dotnet publish
+        run: dotnet publish ${{inputs.project_name}} -c Release -o ${{env.DOTNET_ROOT}}/${{inputs.project_name}}
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v2
+        with:
+          name: .net-app
+          path: ${{env.DOTNET_ROOT}}/${{inputs.project_name}}
+
+  deploy:
+    runs-on: windows-latest
+    needs: build
+    environment:
+      name: 'Production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v2
+        with:
+          name: .net-app
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: 'petshare-${{inputs.project_name}}'
+          slot-name: 'Production'
+          publish-profile: ${{secrets.azure_app_service_publish_profile}}
+          package: .

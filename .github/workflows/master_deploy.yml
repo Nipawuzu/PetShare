@@ -1,0 +1,13 @@
+name: Pull request workflow
+
+on:
+  - pull_request
+  - workflow_dispatch
+
+jobs:
+  test_flutter:
+    uses: ./.github/workflows/deployAPI.yml
+    with:
+      project_name: ShelterAPI
+    secrets:
+      azure_app_service_publish_profile: ${{ secrets.PUBLISH_PROFILE_SHELTER_API }}
