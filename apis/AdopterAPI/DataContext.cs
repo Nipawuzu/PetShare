@@ -1,7 +1,7 @@
 using DatabaseContextLibrary.models;
 using Microsoft.EntityFrameworkCore;
 
-namespace AdoptersAPI
+namespace AdopterAPI
 {
     public class DataContext : DbContext
     {
