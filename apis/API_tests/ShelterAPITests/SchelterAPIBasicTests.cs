@@ -9,7 +9,7 @@ namespace APIs_tests.ShelterAPITests
 {
     public class SchelterAPIBasicTests : APITests<ProgramShelterAPI, DataContext>
     {
-        private const string SHELTER_TOKEN = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiIzZmE4NWY2NC01NzE3LTQ1NjItYjNmYy0yYzk2M2Y2NmFmYTYiLCJleHAiOjE5MTYyMzkwMjIsImF1ZCI6WyJBQUEiXSwicm9sZXMiOlsiU2hlbHRlciJdfQ.E2872Rdzn0qvJnjXn_rJA-IHSQm4Nqu49OHlkfhUbe8";
+        private const string SHELTER_TOKEN = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkMDc5NmI4NS04MjYzLTQwYzMtZGQ1NC0wOGRiM2MxNWYxMDgiLCJleHAiOjE5MTYyMzkwMjIsImF1ZCI6WyJBQUEiXSwicm9sZXMiOlsiU2hlbHRlciJdfQ.isOtJ-x-QWUTmbDLlauAbIMOON46sGGOAXMGQK5tzH8";
         private const string ADMIN_TOKEN = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiIzZmE4NWY2NC01NzE3LTQ1NjItYjNmYy0yYzk2M2Y2NmFmYTYiLCJleHAiOjE5MTYyMzkwMjIsImF1ZCI6WyJBQUEiXSwicm9sZXMiOlsiQWRtaW4iXX0.1SnWaA5brkWD2l4yG3ZWczqfvH07tTHWQs9Bmn70q4Q";
 
         [Theory]

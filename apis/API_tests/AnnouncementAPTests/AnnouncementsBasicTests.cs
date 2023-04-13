@@ -8,7 +8,7 @@ namespace APIs_tests.AnnouncementAPTests
 {
     public class AnnouncementsBasicTests : APITests<ProgramAnnouncementsAPI, DataContext>
     {
-        private const string SHELTER_TOKEN = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI0NzUwYzI4MS00OTg1LTQwY2QtOWFjMC1iM2QzODlhY2YyMDIiLCJleHAiOjE5MTYyMzkwMjIsImF1ZCI6WyJBQUEiXSwicm9sZXMiOlsiU2hlbHRlciJdfQ.5XeISfgJqck7GI_C9k20we5s166KrHaZzW4xOdztegs";
+        private const string SHELTER_TOKEN = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkMDc5NmI4NS04MjYzLTQwYzMtZGQ1NC0wOGRiM2MxNWYxMDgiLCJleHAiOjE5MTYyMzkwMjIsImF1ZCI6WyJBQUEiXSwicm9sZXMiOlsiU2hlbHRlciJdfQ.isOtJ-x-QWUTmbDLlauAbIMOON46sGGOAXMGQK5tzH8";
 
 
         [Fact]

@@ -1,6 +1,6 @@
 ﻿using DatabaseContextLibrary.models;
 
-namespace AdoptersAPI.Requests
+namespace AdopterAPI.Requests
 {
     public class PutAdopterRequest
     {
