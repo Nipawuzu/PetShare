@@ -1,14 +1,14 @@
-name: Try building Flutter project
+name: Test Flutter App
 
 on:
   workflow_call:
     inputs:
       path_to_project:
-        required: true
+        default: client/
         type: string
 
 jobs:
-  try_building_android:
+  test_application:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -21,12 +21,6 @@ jobs:
         uses: ./.github/actions/create_env_file
         with:
           target_dir: ${{ inputs.path_to_project }}/env/
-      - name: Java setup
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'zulu'
-          java-version: '12.x'
-          cache: 'gradle'
       - name: Flutter setup
         uses: subosito/flutter-action@v2
         with:
@@ -34,5 +28,9 @@ jobs:
           cache: true
       - name: Flutter get dependencies
         run: flutter pub get
-      - name: building_android_debug_apk
-        run: flutter build apk --debug
+      - name: Check code formatting
+        run: dart format --set-exit-if-changed lib/
+      - name:  Analyze project
+        run: flutter analyze
+      - name: Run tests
+        run: flutter test

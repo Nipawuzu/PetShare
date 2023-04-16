@@ -1,0 +1,27 @@
+name: Secrets for .NET apis
+description:  Action sets up a secrets needed for building .NET apis
+
+inputs:
+  google_cloud_bucket_name:
+    description: Name of a Google Cloud bucket name. It is needed for file storage.
+    required: true
+  google_cloud_secret:
+    description: Google Cloud secret needed for file storage.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Init user secrets
+      shell: bash
+      run: dotnet user-secrets -p apis/FileStorageService init
+    - name: Add Google Cloud Bucket name
+      shell: bash
+      env:
+        GOOGLE_CLOUD_BUCKET_NAME: ${{ inputs.google_cloud_bucket_name }}
+      run: dotnet user-secrets -p apis/FileStorageService set "GoogleCloud:BucketName" "$GOOGLE_CLOUD_BUCKET_NAME"
+    - name: Add Google Cloud secrets
+      shell: bash
+      env:
+        GOOGLE_CLOUD_SECRET: ${{ inputs.google_cloud_secret }}
+      run: dotnet user-secrets -p apis/FileStorageService set "GoogleCloud:Secret" "$GOOGLE_CLOUD_SECRET"

@@ -1,35 +1,80 @@
+import 'dart:typed_data';
+
 import 'package:dio/dio.dart';
 import 'package:http_status_code/http_status_code.dart';
 import 'package:pet_share/announcements/announcement.dart';
-import 'package:pet_share/announcements/requests/new_announcement.dart';
+import 'package:pet_share/announcements/new_announcement.dart';
+import 'package:pet_share/announcements/new_pet.dart';
+import 'package:pet_share/announcements/requests/post_announcement_request.dart';
+import 'package:pet_share/announcements/requests/post_pet_request.dart';
 import 'package:pet_share/announcements/requests/put_announcement.dart';
+import 'package:pet_share/announcements/responses/post_announcement_response.dart';
+import 'package:pet_share/announcements/responses/post_pet_response.dart';
 
 class AnnouncementService {
-  AnnouncementService(this._url);
+  AnnouncementService(this._dio, this._url);
 
+  final Dio _dio;
   final String _url;
+  final String _token = "";
 
-  Future<bool> sendAnnouncement(NewAnnouncement announcement) async {
-    var response = await Dio().post(
-      "$_url/announcements",
-      data: announcement.toJson(),
+  Future<String> sendPet(NewPet pet) async {
+    var response = await _dio.post(
+      "$_url/pet",
+      data: PostPetRequest(
+        name: pet.name,
+        birthday: pet.birthday,
+        breed: pet.breed,
+        description: pet.description,
+        species: pet.species,
+      ).toJson(),
       options: Options(headers: {
-        "Authorization":
-            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiIzZmE4NWY2NC01NzE3LTQ1NjItYjNmYy0yYzk2M2Y2NmFmYTYiLCJleHAiOjE5MTYyMzkwMjIsImF1ZCI6WyJBQUEiXSwicm9sZXMiOlsiU2hlbHRlciJdfQ.E2872Rdzn0qvJnjXn_rJA-IHSQm4Nqu49OHlkfhUbe8",
+        "Authorization": _token,
         "HttpHeaders.contentTypeHeader": "application/json",
       }),
+    );
+
+    var res = PostPetResponse.fromJson(response.data);
+    return response.statusCode == StatusCode.OK ? res.id : "";
+  }
+
+  Future<bool> uploadPetPhoto(String petId, Uint8List photo) async {
+    FormData formData = FormData.fromMap({
+      "file": MultipartFile.fromBytes(photo, filename: petId),
+    });
+
+    var response = await _dio.post(
+      "$_url/pet/$petId/photo",
+      data: formData,
     );
 
     return response.statusCode == StatusCode.OK;
   }
 
+  Future<String> sendAnnouncement(NewAnnouncement announcement) async {
+    var response = await _dio.post(
+      "$_url/announcements",
+      data: PostAnnouncementRequest(
+        title: announcement.title,
+        description: announcement.description,
+        petId: announcement.petId,
+      ).toJson(),
+      options: Options(headers: {
+        "Authorization": _token,
+        "HttpHeaders.contentTypeHeader": "application/json",
+      }),
+    );
+
+    var res = PostAnnouncementResponse.fromJson(response.data);
+    return response.statusCode == StatusCode.OK ? res.id : "";
+  }
+
   Future<List<Announcement>> getAnnouncements() async {
-    var response = await Dio().get(
+    var response = await _dio.get(
       "$_url/announcements",
       options: Options(headers: {
         "HttpHeaders.contentTypeHeader": "application/json",
-        "Authorization":
-            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiIzZmE4NWY2NC01NzE3LTQ1NjItYjNmYy0yYzk2M2Y2NmFmYTYiLCJleHAiOjE5MTYyMzkwMjIsImF1ZCI6WyJBQUEiXSwicm9sZXMiOlsiQWRtaW4iXX0.1SnWaA5brkWD2l4yG3ZWczqfvH07tTHWQs9Bmn70q4Q"
+        "Authorization": _token
       }),
     );
 
@@ -50,12 +95,11 @@ class AnnouncementService {
       title: null,
       description: null,
     );
-    var response = await Dio().put(
+    var response = await _dio.put(
       "$_url/announcements/$announcementId",
       data: announcement.toJson(),
       options: Options(headers: {
-        "Authorization":
-            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiIzZmE4NWY2NC01NzE3LTQ1NjItYjNmYy0yYzk2M2Y2NmFmYTYiLCJleHAiOjE5MTYyMzkwMjIsImF1ZCI6WyJBQUEiXSwicm9sZXMiOlsiQWRtaW4iXX0.1SnWaA5brkWD2l4yG3ZWczqfvH07tTHWQs9Bmn70q4Q",
+        "Authorization": _token,
         "HttpHeaders.contentTypeHeader": "application/json",
       }),
     );

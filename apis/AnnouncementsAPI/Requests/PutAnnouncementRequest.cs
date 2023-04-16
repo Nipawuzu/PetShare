@@ -7,6 +7,6 @@ namespace AnnouncementsAPI.Requests
         public string? Title { get; set; }
         public string? Description { get; set; }
         public Guid? PetId { get; set; }
-        public Status? Status { get; set; }
+        public AnnouncementStatus? Status { get; set; }
     }
 }

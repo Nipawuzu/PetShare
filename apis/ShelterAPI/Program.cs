@@ -1,16 +1,11 @@
 using APIAuthCommonLibrary;
-using DatabaseContextLibrary;
-using DatabaseContextLibrary.models;
 using Microsoft.EntityFrameworkCore;
 using ShelterAPI;
-using ShelterAPI.Requests;
 
 const string ConnectionString = "Server=tcp:petshareserver2.database.windows.net,1433;Initial Catalog=PetShareDatabase;Persist Security Info=False;User ID=azureuser;Password=kotysathebest123!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGenWithSecurity("ShelterAPI", "v1");
@@ -30,55 +25,26 @@ app.UseAuthorization();
 
 app.UseHttpsRedirection();
 
-app.MapGet("/shelter", async (DataContext context) =>
-    Results.Ok(await context.Shelters.Include("Address").ToListAsync()))
-    .WithOpenApi()
-    .RequireAuthorization("Auth")
-    .WithSummary("Gets all shelters.")
-    .Produces(StatusCodes.Status200OK);
+app.MapGet("/shelter", Endpoints.GetShelter)
+.WithOpenApi()
+.RequireAuthorization("Auth")
+.WithSummary("Gets all shelters.")
+.Produces(StatusCodes.Status200OK);
 
-app.MapGet("/shelter/{shelterId}", async (DataContext context, Guid shelterId) =>
-    await context.Shelters.Include("Address").FirstOrDefaultAsync(s => s.Id == shelterId) is Shelter shelter ?
-        Results.Ok(shelter) :
-        Results.NotFound("Sorry, shelter not found"))
-    .WithOpenApi()
-    .RequireAuthorization("Auth")
-    .WithSummary("Gets shelter by id.")
-    .Produces(StatusCodes.Status200OK)
-    .Produces(StatusCodes.Status404NotFound);
+app.MapGet("/shelter/{shelterId}", Endpoints.GetShelters)
+.WithOpenApi()
+.RequireAuthorization("Auth")
+.WithSummary("Gets shelter by id.")
+.Produces(StatusCodes.Status200OK)
+.Produces(StatusCodes.Status404NotFound);
 
-app.MapPost("/shelter", async (DataContext context, PostShelterRequest shelter) =>
-{
-    var newShelter = shelter.Map();
-
-    if (shelter.Address != null)
-    {
-        var newAddress = shelter.Address.Map();
-        context.Address.Add(newAddress);
-        await context.SaveChangesAsync();
-        newShelter.AddressId = newAddress.Id;
-    }
-
-    context.Shelters.Add(newShelter);
-    await context.SaveChangesAsync();
-    return Results.Ok();
-})
+app.MapPost("/shelter", Endpoints.PostShelter)
 .WithOpenApi()
 .RequireAuthorization("Auth")
 .WithSummary("Posts new shelter.")
 .Produces(StatusCodes.Status200OK);
 
-app.MapPut("/shelter/{shelterId}", async (DataContext context, Guid shelterId, PutShelterRequest updatedShelter) =>
-{
-    var shelter = await context.Shelters.FirstOrDefaultAsync(s => s.Id == shelterId);
-    if (shelter is null)
-        return Results.BadRequest("Sorry, this shelter doesn't exist.");
-
-    shelter.IsAuthorized = updatedShelter.IsAuthorized;
-    await context.SaveChangesAsync();
-
-    return Results.Ok(await context.Shelters.Include("Address").FirstOrDefaultAsync(s => s.Id == shelterId));
-})
+app.MapPut("/shelter/{shelterId}", Endpoints.PutShelter)
 .WithOpenApi()
 .RequireAuthorization("Admin")
 .WithSummary("Updates shelter. Requires admin role.")

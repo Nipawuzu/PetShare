@@ -13,9 +13,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "APIAuthCommonLibrary", "API
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "APIs_tests", "API_tests\APIs_tests.csproj", "{C6AB1AE0-D491-4602-B9FE-CA411827A3A4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileStorageService", "FileStorageService\FileStorageService.csproj", "{0268F4AC-4662-48D7-8E17-62D6D4D4D670}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileStorageService", "FileStorageService\FileStorageService.csproj", "{0268F4AC-4662-48D7-8E17-62D6D4D4D670}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileStorageTests", "FileStorageTests\FileStorageTests.csproj", "{B161A082-45B2-49A3-96D1-A611E4282C6A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileStorageTests", "FileStorageTests\FileStorageTests.csproj", "{B161A082-45B2-49A3-96D1-A611E4282C6A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdopterAPI", "AdopterAPI\AdopterAPI.csproj", "{8B8D7FCE-2E29-4C8D-B07B-1B9B5689164A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{B161A082-45B2-49A3-96D1-A611E4282C6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B161A082-45B2-49A3-96D1-A611E4282C6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B161A082-45B2-49A3-96D1-A611E4282C6A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B8D7FCE-2E29-4C8D-B07B-1B9B5689164A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B8D7FCE-2E29-4C8D-B07B-1B9B5689164A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B8D7FCE-2E29-4C8D-B07B-1B9B5689164A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B8D7FCE-2E29-4C8D-B07B-1B9B5689164A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

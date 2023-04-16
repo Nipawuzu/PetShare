@@ -1,0 +1,47 @@
+name: Release flutter app
+
+on:
+  workflow_call:
+    inputs:
+      path_to_project:
+        default: client/
+        type: string
+
+jobs:
+  build:
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{inputs.path_to_project}}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Create env file
+        uses: ./.github/actions/create_env_file
+        with:
+          target_dir: ${{inputs.path_to_project}}/env/
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '12.x'
+          cache: 'gradle'
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.x'
+          cache: true
+      - name: Flutter get dependencies
+        run: flutter pub get
+      - name: Build release android apk
+        run: flutter build apk --release
+      - name: Make a release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: ${{inputs.path_to_project}}/build/app/outputs/flutter-apk/app-release.apk
+          generate_release_notes: true
+          prerelease: true
+          tag_name: new_release
