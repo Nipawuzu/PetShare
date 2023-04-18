@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:pet_share/services/generics/post_address_request.dart';
 
 import 'new_adopter.dart';
 
@@ -36,4 +37,11 @@ class NewAddress {
   Map<String, dynamic> toJson() => _$NewAddressToJson(this);
   factory NewAddress.fromJson(Map<String, dynamic> json) =>
       _$NewAddressFromJson(json);
+
+  PostAddressRequest toPostAddressRequest() => PostAddressRequest(
+      street: street,
+      city: city,
+      province: province,
+      postalCode: postalCode,
+      country: country);
 }

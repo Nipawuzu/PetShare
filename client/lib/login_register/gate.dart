@@ -6,13 +6,18 @@ import 'package:pet_share/login_register/cubit.dart';
 import 'package:pet_share/login_register/register_page.dart';
 import 'package:pet_share/login_register/welcome_screen.dart';
 
+import 'error_page.dart';
+
 class AuthGate extends StatelessWidget {
   const AuthGate({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => AuthCubit(),
+      create: (_) => AuthCubit(
+        adopterService: context.read(),
+        shelterService: context.read(),
+      ),
       child: BlocBuilder<AuthCubit, AuthState>(
         builder: (context, state) {
           if (state is SignedInState) {
@@ -43,8 +48,12 @@ class AuthGate extends StatelessWidget {
           } else if (state is SigningInState) {
             return const Center(
               child: CircularProgressIndicator(
-                color: Colors.brown,
+                color: Colors.orange,
               ),
+            );
+          } else if (state is ErrorState) {
+            return ErrorPage(
+              error: state.error,
             );
           } else {
             return const SizedBox();

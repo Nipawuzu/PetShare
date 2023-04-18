@@ -1,14 +1,18 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pet_share/login_register/requests/new_adopter.dart';
-import 'package:pet_share/login_register/requests/new_shelter.dart';
+import 'package:pet_share/login_register/new_adopter.dart';
+import 'package:pet_share/login_register/new_shelter.dart';
+import 'package:pet_share/services/adopter/service.dart';
+import 'package:pet_share/services/shelter/service.dart';
 
 class AuthCubit extends Cubit<AuthState> {
-  AuthCubit()
+  AuthCubit({required this.adopterService, required this.shelterService})
       : super(
-          const ChooseRegisterTypeState(pageNumber: 0),
+          const ErrorState(error: "COś poszłos nie tak psmdinadwdk"),
         );
 
   int pageNumber = 0;
+  AdopterService adopterService;
+  ShelterService shelterService;
 
   Future<void> signInOrSignUp() async {
     emit(const SigningInState());
@@ -64,50 +68,69 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   Future<void> signUp(NewUser user) async {
-    emit(const SignedInState());
+    emit(const SigningInState());
+
+    if (user is NewAdopter) {
+      var id = await adopterService.sendAdopter(user);
+      if (id.isNotEmpty) {
+        emit(const SignedInState());
+        return;
+      }
+    } else if (user is NewShelter) {
+      var id = await shelterService.sendShelter(user);
+      if (id.isNotEmpty) {
+        emit(const SignedInState());
+        return;
+      }
+    }
+
+    emit(const ErrorState(
+        error: "Coś poszło nie tak. Spróbuj ponownie później"));
   }
 }
 
 abstract class AuthState {
-  const AuthState(this.error);
-
-  final String? error;
+  const AuthState();
 }
 
 class SignedInState extends AuthState {
-  const SignedInState() : super('');
+  const SignedInState();
 }
 
 class SignedOutState extends AuthState {
-  const SignedOutState({error}) : super(error);
+  const SignedOutState();
 }
 
 class ChooseRegisterTypeState extends AuthState {
-  const ChooseRegisterTypeState({error, required this.pageNumber})
-      : super(error);
+  const ChooseRegisterTypeState({required this.pageNumber});
 
   final int pageNumber;
 }
 
 class RegisterAsAdopterState extends AuthState {
-  const RegisterAsAdopterState({error, required this.adopter}) : super(error);
+  const RegisterAsAdopterState({error, required this.adopter});
   final NewAdopter adopter;
 }
 
 class RegisterAsShelterState extends AuthState {
-  const RegisterAsShelterState({error, required this.shelter}) : super(error);
+  const RegisterAsShelterState({error, required this.shelter});
   final NewShelter shelter;
 }
 
 class AddressPageState extends AuthState {
-  const AddressPageState({error, required this.type, required this.user})
-      : super(error);
+  const AddressPageState({error, required this.type, required this.user});
   final RegisterType type;
   final NewUser user;
 }
 
 class SigningInState extends AuthState {
-  const SigningInState() : super('');
+  const SigningInState();
+}
+
+class ErrorState extends AuthState {
+  const ErrorState({required this.error});
+
+  final String error;
 }
 
 enum RegisterType {

@@ -8,7 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:pet_share/announcements/form/cubit.dart';
 import 'package:pet_share/announcements/new_announcement.dart';
 import 'package:pet_share/announcements/new_pet.dart';
-import 'package:pet_share/announcements/service.dart';
+import 'package:pet_share/services/announcements/service.dart';
 
 class NewAnnouncementForm extends StatefulWidget {
   const NewAnnouncementForm(this.announcementService, {super.key});

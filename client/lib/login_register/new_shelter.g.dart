@@ -11,6 +11,8 @@ NewShelter _$NewShelterFromJson(Map<String, dynamic> json) => NewShelter(
     )
       ..userName = json['userName'] as String
       ..phoneNumber = json['phoneNumber'] as String
+      ..dialCode = json['dialCode'] as String
+      ..isoCode = json['isoCode'] as String
       ..email = json['email'] as String
       ..address = json['address'] == null
           ? null
@@ -20,6 +22,8 @@ Map<String, dynamic> _$NewShelterToJson(NewShelter instance) =>
     <String, dynamic>{
       'userName': instance.userName,
       'phoneNumber': instance.phoneNumber,
+      'dialCode': instance.dialCode,
+      'isoCode': instance.isoCode,
       'email': instance.email,
       'address': instance.address,
       'fullShelterName': instance.fullShelterName,

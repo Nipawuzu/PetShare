@@ -39,7 +39,7 @@ class WelcomeScreen extends StatelessWidget {
               child: GestureDetector(
                 onTap: () {},
                 child: const Text(
-                  "Możesz u nas adoptować zwierzęta lub oddać je w dobre ręce",
+                  "Możesz u nas adoptować zwierzęta lub oddawać je w dobre ręce",
                   textScaleFactor: 1.6,
                   style: TextStyle(
                       fontFamily: "Quicksand",

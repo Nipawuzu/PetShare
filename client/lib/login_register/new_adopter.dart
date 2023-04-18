@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:pet_share/login_register/requests/new_shelter.dart';
+import 'new_shelter.dart';
 
 part 'new_adopter.g.dart';
 

@@ -5,11 +5,12 @@ import 'package:http_status_code/http_status_code.dart';
 import 'package:pet_share/announcements/announcement.dart';
 import 'package:pet_share/announcements/new_announcement.dart';
 import 'package:pet_share/announcements/new_pet.dart';
-import 'package:pet_share/announcements/requests/post_announcement_request.dart';
-import 'package:pet_share/announcements/requests/post_pet_request.dart';
-import 'package:pet_share/announcements/requests/put_announcement.dart';
-import 'package:pet_share/announcements/responses/post_announcement_response.dart';
-import 'package:pet_share/announcements/responses/post_pet_response.dart';
+import 'package:pet_share/services/announcements/requests/post_announcement_request.dart';
+import 'package:pet_share/services/announcements/requests/post_pet_request.dart';
+import 'package:pet_share/services/announcements/responses/post_pet_response.dart';
+
+import 'requests/put_announcement.dart';
+import 'responses/post_announcement_response.dart';
 
 class AnnouncementService {
   AnnouncementService(this._dio, this._url);
