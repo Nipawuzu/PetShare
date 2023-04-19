@@ -58,5 +58,16 @@ namespace APIs_tests
 
             return (T)resObj;
         }
+
+        protected async Task<Guid> PostRequest(HttpRequestMessage request)
+        {
+            var res = await client.SendAsync(request);
+
+            Assert.Equal(HttpStatusCode.Created, res.StatusCode);
+            var resId = res.Headers.Location;
+            Assert.NotNull(resId);
+
+            return new Guid(resId.ToString());
+        }
     }
 }
