@@ -33,8 +33,8 @@ namespace APIs_tests.ShelterAPITests
             };
 
             var postRequest = CreateRequest(HttpMethod.Post, Urls.Shelter, postShelterRequest, SHELTER_TOKEN);
-            var postResult = await SendRequest<PostShelterResponse>(postRequest);
-            return postResult.Id;
+            var postResult = await PostRequest(postRequest);
+            return postResult;
         }
 
 
@@ -66,6 +66,7 @@ namespace APIs_tests.ShelterAPITests
 
             var getRequest = CreateRequest(HttpMethod.Put, $"{Urls.Shelter}/{shelterId}", req, authToken: ADMIN_TOKEN);
             var res = await this.client.SendAsync(getRequest);
+
 
             Assert.Equal(HttpStatusCode.OK, res.StatusCode);
         }
