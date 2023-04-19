@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pet_share/announcements/new_announcement.dart';
-import 'package:pet_share/announcements/new_pet.dart';
-import 'package:pet_share/announcements/pet.dart';
+import 'package:pet_share/announcements/models/new_announcement.dart';
+import 'package:pet_share/announcements/models/new_pet.dart';
+import 'package:pet_share/announcements/models/pet.dart';
 import 'package:pet_share/services/announcements/service.dart';
 
 class AnnouncementFormState {}

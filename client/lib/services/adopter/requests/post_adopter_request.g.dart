@@ -10,14 +10,14 @@ PostAdopterRequest _$PostAdopterRequestFromJson(Map<String, dynamic> json) =>
     PostAdopterRequest(
       firstName: json['firstName'] as String? ?? '',
       lastName: json['lastName'] as String? ?? '',
-    )
-      ..userName = json['userName'] as String
-      ..phoneNumber = json['phoneNumber'] as String
-      ..email = json['email'] as String
-      ..address = json['address'] == null
+      userName: json['userName'] as String? ?? '',
+      phoneNumber: json['phoneNumber'] as String? ?? '',
+      email: json['email'] as String? ?? '',
+      address: json['address'] == null
           ? null
           : PostAddressRequest.fromJson(
-              json['address'] as Map<String, dynamic>);
+              json['address'] as Map<String, dynamic>),
+    );
 
 Map<String, dynamic> _$PostAdopterRequestToJson(PostAdopterRequest instance) =>
     <String, dynamic>{

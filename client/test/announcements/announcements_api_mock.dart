@@ -2,12 +2,12 @@ import 'package:dio/dio.dart';
 import 'package:http_mock_adapter/http_mock_adapter.dart';
 import 'package:http_status_code/http_status_code.dart';
 import 'package:pet_share/address.dart';
-import 'package:pet_share/announcements/announcement.dart';
-import 'package:pet_share/announcements/pet.dart';
+import 'package:pet_share/announcements/models/announcement.dart';
+import 'package:pet_share/announcements/models/pet.dart';
 import 'package:pet_share/services/announcements/responses/post_pet_response.dart';
 import 'package:pet_share/shelter.dart';
 
-class APIMocksProvider {
+extension AnnouncementsAPIMock on Dio {
   static Dio createAnnouncementsApiMock(String url) {
     Dio dio = Dio();
     final dioAdapter = DioAdapter(dio: dio);
@@ -52,6 +52,11 @@ class APIMocksProvider {
     }, data: Matchers.any);
 
     dioAdapter.onPost("$url/pet/cb849fa2-1033-4d6b-7c88-08db36d6f10f/photo",
+        (request) {
+      request.reply(StatusCode.OK, null);
+    }, data: Matchers.any);
+
+    dioAdapter.onPut("$url/announcements/cb849fa2-1033-4d6b-7c88-08db36d6f10f",
         (request) {
       request.reply(StatusCode.OK, null);
     }, data: Matchers.any);

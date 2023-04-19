@@ -1,4 +1,4 @@
-import 'package:pet_share/announcements/new_pet.dart';
+import 'package:pet_share/announcements/models/new_pet.dart';
 
 class NewAnnouncement {
   NewAnnouncement({

@@ -16,7 +16,7 @@ void main() {
   testWidgets('Send new announcement form with new pet', (tester) async {
     await tester.pumpWidget(
       buildMediaQueryForTests(NewAnnouncementForm(AnnouncementService(
-          APIMocksProvider.createAnnouncementsApiMock(url), url))),
+          AnnouncementsAPIMock.createAnnouncementsApiMock(url), url))),
     );
 
     await tester.enterText(find.byKey(const Key('name')), 'test name');
