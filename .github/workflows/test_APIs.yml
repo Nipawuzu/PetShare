@@ -28,6 +28,7 @@ jobs:
         with:
           google_cloud_bucket_name: ${{ secrets.GOOGLE_CLOUD_BUCKET_NAME }}
           google_cloud_secret: ${{ secrets.GOOGLE_CLOUD_SECRET }}
+          database_connection: ${{ secrets.DATABASE_SECRET }}
       - name: Build APIs
         run: dotnet build --no-restore Backend.sln
       - name: Test APIs

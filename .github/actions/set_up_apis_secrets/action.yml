@@ -8,11 +8,14 @@ inputs:
   google_cloud_secret:
     description: Google Cloud secret needed for file storage.
     required: true
+  database_connection:
+    description: Database connection string
+    required: true
 
 runs:
   using: composite
   steps:
-    - name: Init user secrets
+    - name: Init user FileStorageService secrets
       shell: bash
       run: dotnet user-secrets -p apis/FileStorageService init
     - name: Add Google Cloud Bucket name
@@ -25,3 +28,12 @@ runs:
       env:
         GOOGLE_CLOUD_SECRET: ${{ inputs.google_cloud_secret }}
       run: dotnet user-secrets -p apis/FileStorageService set "GoogleCloud:Secret" "$GOOGLE_CLOUD_SECRET"
+    
+    - name: Init user Announcements secrets
+      shell: bash
+      run: dotnet user-secrets -p apis/AnnouncementsAPI init
+    - name: Add Google Cloud Bucket name
+      shell: bash
+      env:
+        CONNECTION_STRING: ${{ inputs.database_connection }}
+      run: dotnet user-secrets -p apis/AnnouncementsAPI set ""DataBase"" "$CONNECTION_STRING"
