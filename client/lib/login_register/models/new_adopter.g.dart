@@ -29,15 +29,15 @@ Map<String, dynamic> _$NewUserToJson(NewUser instance) => <String, dynamic>{
 NewAdopter _$NewAdopterFromJson(Map<String, dynamic> json) => NewAdopter(
       firstName: json['firstName'] as String? ?? '',
       lastName: json['lastName'] as String? ?? '',
-    )
-      ..userName = json['userName'] as String
-      ..phoneNumber = json['phoneNumber'] as String
-      ..dialCode = json['dialCode'] as String
-      ..isoCode = json['isoCode'] as String
-      ..email = json['email'] as String
-      ..address = json['address'] == null
+      userName: json['userName'] as String? ?? '',
+      phoneNumber: json['phoneNumber'] as String? ?? '',
+      dialCode: json['dialCode'] as String? ?? '+48',
+      isoCode: json['isoCode'] as String? ?? 'PL',
+      email: json['email'] as String? ?? '',
+      address: json['address'] == null
           ? null
-          : NewAddress.fromJson(json['address'] as Map<String, dynamic>);
+          : NewAddress.fromJson(json['address'] as Map<String, dynamic>),
+    );
 
 Map<String, dynamic> _$NewAdopterToJson(NewAdopter instance) =>
     <String, dynamic>{

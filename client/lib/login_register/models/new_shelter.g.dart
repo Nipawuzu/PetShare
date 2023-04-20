@@ -8,15 +8,15 @@ part of 'new_shelter.dart';
 
 NewShelter _$NewShelterFromJson(Map<String, dynamic> json) => NewShelter(
       fullShelterName: json['fullShelterName'] as String? ?? '',
-    )
-      ..userName = json['userName'] as String
-      ..phoneNumber = json['phoneNumber'] as String
-      ..dialCode = json['dialCode'] as String
-      ..isoCode = json['isoCode'] as String
-      ..email = json['email'] as String
-      ..address = json['address'] == null
+      userName: json['userName'] as String? ?? '',
+      phoneNumber: json['phoneNumber'] as String? ?? '',
+      dialCode: json['dialCode'] as String? ?? '+48',
+      isoCode: json['isoCode'] as String? ?? 'PL',
+      email: json['email'] as String? ?? '',
+      address: json['address'] == null
           ? null
-          : NewAddress.fromJson(json['address'] as Map<String, dynamic>);
+          : NewAddress.fromJson(json['address'] as Map<String, dynamic>),
+    );
 
 Map<String, dynamic> _$NewShelterToJson(NewShelter instance) =>
     <String, dynamic>{
