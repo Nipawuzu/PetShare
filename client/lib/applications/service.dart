@@ -1,6 +1,6 @@
 import 'package:pet_share/address.dart';
-import 'package:pet_share/announcements/announcement.dart';
-import 'package:pet_share/announcements/pet.dart';
+import 'package:pet_share/announcements/models/announcement.dart';
+import 'package:pet_share/announcements/models/pet.dart';
 import 'package:pet_share/applications/application.dart';
 import 'package:pet_share/shelter.dart';
 

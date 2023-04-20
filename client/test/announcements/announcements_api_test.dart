@@ -1,8 +1,9 @@
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:pet_share/announcements/new_announcement.dart';
-import 'package:pet_share/announcements/new_pet.dart';
+import 'package:pet_share/announcements/models/announcement.dart';
+import 'package:pet_share/announcements/models/new_announcement.dart';
+import 'package:pet_share/announcements/models/new_pet.dart';
 import 'package:pet_share/services/announcements/service.dart';
 
 import 'announcements_api_mock.dart';
@@ -11,7 +12,7 @@ void main() {
   group('AnnouncementsAPI', () {
     var url = "https://petshare.com";
     var service = AnnouncementService(
-        APIMocksProvider.createAnnouncementsApiMock(url), url);
+        AnnouncementsAPIMock.createAnnouncementsApiMock(url), url);
 
     test('Post new pet', () async {
       var newPet = NewPet(
@@ -45,6 +46,12 @@ void main() {
     test('Get announcements', () async {
       var res = await service.getAnnouncements();
       assert(res.isNotEmpty);
+    });
+
+    test('Update status', () async {
+      var res = await service.updateStatus(
+          "cb849fa2-1033-4d6b-7c88-08db36d6f10f", AnnouncementStatus.removed);
+      assert(res);
     });
   });
 }

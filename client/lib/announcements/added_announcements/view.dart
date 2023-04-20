@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pet_share/announcements/added_announcements/after_adoption_page.dart';
 import 'package:pet_share/announcements/added_announcements/cubit.dart';
-import 'package:pet_share/announcements/announcement.dart';
+import 'package:pet_share/announcements/models/announcement.dart';
 import 'package:pet_share/announcements/details/view.dart';
+import 'package:pet_share/services/adopter/service.dart';
 import 'package:pet_share/services/announcements/service.dart';
 import 'package:pet_share/common_widgets/custom_text_field.dart';
 import 'package:pet_share/common_widgets/image.dart';
 
 class AddedAnnouncements extends StatefulWidget {
-  const AddedAnnouncements({super.key, required this.announcementService});
+  const AddedAnnouncements({
+    super.key,
+    required this.announcementService,
+    required this.adopterService,
+  });
   final AnnouncementService announcementService;
+  final AdopterService adopterService;
 
   @override
   State<AddedAnnouncements> createState() => _AddedAnnouncementsState();
@@ -26,8 +33,8 @@ class _AddedAnnouncementsState extends State<AddedAnnouncements> {
           if (snapshot.hasData) {
             announcements = snapshot.data!;
             return BlocProvider(
-              create: (_) =>
-                  ListOfAnnouncementsCubit(widget.announcementService),
+              create: (_) => ListOfAnnouncementsCubit(
+                  widget.announcementService, widget.adopterService),
               child: BlocBuilder<ListOfAnnouncementsCubit,
                   ListOfAnnouncementsState>(
                 builder: (context, state) {
@@ -38,17 +45,31 @@ class _AddedAnnouncementsState extends State<AddedAnnouncements> {
                   } else if (state is AnnouncementDetailsState) {
                     return AnnouncementAndPetDetails(
                         announcement: state.announcement);
+                  } else if (state is AfterAdoptionState) {
+                    return AfterAdoptionPage(
+                      message: state.message,
+                      suceed: state.success,
+                    );
                   }
                   return Container();
                 },
               ),
             );
           } else if (snapshot.hasError) {
-            return Text(snapshot.error.toString());
+            return Scaffold(
+              body: Center(
+                child: TextWithBasicStyle(
+                  text: snapshot.error.toString(),
+                  align: TextAlign.center,
+                ),
+              ),
+            );
           }
-          return const Center(
-            child: CircularProgressIndicator(
-              color: Colors.orange,
+          return const Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(
+                color: Colors.orange,
+              ),
             ),
           );
         })));

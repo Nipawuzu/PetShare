@@ -6,8 +6,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:pet_share/announcements/form/cubit.dart';
-import 'package:pet_share/announcements/new_announcement.dart';
-import 'package:pet_share/announcements/new_pet.dart';
+import 'package:pet_share/announcements/models/new_announcement.dart';
+import 'package:pet_share/announcements/models/new_pet.dart';
 import 'package:pet_share/services/announcements/service.dart';
 
 class NewAnnouncementForm extends StatefulWidget {

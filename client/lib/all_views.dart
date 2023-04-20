@@ -21,6 +21,7 @@ class AllViews extends StatelessWidget {
             text: "Dodane ogłoszenia",
             child: AddedAnnouncements(
               announcementService: context.read(),
+              adopterService: context.read(),
             ),
           ),
           ViewsListTile(

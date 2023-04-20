@@ -1,4 +1,4 @@
-import 'package:pet_share/announcements/announcement.dart';
+import 'package:pet_share/announcements/models/announcement.dart';
 import 'package:pet_share/shelter.dart';
 
 class Application {

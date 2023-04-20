@@ -1,13 +1,13 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pet_share/login_register/new_adopter.dart';
-import 'package:pet_share/login_register/new_shelter.dart';
+import 'package:pet_share/login_register/models/new_adopter.dart';
+import 'package:pet_share/login_register/models/new_shelter.dart';
 import 'package:pet_share/services/adopter/service.dart';
 import 'package:pet_share/services/shelter/service.dart';
 
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit({required this.adopterService, required this.shelterService})
       : super(
-          const ErrorState(error: "COś poszłos nie tak psmdinadwdk"),
+          const SignedInState(),
         );
 
   int pageNumber = 0;

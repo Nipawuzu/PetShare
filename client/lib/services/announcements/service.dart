@@ -2,9 +2,9 @@ import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:http_status_code/http_status_code.dart';
-import 'package:pet_share/announcements/announcement.dart';
-import 'package:pet_share/announcements/new_announcement.dart';
-import 'package:pet_share/announcements/new_pet.dart';
+import 'package:pet_share/announcements/models/announcement.dart';
+import 'package:pet_share/announcements/models/new_announcement.dart';
+import 'package:pet_share/announcements/models/new_pet.dart';
 import 'package:pet_share/services/announcements/requests/post_announcement_request.dart';
 import 'package:pet_share/services/announcements/requests/post_pet_request.dart';
 import 'package:pet_share/services/announcements/responses/post_pet_response.dart';
@@ -17,7 +17,7 @@ class AnnouncementService {
 
   final Dio _dio;
   final String _url;
-  final String _token = "";
+  final String _token = "Bearer ";
 
   Future<String> sendPet(NewPet pet) async {
     var response = await _dio.post(
