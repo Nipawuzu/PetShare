@@ -7,10 +7,8 @@ import 'package:pet_share/announcements/models/new_announcement.dart';
 import 'package:pet_share/announcements/models/new_pet.dart';
 import 'package:pet_share/services/announcements/requests/post_announcement_request.dart';
 import 'package:pet_share/services/announcements/requests/post_pet_request.dart';
-import 'package:pet_share/services/announcements/responses/post_pet_response.dart';
 
 import 'requests/put_announcement.dart';
-import 'responses/post_announcement_response.dart';
 
 class AnnouncementService {
   AnnouncementService(this._dio, this._url);
