@@ -51,6 +51,7 @@ dependencies:
   cached_network_image: ^3.2.3
   http_parser: ^4.0.2
   http_mock_adapter: ^0.4.2
+  auth0_flutter: ^1.1.0
 
 dev_dependencies:
   flutter_test:
