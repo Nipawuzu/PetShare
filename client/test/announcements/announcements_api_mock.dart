@@ -4,7 +4,6 @@ import 'package:http_status_code/http_status_code.dart';
 import 'package:pet_share/address.dart';
 import 'package:pet_share/announcements/models/announcement.dart';
 import 'package:pet_share/announcements/models/pet.dart';
-import 'package:pet_share/services/announcements/responses/post_pet_response.dart';
 import 'package:pet_share/shelter.dart';
 
 extension AnnouncementsAPIMock on Dio {
