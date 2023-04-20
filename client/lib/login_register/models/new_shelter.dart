@@ -7,9 +7,22 @@ part 'new_shelter.g.dart';
 
 @JsonSerializable()
 class NewShelter extends NewUser {
-  NewShelter({
-    this.fullShelterName = '',
-  });
+  NewShelter(
+      {this.fullShelterName = '',
+      String userName = '',
+      String phoneNumber = '',
+      String dialCode = '+48',
+      String isoCode = 'PL',
+      String email = '',
+      NewAddress? address})
+      : super(
+          address: address,
+          dialCode: dialCode,
+          email: email,
+          isoCode: isoCode,
+          phoneNumber: phoneNumber,
+          userName: userName,
+        );
 
   String fullShelterName;
 
