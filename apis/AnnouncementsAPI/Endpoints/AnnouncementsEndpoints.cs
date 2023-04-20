@@ -4,11 +4,10 @@ using APIAuthCommonLibrary;
 using DatabaseContextLibrary.models;
 using FileStorageLibrary;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
 
 namespace AnnouncementsAPI.Endpoints
 {
-    public class AnnouncementsEndpoints
+    public class AnnouncementsEndpoints : Endpoints
     {
         public static async Task<IResult> GetWithFilters(
             DataContext context,
@@ -64,6 +63,22 @@ namespace AnnouncementsAPI.Endpoints
             return Results.Ok(res);
         }
 
+        public static async Task<IResult> GetForAuthorisedShelter(
+            DataContext context,
+            IStorage storage,
+            HttpContext httpContext)
+        {
+            if (!AuthorizeUser(httpContext, out var role, out var userId) || role != Role.Shelter)
+                return Results.Unauthorized();
+
+            var announcements = context.Announcements.Include(x => x.Pet)
+                .ThenInclude(x => x.Shelter).ThenInclude(x => x.Address).Where(x => x.Pet.ShelterId == userId);
+
+            var res = await announcements.Select(a => a.MapDTO()).ToListAsync();
+            foreach (var a in res) await a.Pet.AttachPhotoUrl(storage);
+
+            return Results.Ok(res);
+        }
 
         public static async Task<IResult> Post(
             DataContext context,
@@ -72,25 +87,19 @@ namespace AnnouncementsAPI.Endpoints
         {
             var newAnnouncement = announcement.Map();
 
-            var identity = httpContext.User.Identity as ClaimsIdentity;
-            var issuerClaim = identity?.GetIssuer();
-
-            if (identity is null || issuerClaim is null)
+            if (!AuthorizeUser(httpContext, out var role, out var userId) || role != Role.Shelter)
                 return Results.Unauthorized();
 
-            var shelterId = Guid.Parse(issuerClaim);
-
             var pet = await context.Pets.FindAsync(announcement.PetId);
-            
+
             if (pet == null) return Results.BadRequest("Announcement's pet doesn't exist");
-            if (pet.ShelterId != shelterId) return Results.Unauthorized();
+            if (pet.ShelterId != userId) return Results.Unauthorized();
 
             newAnnouncement.PetId = announcement.PetId;
             context.Announcements.Add(newAnnouncement);
             await context.SaveChangesAsync();
 
-            var res = new PostAnnouncementResponse() { Id = newAnnouncement.Id };
-            return Results.Ok(res);
+            return Results.Created(newAnnouncement.Id.ToString(), newAnnouncement.MapDTO());
         }
 
         public static async Task<IResult> Put(
@@ -104,14 +113,8 @@ namespace AnnouncementsAPI.Endpoints
             if (announcement is null)
                 return Results.NotFound("Announcement doesn't exist.");
 
-            var identity = httpContext.User.Identity as ClaimsIdentity;
-            var issuerClaim = identity?.GetIssuer();
-            var roleClaim = identity?.GetRole();
-
-            if (identity is null || issuerClaim is null || roleClaim is null)
+            if(!AuthorizeUser(httpContext, out var role, out var userId))
                 return Results.Unauthorized();
-
-            var shelterId = Guid.Parse(issuerClaim);
 
             Pet? announcementPet;
             if (announcementRequest.PetId != null)
@@ -124,8 +127,7 @@ namespace AnnouncementsAPI.Endpoints
             else
                 announcementPet = announcement.Pet;
 
-
-            if (roleClaim == "Shelter" && announcementPet.ShelterId != shelterId)
+            if (role == Role.Shelter && announcementPet.ShelterId != userId)
                 return Results.Unauthorized();
 
             if (announcementRequest.Title != null)

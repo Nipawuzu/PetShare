@@ -3,23 +3,17 @@ using AnnouncementsAPI.Responses;
 using APIAuthCommonLibrary;
 using FileStorageLibrary;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
 
 namespace AnnouncementsAPI.Endpoints
 {
-    public class PetEndpoints
+    public class PetEndpoints : Endpoints
     {
         public static async Task<IResult> GetAllForAuthorisedShelter(DataContext context, HttpContext httpContext)
         {
-            var identity = httpContext.User.Identity as ClaimsIdentity;
-            var issuerClaim = identity?.GetIssuer();
-
-            if (identity is null || issuerClaim is null)
+            if (!AuthorizeUser(httpContext, out _, out var userId))
                 return Results.Unauthorized();
 
-            var shelterId = Guid.Parse(issuerClaim);
-
-            var res = await context.Pets.Where(p => p.ShelterId == shelterId).ToListAsync();
+            var res = await context.Pets.Where(p => p.ShelterId == userId).Select(p => p.MapDTO()).ToListAsync();
             return Results.Ok(res);
         }
 
@@ -35,21 +29,15 @@ namespace AnnouncementsAPI.Endpoints
 
         public static async Task<IResult> Post(DataContext context, PostPetRequest petRequest, HttpContext httpContext)
         {
-            var identity = httpContext.User.Identity as ClaimsIdentity;
-            var issuerClaim = identity?.GetIssuer();
-
-            if (identity is null || issuerClaim is null)
+            if (!AuthorizeUser(httpContext, out _, out var userId))
                 return Results.Unauthorized();
 
-            var shelterId = Guid.Parse(issuerClaim);
-
             var pet = petRequest.Map();
-            pet.ShelterId = shelterId;
+            pet.ShelterId = userId;
             context.Pets.Add(pet);
             await context.SaveChangesAsync();
 
-            var res = new PostPetResponse() { Id = pet.Id };
-            return Results.Ok(res);
+            return Results.Created(pet.Id.ToString(), pet.MapDTO());
         }
 
         public static async Task<IResult> Put(DataContext context, IStorage storage, PutPetRequest petRequest, Guid petId, HttpContext httpContext)
@@ -58,19 +46,8 @@ namespace AnnouncementsAPI.Endpoints
             if (pet is null)
                 return Results.NotFound("Pet doesn't exist.");
 
-            var identity = httpContext.User.Identity as ClaimsIdentity;
-            var issuerClaim = identity?.GetIssuer();
-            var roleClaim = identity?.GetRole();
-
-            if (identity is null || issuerClaim is null || roleClaim is null)
+            if (!AuthorizeUser(httpContext, out var role, out var userId) || role == Role.Shelter && pet.ShelterId != userId)
                 return Results.Unauthorized();
-
-            if (roleClaim == "Shelter")
-            {
-                var shelterId = Guid.Parse(issuerClaim);
-                if (pet.ShelterId != shelterId)
-                    return Results.Unauthorized();
-            }
 
             if (petRequest.Name != null)
                 pet.Name = petRequest.Name;
@@ -87,7 +64,7 @@ namespace AnnouncementsAPI.Endpoints
             return Results.Ok();
         }
 
-        public static async Task<IResult> UploadPhoto(IStorage storage, HttpContext context, Guid petId, IFormFile file)
+        public static async Task<IResult> UploadPhoto(IStorage storage, Guid petId, IFormFile file)
         {
             await storage.UploadFileAsync(file.OpenReadStream(), petId.ToString());
             return Results.Ok();

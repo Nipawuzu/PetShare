@@ -42,13 +42,25 @@ extension AnnouncementsAPIMock on Dio {
     }, data: Matchers.any);
 
     dioAdapter.onPost("$url/pet", (request) {
-      var res = PostPetResponse(id: "cb849fa2-1033-4d6b-7c88-08db36d6f10f");
-      request.reply(StatusCode.OK, res.toJson());
+      request.reply(
+        StatusCode.CREATED,
+        null,
+        headers: const {
+          Headers.contentTypeHeader: [Headers.jsonContentType],
+          "location": ["cb849fa2-1033-4d6b-7c88-08db36d6f10f"]
+        },
+      );
     }, data: Matchers.any);
 
     dioAdapter.onPost("$url/announcements", (request) {
-      var res = PostPetResponse(id: "cb849fa2-1033-4d6b-7c88-08db36d6f10f");
-      request.reply(StatusCode.OK, res.toJson());
+      request.reply(
+        StatusCode.CREATED,
+        null,
+        headers: const {
+          Headers.contentTypeHeader: [Headers.jsonContentType],
+          "location": ["cb849fa2-1033-4d6b-7c88-08db36d6f10f"]
+        },
+      );
     }, data: Matchers.any);
 
     dioAdapter.onPost("$url/pet/cb849fa2-1033-4d6b-7c88-08db36d6f10f/photo",

@@ -43,6 +43,13 @@ app.MapGet("/announcements/{announcementId}", AnnouncementsEndpoints.GetById)
 .Produces(404)
 .Produces(401);
 
+app.MapGet("/shelter/announcements", AnnouncementsEndpoints.GetForAuthorisedShelter)
+.WithOpenApi()
+.RequireAuthorization("Auth")
+.WithSummary("Gets all announcements for shelter. Requires shelter role. Gets shelter id from auth claims.")
+.Produces(200)
+.Produces(401);
+
 app.MapPost("/announcements", AnnouncementsEndpoints.Post)
 .WithOpenApi()
 .RequireAuthorization("Shelter")
@@ -59,7 +66,7 @@ app.MapPut("/announcements/{announcementId}", AnnouncementsEndpoints.Put)
 .Produces(StatusCodes.Status400BadRequest)
 .Produces(StatusCodes.Status401Unauthorized);
 
-app.MapGet("/pet", PetEndpoints.GetAllForAuthorisedShelter)
+app.MapGet("/shelter/pets", PetEndpoints.GetAllForAuthorisedShelter)
 .WithOpenApi()
 .RequireAuthorization("Shelter")
 .WithSummary("Gets all pets for shelter. Requires shelter role. Gets shelter id from auth claims.")

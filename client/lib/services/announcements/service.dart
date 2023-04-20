@@ -35,8 +35,8 @@ class AnnouncementService {
       }),
     );
 
-    var res = PostPetResponse.fromJson(response.data);
-    return response.statusCode == StatusCode.OK ? res.id : "";
+    var id = response.headers.value("location");
+    return response.statusCode == StatusCode.CREATED && id != null ? id : "";
   }
 
   Future<bool> uploadPetPhoto(String petId, Uint8List photo) async {
@@ -66,8 +66,8 @@ class AnnouncementService {
       }),
     );
 
-    var res = PostAnnouncementResponse.fromJson(response.data);
-    return response.statusCode == StatusCode.OK ? res.id : "";
+    var id = response.headers.value("location");
+    return response.statusCode == StatusCode.CREATED && id != null ? id : "";
   }
 
   Future<List<Announcement>> getAnnouncements() async {
