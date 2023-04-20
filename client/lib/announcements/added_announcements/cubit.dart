@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pet_share/announcements/announcement.dart';
-import 'package:pet_share/announcements/service.dart';
+import 'package:pet_share/services/announcements/service.dart';
 
 class ListOfAnnouncementsState {}
 

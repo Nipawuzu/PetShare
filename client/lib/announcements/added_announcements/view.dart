@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pet_share/announcements/added_announcements/cubit.dart';
 import 'package:pet_share/announcements/announcement.dart';
 import 'package:pet_share/announcements/details/view.dart';
-import 'package:pet_share/announcements/service.dart';
+import 'package:pet_share/services/announcements/service.dart';
 import 'package:pet_share/common_widgets/custom_text_field.dart';
 import 'package:pet_share/common_widgets/image.dart';
 

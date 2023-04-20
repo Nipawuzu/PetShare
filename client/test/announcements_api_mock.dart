@@ -4,7 +4,7 @@ import 'package:http_status_code/http_status_code.dart';
 import 'package:pet_share/address.dart';
 import 'package:pet_share/announcements/announcement.dart';
 import 'package:pet_share/announcements/pet.dart';
-import 'package:pet_share/announcements/responses/post_pet_response.dart';
+import 'package:pet_share/services/announcements/responses/post_pet_response.dart';
 import 'package:pet_share/shelter.dart';
 
 class APIMocksProvider {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pet_share/announcements/form/view.dart';
-import 'package:pet_share/announcements/service.dart';
+import 'package:pet_share/services/announcements/service.dart';
 
 import 'announcements_api_mock.dart';
 

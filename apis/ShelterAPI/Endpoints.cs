@@ -35,8 +35,7 @@ namespace ShelterAPI
 
             context.Shelters.Add(newShelter);
             await context.SaveChangesAsync();
-            var res = new PostShelterResponse(newShelter.Id);
-            return Results.Ok(res);
+            return Results.Created(newShelter.Id.ToString(), null);
         }
 
         public static async Task<IResult> PutShelter(DataContext context, Guid shelterId, PutShelterRequest updatedShelter)
