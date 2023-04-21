@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:pet_share/announcements/announcement.dart';
+import 'package:pet_share/announcements/models/announcement.dart';
 import 'package:pet_share/utils/announcementstatus_converter.dart';
 
 part 'put_announcement.g.dart';

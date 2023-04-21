@@ -4,8 +4,8 @@ import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:pet_share/announcements/details/view.dart';
 import 'package:pet_share/common_widgets/custom_input_decoration.dart';
 import 'package:pet_share/login_register/cubit.dart';
-import 'package:pet_share/login_register/new_adopter.dart';
-import 'package:pet_share/login_register/new_shelter.dart';
+import 'package:pet_share/login_register/models/new_adopter.dart';
+import 'package:pet_share/login_register/models/new_shelter.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({

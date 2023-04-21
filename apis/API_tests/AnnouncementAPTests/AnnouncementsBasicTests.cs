@@ -1,6 +1,5 @@
 ﻿using AnnouncementsAPI;
 using AnnouncementsAPI.Requests;
-using AnnouncementsAPI.Responses;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Net;
 
@@ -9,7 +8,6 @@ namespace APIs_tests.AnnouncementAPTests
     public class AnnouncementsBasicTests : APITests<ProgramAnnouncementsAPI, DataContext>
     {
         private const string SHELTER_TOKEN = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkMDc5NmI4NS04MjYzLTQwYzMtZGQ1NC0wOGRiM2MxNWYxMDgiLCJleHAiOjE5MTYyMzkwMjIsImF1ZCI6WyJBQUEiXSwicm9sZXMiOlsiU2hlbHRlciJdfQ.isOtJ-x-QWUTmbDLlauAbIMOON46sGGOAXMGQK5tzH8";
-
 
         [Fact]
         public async void GetAllAnnouncementsAsShelter()
@@ -58,9 +56,9 @@ namespace APIs_tests.AnnouncementAPTests
             };
 
             var req = CreateRequest(HttpMethod.Post, Urls.Pets, body: postPetRequest, authToken: SHELTER_TOKEN);
-            var res = await SendRequest<PostPetResponse>(req);
+            var res = await PostRequest(req);
 
-            return res.Id;
+            return res;
         }
 
         [Fact]
@@ -76,9 +74,9 @@ namespace APIs_tests.AnnouncementAPTests
             };
 
             var req = CreateRequest(HttpMethod.Post, Urls.Announcements, body: postAnnouncementReq, authToken: SHELTER_TOKEN);
-            var res = await SendRequest<PostAnnouncementResponse>(req);
+            var res = await PostRequest(req);
 
-            return res.Id;
+            return res;
         }
 
         [Fact]
@@ -105,7 +103,7 @@ namespace APIs_tests.AnnouncementAPTests
         [Fact]
         public async void GetPetsAsShelter()
         {
-            var req = CreateRequest(HttpMethod.Get, Urls.Pets, authToken: SHELTER_TOKEN);
+            var req = CreateRequest(HttpMethod.Get, Urls.PetsForShelter, authToken: SHELTER_TOKEN);
             var res = await client.SendAsync(req);
 
             Assert.Equal(HttpStatusCode.OK, res.StatusCode);

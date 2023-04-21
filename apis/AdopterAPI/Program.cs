@@ -125,3 +125,6 @@ app.MapPut("/applications/{applicationId}/withdraw", ApplicationsEndpoints.PutAp
 .Produces(StatusCodes.Status400BadRequest);
 
 app.Run();
+
+// For testing purposes
+public partial class ProgramAdopterAPI { }

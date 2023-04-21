@@ -2,22 +2,20 @@ import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:http_status_code/http_status_code.dart';
-import 'package:pet_share/announcements/announcement.dart';
-import 'package:pet_share/announcements/new_announcement.dart';
-import 'package:pet_share/announcements/new_pet.dart';
+import 'package:pet_share/announcements/models/announcement.dart';
+import 'package:pet_share/announcements/models/new_announcement.dart';
+import 'package:pet_share/announcements/models/new_pet.dart';
 import 'package:pet_share/services/announcements/requests/post_announcement_request.dart';
 import 'package:pet_share/services/announcements/requests/post_pet_request.dart';
-import 'package:pet_share/services/announcements/responses/post_pet_response.dart';
 
 import 'requests/put_announcement.dart';
-import 'responses/post_announcement_response.dart';
 
 class AnnouncementService {
   AnnouncementService(this._dio, this._url);
 
   final Dio _dio;
   final String _url;
-  String _token = "";
+  String _token = "Bearer ";
 
   void setToken(String token) {
     _token = "Bearer $token";
@@ -39,8 +37,8 @@ class AnnouncementService {
       }),
     );
 
-    var res = PostPetResponse.fromJson(response.data);
-    return response.statusCode == StatusCode.OK ? res.id : "";
+    var id = response.headers.value("location");
+    return response.statusCode == StatusCode.CREATED && id != null ? id : "";
   }
 
   Future<bool> uploadPetPhoto(String petId, Uint8List photo) async {
@@ -70,8 +68,8 @@ class AnnouncementService {
       }),
     );
 
-    var res = PostAnnouncementResponse.fromJson(response.data);
-    return response.statusCode == StatusCode.OK ? res.id : "";
+    var id = response.headers.value("location");
+    return response.statusCode == StatusCode.CREATED && id != null ? id : "";
   }
 
   Future<List<Announcement>> getAnnouncements() async {

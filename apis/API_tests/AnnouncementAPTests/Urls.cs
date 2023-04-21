@@ -5,5 +5,6 @@ namespace APIs_tests.AnnouncementAPTests
     {
         public const string Announcements = "/announcements";
         public const string Pets = "/pet";
+        public const string PetsForShelter = "shelter/pets";
     }
 }

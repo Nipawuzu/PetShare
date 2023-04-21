@@ -4,8 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:pet_share/announcements/added_announcements/cubit.dart';
 import 'package:pet_share/announcements/added_announcements/view.dart';
-import 'package:pet_share/announcements/announcement.dart';
-import 'package:pet_share/announcements/pet.dart';
+import 'package:pet_share/announcements/models/announcement.dart';
+import 'package:pet_share/announcements/models/pet.dart';
 import 'package:pet_share/common_widgets/custom_text_field.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -208,7 +208,10 @@ class AnnouncementAndPetDetails extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.all(4.0),
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  context.read<ListOfAnnouncementsCubit>().adopt(
+                      "1ae57d7b-acfe-456f-3f70-08db3c140a81", announcement);
+                },
                 child: const BoldTextWithBasicStyle(
                   text: "Aplikuj",
                 ),

@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:http_status_code/http_status_code.dart';
-import 'package:pet_share/login_register/new_shelter.dart';
+import 'package:pet_share/login_register/models/new_shelter.dart';
 import 'package:pet_share/services/shelter/requests/post_shelter_request.dart';
 
 class ShelterService {

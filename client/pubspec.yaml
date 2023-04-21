@@ -80,6 +80,8 @@ flutter:
     - images/new_announcement.png
     - images/shelter.png
     - images/adoption.png
+    - images/success.png
+    - images/fail.png
   fonts:
     - family: Quicksand
       fonts:

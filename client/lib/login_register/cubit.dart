@@ -1,7 +1,7 @@
 import 'package:auth0_flutter/auth0_flutter.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pet_share/login_register/new_adopter.dart';
-import 'package:pet_share/login_register/new_shelter.dart';
+import 'package:pet_share/login_register/models/new_adopter.dart';
+import 'package:pet_share/login_register/models/new_shelter.dart';
 import 'package:pet_share/services/adopter/service.dart';
 import 'package:pet_share/services/announcements/service.dart';
 import 'package:pet_share/services/shelter/service.dart';
