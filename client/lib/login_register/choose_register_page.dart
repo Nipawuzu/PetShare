@@ -4,9 +4,16 @@ import 'package:pet_share/login_register/cubit.dart';
 import 'package:provider/provider.dart';
 
 class ChooseRegisterPage extends StatefulWidget {
-  const ChooseRegisterPage({super.key, this.pageNumber = 0});
+  const ChooseRegisterPage({
+    super.key,
+    this.pageNumber = 0,
+    required this.authId,
+    required this.email,
+  });
 
   final int pageNumber;
+  final String authId;
+  final String email;
   @override
   State<ChooseRegisterPage> createState() => _ChooseRegisterPageState();
 }
@@ -98,9 +105,12 @@ class _ChooseRegisterPageState extends State<ChooseRegisterPage> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: GestureDetector(
-                  onTap: () => context
-                      .read<AuthCubit>()
-                      .tryToSignUp(cardModel.type, currentPage.toInt()),
+                  onTap: () => context.read<AuthCubit>().tryToSignUp(
+                        cardModel.type,
+                        currentPage.toInt(),
+                        widget.authId,
+                        widget.email,
+                      ),
                   child: cardModel.type == RegisterType.none
                       ? Text(
                           cardModel.description,

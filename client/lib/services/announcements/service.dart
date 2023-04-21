@@ -17,7 +17,11 @@ class AnnouncementService {
 
   final Dio _dio;
   final String _url;
-  final String _token = "";
+  String _token = "";
+
+  void setToken(String token) {
+    _token = "Bearer $token";
+  }
 
   Future<String> sendPet(NewPet pet) async {
     var response = await _dio.post(

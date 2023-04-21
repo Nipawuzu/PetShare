@@ -12,10 +12,10 @@ namespace APIAuthCommonLibrary
 {
     public static class AuthEnablingExtensions
     {
-#warning do zweryfikowania po ustaleniu claimów
-        private const string SHELTER = "Shelter";
-        private const string ADMIN = "Admin";
-        private const string ADOPTER = "Adopter";
+        private const string SHELTER = "shelter";
+        private const string ADMIN = "admin";
+        private const string ADOPTER = "adopter";
+        private const string ROLE = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role";
 
         public static void AddSwaggerGenWithSecurity(this IServiceCollection services, string apiName, string apiVersion)
         {
@@ -35,7 +35,7 @@ namespace APIAuthCommonLibrary
                     In = ParameterLocation.Header,
                     Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 1safsfsdfdfd\"",
                 });
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement 
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {
                     {
                         new OpenApiSecurityScheme {
@@ -50,20 +50,17 @@ namespace APIAuthCommonLibrary
             });
         }
 
-        public static void AddCustomAuthentication(this IServiceCollection services, string secret)
+        public static void AddCustomAuthentication(this IServiceCollection services, string audience, string authority)
         {
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
              .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, c =>
              {
-#warning tym zakomentowanym będziemy się przejmować po zrobieniu Auth0
-                 //c.Authority = $"https://{builder.Configuration["Auth0:Domain"]}";
-                 c.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                 c.Audience = audience;
+                 c.Authority = authority;
+                 c.TokenValidationParameters = new TokenValidationParameters()
                  {
-                     ValidateAudience = false,
                      ValidateIssuer = false,
-                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret)),
-                     //ValidAudience = builder.Configuration["Auth0:Audience"],
-                     //ValidIssuer = $"{builder.Configuration["Auth0:Domain"]}"
+                     ValidateIssuerSigningKey = false,
                  };
              });
         }

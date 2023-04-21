@@ -8,7 +8,11 @@ class AdopterService {
 
   final Dio _dio;
   final String _url;
-  final String _token = "Bearer ";
+  String _token = "Bearer ";
+
+  void setToken(String token) {
+    _token = "Bearer $token";
+  }
 
   Future<String> sendAdopter(NewAdopter adopter) async {
     var response = await _dio.post(
