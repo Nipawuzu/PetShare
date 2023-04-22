@@ -1,22 +1,25 @@
+import 'dart:typed_data';
+
 import 'package:bottom_picker/bottom_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:pet_share/announcements/form/cubit.dart';
-import 'package:pet_share/announcements/requests/new_announcement.dart';
-import 'package:pet_share/announcements/requests/new_pet.dart';
-import 'package:pet_share/announcements/service.dart';
+import 'package:pet_share/announcements/models/new_announcement.dart';
+import 'package:pet_share/announcements/models/new_pet.dart';
+import 'package:pet_share/services/announcements/service.dart';
 
-class NewAnnoucementForm extends StatefulWidget {
-  const NewAnnoucementForm(this.announcementService, {super.key});
+class NewAnnouncementForm extends StatefulWidget {
+  const NewAnnouncementForm(this.announcementService, {super.key});
 
   final AnnouncementService announcementService;
 
   @override
-  State<NewAnnoucementForm> createState() => _NewAnnoucementFormState();
+  State<NewAnnouncementForm> createState() => _NewAnnouncementFormState();
 }
 
-class _NewAnnoucementFormState extends State<NewAnnoucementForm> {
+class _NewAnnouncementFormState extends State<NewAnnouncementForm> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -26,7 +29,7 @@ class _NewAnnoucementFormState extends State<NewAnnoucementForm> {
           if (state is PetFormState) {
             return PetFormPage(state: state);
           } else if (state is DetailsFormState) {
-            return AnnoucementFormPage(state: state);
+            return AnnouncementFormPage(state: state);
           } else if (state is SendingFormState) {
             return Scaffold(
               body: Center(
@@ -64,6 +67,36 @@ class _NewAnnoucementFormState extends State<NewAnnoucementForm> {
                 ],
               )),
             );
+          } else if (state is FormErrorState) {
+            Future.delayed(
+              const Duration(seconds: 2),
+              () => Navigator.of(context).pop(),
+            );
+
+            return Scaffold(
+              body: Center(
+                  child: Padding(
+                padding: const EdgeInsets.all(50.0),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: const [
+                    Flexible(
+                      child: Text(
+                        "Wystąpił błąd poczas próby wysłania ogłoszenia. Spróbuj ponownie później.",
+                        textScaleFactor: 1.5,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 16,
+                    ),
+                    Icon(
+                      Icons.error,
+                      color: Colors.red,
+                    )
+                  ],
+                ),
+              )),
+            );
           }
 
           return Container();
@@ -92,6 +125,7 @@ class _PetFormPageState extends State<PetFormPage> {
     _pet = widget.state.announcement.pet ?? _pet;
     _datePickerController.text =
         _formatDate(widget.state.announcement.pet?.birthday);
+    _pickedPhoto = widget.state.announcement.pet?.photo;
   }
 
   String _formatDate(DateTime? date) {
@@ -100,6 +134,7 @@ class _PetFormPageState extends State<PetFormPage> {
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
+      toolbarHeight: 64,
       leading: IconButton(
           onPressed: () => Navigator.of(context).pop(),
           icon: const Icon(Icons.close)),
@@ -114,22 +149,34 @@ class _PetFormPageState extends State<PetFormPage> {
     );
   }
 
+  Uint8List? _pickedPhoto;
+
   Widget _buildImage(BuildContext context) {
     return Center(
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-            border: Border.all(
-              color: Colors.black,
-              width: 4,
-            ),
-            borderRadius: BorderRadius.circular(20)),
-        child: InkWell(
-          onTap: () {},
-          child: const SizedBox.square(
-            dimension: 250,
-            child: Icon(
-              Icons.camera_alt_outlined,
-              size: 64,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: Colors.grey.shade200,
+          ),
+          child: InkWell(
+            onTap: () async {
+              var img = await ImagePicker().pickImage(
+                source: ImageSource.gallery,
+              );
+              _pickedPhoto = await img?.readAsBytes();
+              setState(() {});
+            },
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                  minHeight: _pickedPhoto == null ? 250 : 0,
+                  minWidth: double.maxFinite),
+              child: _pickedPhoto == null
+                  ? const Icon(
+                      Icons.camera_alt_outlined,
+                      size: 64,
+                    )
+                  : Image.memory(_pickedPhoto!),
             ),
           ),
         ),
@@ -139,6 +186,7 @@ class _PetFormPageState extends State<PetFormPage> {
 
   Widget _buildNameField(BuildContext context) {
     return TextFormField(
+      key: const Key('name'),
       initialValue: _pet.name,
       onSaved: (newValue) => _pet.name = newValue.toString(),
       decoration: InputDecoration(
@@ -159,6 +207,7 @@ class _PetFormPageState extends State<PetFormPage> {
   final TextEditingController _datePickerController = TextEditingController();
   Widget _buildBirthdayField(BuildContext context) {
     return TextFormField(
+      key: const Key('birthday'),
       validator: (value) =>
           value?.isEmpty ?? false ? "Wybierz datę urodzenia zwierzątka" : null,
       readOnly: true,
@@ -193,6 +242,7 @@ class _PetFormPageState extends State<PetFormPage> {
 
   Widget _buildSpeciesField(BuildContext context) {
     return TextFormField(
+      key: const Key('species'),
       initialValue: _pet.species,
       onSaved: (newValue) => _pet.species = newValue?.trim() ?? '',
       decoration: InputDecoration(
@@ -212,6 +262,7 @@ class _PetFormPageState extends State<PetFormPage> {
 
   Widget _buildBreedField(BuildContext context) {
     return TextFormField(
+      key: const Key('breed'),
       initialValue: _pet.breed,
       onSaved: (newValue) => _pet.breed = newValue?.trim() ?? '',
       decoration: const InputDecoration(
@@ -224,6 +275,7 @@ class _PetFormPageState extends State<PetFormPage> {
     return ConstrainedBox(
       constraints: const BoxConstraints(maxHeight: 216),
       child: TextFormField(
+        key: const Key('description'),
         initialValue: _pet.description,
         onSaved: (newValue) => _pet.description = newValue?.trim() ?? '',
         minLines: 5,
@@ -235,48 +287,52 @@ class _PetFormPageState extends State<PetFormPage> {
   }
 
   Widget _buildActionButtons(BuildContext context) {
-    return SizedBox(
-      height: 48,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          TextButton(
-              onPressed: () {
-                showModalBottomSheet(
-                  context: context,
-                  builder: (context) => _buildPetList(context),
-                );
-              },
-              child: const Center(
-                child: Text(
-                  "Wybierz z listy...",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontSize: 18,
-                      fontFamily: "Quicksand",
-                      fontWeight: FontWeight.bold),
-                ),
-              )),
-          TextButton(
-            onPressed: () {
-              if (_formKey.currentState!.validate()) {
-                _formKey.currentState!.save();
-                widget.state.announcement.pet = _pet;
-                context
-                    .read<AnnouncementFormCubit>()
-                    .createPet(widget.state.announcement);
-              }
-            },
-            child: const Text(
-              "Next",
-              style: TextStyle(
-                  fontSize: 20,
-                  fontFamily: "Quicksand",
-                  fontWeight: FontWeight.bold),
+    return BottomAppBar(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 4),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: ElevatedButton(
+                    style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(Colors.grey.shade100)),
+                    onPressed: () {
+                      showModalBottomSheet(
+                        context: context,
+                        builder: (context) => _buildPetList(context),
+                      );
+                    },
+                    child: const Text("Wybierz z listy...")),
+              ),
             ),
-          ),
-        ],
+            const SizedBox(
+              width: 16,
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: ElevatedButton(
+                  key: const Key('next'),
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      _formKey.currentState!.save();
+                      _pet.photo = _pickedPhoto;
+                      widget.state.announcement.pet = _pet;
+                      context
+                          .read<AnnouncementFormCubit>()
+                          .createPet(widget.state.announcement);
+                    }
+                  },
+                  child: const Text("Dalej"),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -289,26 +345,25 @@ class _PetFormPageState extends State<PetFormPage> {
           children: [
             _buildImage(context),
             const SizedBox(
-              height: 24,
+              height: 32,
             ),
             _buildNameField(context),
             const SizedBox(
-              height: 24,
+              height: 16,
             ),
             _buildBirthdayField(context),
             const SizedBox(
-              height: 24,
+              height: 16,
             ),
             _buildSpeciesField(context),
             const SizedBox(
-              height: 24,
+              height: 16,
             ),
             _buildBreedField(context),
             const SizedBox(
-              height: 24,
+              height: 16,
             ),
             _buildDescriptionField(context),
-            _buildActionButtons(context),
           ],
         ),
       ),
@@ -319,24 +374,33 @@ class _PetFormPageState extends State<PetFormPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _buildAppBar(context),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: _buildInputs(context),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 24),
+              child: _buildInputs(context),
+            ),
+          ),
+          _buildActionButtons(context),
+        ],
       ),
     );
   }
 }
 
-class AnnoucementFormPage extends StatefulWidget {
-  const AnnoucementFormPage({super.key, required this.state});
+class AnnouncementFormPage extends StatefulWidget {
+  const AnnouncementFormPage({super.key, required this.state});
 
   final DetailsFormState state;
 
   @override
-  State<AnnoucementFormPage> createState() => _AnnoucementFormPageState();
+  State<AnnouncementFormPage> createState() => _AnnouncementFormPageState();
 }
 
-class _AnnoucementFormPageState extends State<AnnoucementFormPage> {
+class _AnnouncementFormPageState extends State<AnnouncementFormPage> {
   final _formKey = GlobalKey<FormState>();
   late NewAnnouncement _announcement;
 
@@ -363,116 +427,124 @@ class _AnnoucementFormPageState extends State<AnnoucementFormPage> {
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
+      toolbarHeight: 64,
       titleSpacing: 0,
       title: const Text("Nowe ogłoszenie"),
     );
   }
 
   Widget _buildPetInfo() {
-    return SizedBox(
-      height: 200,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.black,
-                    width: 4,
-                  ),
-                  borderRadius: BorderRadius.circular(20)),
-              child: const Icon(
-                Icons.camera_alt_outlined,
-                size: 64,
-              ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: Colors.grey.shade200,
+            ),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(
+                  maxHeight: 250, minWidth: double.maxFinite),
+              child: _announcement.pet?.photo != null
+                  ? Image.memory(_announcement.pet!.photo!, fit: BoxFit.cover)
+                  : const Icon(
+                      Icons.camera_alt_outlined,
+                      size: 64,
+                    ),
             ),
           ),
-          const SizedBox(
-            width: 4,
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("Imię: ${_announcement.pet?.name}"),
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  Text("Gatunek: ${_announcement.pet?.species}"),
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  if (_announcement.pet?.birthday != null)
-                    Text("Wiek: ${_formatAge(_announcement.pet!.birthday!)}"),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
+        ),
+        const SizedBox(
+          height: 8,
+        ),
+        Wrap(
+          alignment: WrapAlignment.start,
+          spacing: 4.0,
+          children: [
+            if (_announcement.pet?.name.isNotEmpty ?? false)
+              Chip(label: Text("Imię: ${_announcement.pet!.name}")),
+            if (_announcement.pet?.species.isNotEmpty ?? false)
+              Chip(label: Text("Gatunek: ${_announcement.pet!.species}")),
+            if (_announcement.pet?.breed.isNotEmpty ?? false)
+              Chip(label: Text("Rasa: ${_announcement.pet!.breed}")),
+            if (_announcement.pet?.birthday != null)
+              Chip(
+                  label:
+                      Text("Wiek: ${_formatAge(_announcement.pet!.birthday!)}"))
+          ],
+        )
+      ],
     );
   }
 
   Widget _buildActionButtons(BuildContext context) {
-    return SizedBox(
-      height: 48,
-      child: Align(
-        alignment: Alignment.centerRight,
-        child: TextButton(
-            onPressed: () {
-              if (_formKey.currentState!.validate()) {
-                _formKey.currentState!.save();
-                context.read<AnnouncementFormCubit>().submit(_announcement);
-              }
-            },
-            child: const Text(
-              "Wyślij",
-              style: TextStyle(
-                  fontSize: 20,
-                  fontFamily: "Quicksand",
-                  fontWeight: FontWeight.bold),
-            )),
+    return BottomAppBar(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 4),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: ElevatedButton(
+                  key: const Key('submit'),
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      _formKey.currentState!.save();
+                      context
+                          .read<AnnouncementFormCubit>()
+                          .submit(_announcement);
+                    }
+                  },
+                  child: const Text("Dodaj ogłoszenie"),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildInputs(BuildContext context) {
-    return Form(
-      key: _formKey,
-      child: Column(
-        children: [
-          _buildPetInfo(),
-          const SizedBox(
-            height: 24,
-          ),
-          TextFormField(
-            onSaved: (newValue) => _announcement.title = newValue?.trim() ?? '',
-            decoration: const InputDecoration(
-              labelText: "Tytuł ogłoszenia",
+    return SingleChildScrollView(
+      child: Form(
+        key: _formKey,
+        child: Column(
+          children: [
+            _buildPetInfo(),
+            const SizedBox(
+              height: 24,
             ),
-          ),
-          const SizedBox(
-            height: 24,
-          ),
-          ConstrainedBox(
-            constraints: const BoxConstraints(maxHeight: 216),
-            child: TextFormField(
+            TextFormField(
+              key: const Key("title"),
               onSaved: (newValue) =>
-                  _announcement.description = newValue?.trim() ?? '',
-              minLines: 5,
-              maxLines: null,
+                  _announcement.title = newValue?.trim() ?? '',
               decoration: const InputDecoration(
-                labelText: "Opis ogłoszenia",
-                alignLabelWithHint: true,
+                labelText: "Tytuł ogłoszenia",
               ),
             ),
-          ),
-          const Spacer(),
-          _buildActionButtons(context),
-        ],
+            const SizedBox(
+              height: 24,
+            ),
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxHeight: 216),
+              child: TextFormField(
+                key: const Key('description'),
+                onSaved: (newValue) =>
+                    _announcement.description = newValue?.trim() ?? '',
+                minLines: 5,
+                maxLines: null,
+                decoration: const InputDecoration(
+                  labelText: "Opis ogłoszenia",
+                  alignLabelWithHint: true,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -486,9 +558,17 @@ class _AnnoucementFormPageState extends State<AnnoucementFormPage> {
       },
       child: Scaffold(
         appBar: _buildAppBar(context),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: _buildInputs(context),
+        body: Column(
+          children: [
+            Expanded(
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 24),
+                child: _buildInputs(context),
+              ),
+            ),
+            _buildActionButtons(context),
+          ],
         ),
       ),
     );

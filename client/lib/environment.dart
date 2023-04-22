@@ -12,4 +12,10 @@ class Environment {
 
   static String get announcementsApiUrl =>
       dotenv.env["ANNOUNCEMENTS_API_URL"] ?? "ANNOUNCEMENTS_API_URL not found!";
+
+  static String get adopterApiUrl =>
+      dotenv.env["ADOPTER_API_URL"] ?? "ADOPTER_API_URL not found!";
+
+  static String get shelterApiUrl =>
+      dotenv.env["SHELTER_API_URL"] ?? "SHELTER_API_URL not found!";
 }

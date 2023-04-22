@@ -12,6 +12,11 @@ namespace APIAuthCommonLibrary
 {
     public static class AuthEnablingExtensions
     {
+#warning do zweryfikowania po ustaleniu claimów
+        private const string SHELTER = "Shelter";
+        private const string ADMIN = "Admin";
+        private const string ADOPTER = "Adopter";
+
         public static void AddSwaggerGenWithSecurity(this IServiceCollection services, string apiName, string apiVersion)
         {
             services.AddSwaggerGen(c =>
@@ -71,13 +76,19 @@ namespace APIAuthCommonLibrary
                     RequireAuthenticatedUser());
                 o.AddPolicy("Shelter", p => p.
                     RequireAuthenticatedUser().
-                    RequireRole("Shelter"));
+                    RequireRole(SHELTER));
                 o.AddPolicy("ShelterOrAdmin", p => p.
                     RequireAuthenticatedUser().
-                    RequireRole("Shelter", "Admin"));
+                    RequireRole(SHELTER, ADMIN));
                 o.AddPolicy("Admin", p => p.
                     RequireAuthenticatedUser().
-                    RequireRole("Admin"));
+                    RequireRole(ADMIN));
+                o.AddPolicy("Adopter", p => p.
+                    RequireAuthenticatedUser().
+                    RequireRole(ADOPTER));
+                o.AddPolicy("AdopterOrAdmin", p => p.
+                    RequireAuthenticatedUser().
+                    RequireRole(ADOPTER, ADMIN));
             });
         }
     }

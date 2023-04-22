@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pet_share/announcements/pet.dart';
-import 'package:pet_share/announcements/requests/new_announcement.dart';
-import 'package:pet_share/announcements/requests/new_pet.dart';
-import 'package:pet_share/announcements/service.dart';
+import 'package:pet_share/announcements/models/new_announcement.dart';
+import 'package:pet_share/announcements/models/new_pet.dart';
+import 'package:pet_share/announcements/models/pet.dart';
+import 'package:pet_share/services/announcements/service.dart';
 
 class AnnouncementFormState {}
 
@@ -21,6 +21,8 @@ class DetailsFormState extends AnnouncementFormState {
 class SendingFormState extends AnnouncementFormState {}
 
 class FormSentState extends AnnouncementFormState {}
+
+class FormErrorState extends AnnouncementFormState {}
 
 class AnnouncementFormCubit extends Cubit<AnnouncementFormState> {
   AnnouncementFormCubit(this._service)
@@ -50,16 +52,25 @@ class AnnouncementFormCubit extends Cubit<AnnouncementFormState> {
       breed: pet.breed,
       description: pet.description,
       name: pet.name,
-      photo: pet.photo,
       species: pet.species,
     );
     emit(DetailsFormState(announcement: announcement));
   }
 
-  void submit(NewAnnouncement announcement) {
-    _service
-        .sendAnnouncement(announcement)
-        .whenComplete(() => emit(FormSentState()));
+  void submit(NewAnnouncement announcement) async {
     emit(SendingFormState());
+
+    try {
+      var petId = await _service.sendPet(announcement.pet!);
+      announcement.petId = petId;
+      if (announcement.pet!.photo != null) {
+        await _service.uploadPetPhoto(petId, announcement.pet!.photo!);
+      }
+      await _service
+          .sendAnnouncement(announcement)
+          .whenComplete(() => emit(FormSentState()));
+    } catch (e) {
+      emit(FormErrorState());
+    }
   }
 }

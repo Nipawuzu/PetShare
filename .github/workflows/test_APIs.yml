@@ -1,0 +1,34 @@
+name: Test dotnet APIs
+
+on:
+  workflow_call:
+    inputs:
+      path_to_project:
+        default: apis/
+        type: string
+
+jobs:
+  test_apis:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.path_to_project }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '7.0.x'
+      - name: Install dependencies
+        run: dotnet restore
+      - name: Secrets set up
+        uses: ./.github/actions/set_up_apis_secrets
+        with:
+          google_cloud_bucket_name: ${{ secrets.GOOGLE_CLOUD_BUCKET_NAME }}
+          google_cloud_secret: ${{ secrets.GOOGLE_CLOUD_SECRET }}
+      - name: Build APIs
+        run: dotnet build --no-restore Backend.sln
+      - name: Test APIs
+        run: dotnet test --no-restore --verbosity normal

@@ -1,10 +1,12 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:pet_share/announcements/added_announcements/cubit.dart';
 import 'package:pet_share/announcements/added_announcements/view.dart';
-import 'package:pet_share/announcements/announcement.dart';
-import 'package:pet_share/announcements/pet.dart';
+import 'package:pet_share/announcements/models/announcement.dart';
+import 'package:pet_share/announcements/models/pet.dart';
+import 'package:pet_share/common_widgets/custom_text_field.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AnnouncementAndPetDetails extends StatelessWidget {
@@ -20,7 +22,7 @@ class AnnouncementAndPetDetails extends StatelessWidget {
         _buildPopUpMenuButton(context),
       ],
       titleSpacing: 0,
-      title: const Text('Wybrane ogłoszenie'),
+      title: const TextWithBasicStyle(text: 'Wybrane ogłoszenie'),
     );
   }
 
@@ -29,11 +31,8 @@ class AnnouncementAndPetDetails extends StatelessWidget {
       itemBuilder: (context) => [
         const PopupMenuItem<int>(
           value: 0,
-          child: Text(
-            "Usuń ogłoszenie",
-            style: TextStyle(
-              fontFamily: "Quicksand",
-            ),
+          child: TextWithBasicStyle(
+            text: "Usuń ogłoszenie",
           ),
         ),
       ],
@@ -48,13 +47,10 @@ class AnnouncementAndPetDetails extends StatelessWidget {
     showDialog<bool>(
       context: context,
       builder: (BuildContext context) => AlertDialog(
-        content: const Text(
-          'Czy na pewno chcesz usunąć to ogłoszenie?',
+        content: const TextWithBasicStyle(
+          text: 'Czy na pewno chcesz usunąć to ogłoszenie?',
           textScaleFactor: 1.2,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontFamily: "Quicksand",
-          ),
+          align: TextAlign.center,
         ),
         actions: <Widget>[
           Row(
@@ -68,8 +64,9 @@ class AnnouncementAndPetDetails extends StatelessWidget {
     ).then((value) => {
           if (value != null && value)
             {
-              announcement.status = AnnouncementStatus.removed,
-              context.read<ListOfAnnouncementsCubit>().goBack(),
+              context
+                  .read<ListOfAnnouncementsCubit>()
+                  .deleteAnnouncement(announcement),
             }
         });
   }
@@ -79,12 +76,9 @@ class AnnouncementAndPetDetails extends StatelessWidget {
     return Expanded(
       child: TextButton(
         onPressed: () => {Navigator.pop(context, doesDelete)},
-        child: Text(
-          text,
+        child: TextWithBasicStyle(
+          text: text,
           textScaleFactor: 1.2,
-          style: const TextStyle(
-            fontFamily: "Quicksand",
-          ),
         ),
       ),
     );
@@ -98,6 +92,23 @@ class AnnouncementAndPetDetails extends StatelessWidget {
           PetDetails(pet: announcement.pet),
           AnnouncementDetails(announcement: announcement),
         ],
+      ),
+    );
+  }
+
+  Widget _buildAddress(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(4.0),
+        child: TextWithBasicStyle(
+          // ignore: prefer_interpolation_to_compose_strings, prefer_adjacent_string_concatenation
+          text: "ul. ${announcement.pet.shelter.address.street}, ${announcement.pet.shelter.address.postalCode} " +
+              "${announcement.pet.shelter.address.city}\n ${announcement.pet.shelter.address.province}, " +
+              // ignore: unnecessary_string_interpolations
+              "${announcement.pet.shelter.address.country}",
+          textScaleFactor: 1.2,
+          align: TextAlign.center,
+        ),
       ),
     );
   }
@@ -120,13 +131,11 @@ class AnnouncementAndPetDetails extends StatelessWidget {
         Center(
           child: Padding(
             padding: const EdgeInsets.all(4.0),
-            child: Text(
-              "Skontaktuj się ze schroniskiem ${announcement.shelter.fullShelterName}",
+            child: TextWithBasicStyle(
+              text:
+                  "Skontaktuj się ze schroniskiem ${announcement.pet.shelter.fullShelterName}",
               textScaleFactor: 1.3,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontFamily: "Quicksand",
-              ),
+              align: TextAlign.center,
             ),
           ),
         ),
@@ -138,22 +147,20 @@ class AnnouncementAndPetDetails extends StatelessWidget {
                 "Zadzwoń",
                 Icons.phone,
                 () => CallUtils.openDialer(
-                    announcement.shelter.phoneNumber, context)),
+                    announcement.pet.shelter.phoneNumber, context)),
             _buildContactButton(
                 context,
                 "Napisz maila",
                 Icons.email,
                 () => CallUtils.openDialerForEmail(
-                    announcement.shelter.email, context)),
+                    announcement.pet.shelter.email, context)),
           ],
         ),
+        _buildAddress(context),
         TextButton(
-          child: const Text(
-            'Zamknij',
+          child: const TextWithBasicStyle(
+            text: "Zamknij",
             textScaleFactor: 1.2,
-            style: TextStyle(
-              fontFamily: "Quicksand",
-            ),
           ),
           onPressed: () => Navigator.pop(context),
         ),
@@ -167,15 +174,11 @@ class AnnouncementAndPetDetails extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ElevatedButton.icon(
-          onPressed: onPressed as void Function()?,
-          icon: Icon(icon),
-          label: Text(
-            text,
-            style: const TextStyle(
-              fontFamily: "Quicksand",
-            ),
-          ),
-        ),
+            onPressed: onPressed as void Function()?,
+            icon: Icon(icon),
+            label: TextWithBasicStyle(
+              text: text,
+            )),
       ),
     );
   }
@@ -195,25 +198,26 @@ class AnnouncementAndPetDetails extends StatelessWidget {
                     builder: (context) => _buildContactList(context),
                   );
                 },
-                child: const Text(
-                  "Kontakt",
-                  style: TextStyle(
-                      fontFamily: "Quicksand", fontWeight: FontWeight.bold),
+                child: const BoldTextWithBasicStyle(
+                  text: "Kontakt",
                 ),
               ),
             ),
           ),
           Expanded(
-              child: Padding(
-            padding: const EdgeInsets.all(4.0),
-            child: ElevatedButton(
-                onPressed: () {},
-                child: const Text(
-                  "Aplikuj",
-                  style: TextStyle(
-                      fontFamily: "Quicksand", fontWeight: FontWeight.bold),
-                )),
-          ))
+            child: Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: ElevatedButton(
+                onPressed: () {
+                  context.read<ListOfAnnouncementsCubit>().adopt(
+                      "1ae57d7b-acfe-456f-3f70-08db3c140a81", announcement);
+                },
+                child: const BoldTextWithBasicStyle(
+                  text: "Aplikuj",
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -304,7 +308,7 @@ class AnnouncementDetails extends StatelessWidget {
         ),
         CustomTextField(
           firstText: "Schronisko: ",
-          secondText: announcement.shelter.fullShelterName,
+          secondText: announcement.pet.shelter.fullShelterName,
           isFirstTextInBold: true,
         ),
         CustomTextField(
@@ -331,13 +335,18 @@ class PetDetails extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: ImageWidget(
-            size: 200,
-            image: pet.photo != null ? Image.memory(pet.photo!) : null,
+        if (pet.photoUrl != null)
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Center(
+              child: SizedBox(
+                height: 200,
+                child: CachedNetworkImage(
+                  imageUrl: pet.photoUrl!,
+                ),
+              ),
+            ),
           ),
-        ),
         const Text(
           "Dane zwierzątka: ",
           style: TextStyle(
@@ -376,67 +385,41 @@ class PetDetails extends StatelessWidget {
   }
 }
 
-class CustomTextField extends StatelessWidget {
-  const CustomTextField({
-    super.key,
-    required this.firstText,
-    required this.secondText,
-    this.isFirstTextInBold = false,
-    this.secondTextColor = Colors.black,
-  });
-  final String firstText, secondText;
-  final bool isFirstTextInBold;
-  final Color secondTextColor;
+class TextWithBasicStyle extends StatelessWidget {
+  const TextWithBasicStyle(
+      {super.key, required this.text, this.textScaleFactor = 1.0, this.align});
 
+  final String text;
+  final double textScaleFactor;
+  final TextAlign? align;
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(4.0),
-      child: Text.rich(TextSpan(
-          text: firstText,
-          style: TextStyle(
-            fontFamily: "Quicksand",
-            fontSize: 15,
-            fontWeight: isFirstTextInBold ? FontWeight.bold : FontWeight.normal,
-          ),
-          children: [
-            TextSpan(
-              text: secondText,
-              style: TextStyle(
-                fontFamily: "Quicksand",
-                fontSize: 15,
-                color: secondTextColor,
-                fontWeight: FontWeight.normal,
-              ),
-            ),
-          ])),
+    return Text(
+      text,
+      textScaleFactor: textScaleFactor,
+      textAlign: align,
+      style: const TextStyle(
+        fontFamily: "Quicksand",
+      ),
     );
   }
 }
 
-class ImageWidget extends StatelessWidget {
-  const ImageWidget({super.key, required this.size, required this.image});
+class BoldTextWithBasicStyle extends StatelessWidget {
+  const BoldTextWithBasicStyle(
+      {super.key, required this.text, this.textScaleFactor = 1.0});
 
-  final double size;
-  final Image? image;
+  final String text;
+  final double textScaleFactor;
+
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-            border: Border.all(
-              color: Colors.black,
-              width: 3,
-            ),
-            borderRadius: BorderRadius.circular(20)),
-        child: SizedBox.square(
-          dimension: size,
-          child: image ??
-              const Icon(
-                Icons.camera_alt_outlined,
-                size: 64,
-              ),
-        ),
+    return Text(
+      text,
+      textScaleFactor: textScaleFactor,
+      style: const TextStyle(
+        fontFamily: "Quicksand",
+        fontWeight: FontWeight.bold,
       ),
     );
   }

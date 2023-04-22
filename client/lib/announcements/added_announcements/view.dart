@@ -1,35 +1,78 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pet_share/announcements/added_announcements/after_adoption_page.dart';
 import 'package:pet_share/announcements/added_announcements/cubit.dart';
-import 'package:pet_share/announcements/announcement.dart';
+import 'package:pet_share/announcements/models/announcement.dart';
 import 'package:pet_share/announcements/details/view.dart';
+import 'package:pet_share/services/adopter/service.dart';
+import 'package:pet_share/services/announcements/service.dart';
+import 'package:pet_share/common_widgets/custom_text_field.dart';
+import 'package:pet_share/common_widgets/image.dart';
 
 class AddedAnnouncements extends StatefulWidget {
-  const AddedAnnouncements({super.key, required this.announcements});
-  final List<Announcement> announcements;
+  const AddedAnnouncements({
+    super.key,
+    required this.announcementService,
+    required this.adopterService,
+  });
+  final AnnouncementService announcementService;
+  final AdopterService adopterService;
 
   @override
   State<AddedAnnouncements> createState() => _AddedAnnouncementsState();
 }
 
 class _AddedAnnouncementsState extends State<AddedAnnouncements> {
+  late List<Announcement> announcements;
+
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => ListOfAnnouncementsCubit(),
-      child: BlocBuilder<ListOfAnnouncementsCubit, ListOfAnnouncementsState>(
-        builder: (context, state) {
-          if (state is ListViewState) {
-            return AddedAnnouncementsList(
-              announcements: widget.announcements,
+    return FutureBuilder(
+        future: widget.announcementService.getAnnouncements(),
+        builder: (((context, snapshot) {
+          if (snapshot.hasData) {
+            announcements = snapshot.data!;
+            return BlocProvider(
+              create: (_) => ListOfAnnouncementsCubit(
+                  widget.announcementService, widget.adopterService),
+              child: BlocBuilder<ListOfAnnouncementsCubit,
+                  ListOfAnnouncementsState>(
+                builder: (context, state) {
+                  if (state is ListViewState) {
+                    return AddedAnnouncementsList(
+                      announcements: announcements,
+                    );
+                  } else if (state is AnnouncementDetailsState) {
+                    return AnnouncementAndPetDetails(
+                        announcement: state.announcement);
+                  } else if (state is AfterAdoptionState) {
+                    return AfterAdoptionPage(
+                      message: state.message,
+                      suceed: state.success,
+                    );
+                  }
+                  return Container();
+                },
+              ),
             );
-          } else if (state is AnnouncementDetailsState) {
-            return AnnouncementAndPetDetails(announcement: state.announcement);
+          } else if (snapshot.hasError) {
+            return Scaffold(
+              body: Center(
+                child: TextWithBasicStyle(
+                  text: snapshot.error.toString(),
+                  align: TextAlign.center,
+                ),
+              ),
+            );
           }
-          return Container();
-        },
-      ),
-    );
+          return const Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(
+                color: Colors.orange,
+              ),
+            ),
+          );
+        })));
   }
 }
 
@@ -110,9 +153,7 @@ class AnnouncementTile extends StatelessWidget {
                       padding: const EdgeInsets.all(8.0),
                       child: ImageWidget(
                         size: 150,
-                        image: announcement.pet.photo != null
-                            ? Image.memory(announcement.pet.photo!)
-                            : null,
+                        image: announcement.pet.photoUrl,
                       ),
                     ),
                     Flexible(
@@ -121,7 +162,8 @@ class AnnouncementTile extends StatelessWidget {
                         children: [
                           CustomTextField(
                             firstText: "Schronisko: ",
-                            secondText: announcement.shelter.fullShelterName,
+                            secondText:
+                                announcement.pet.shelter.fullShelterName,
                             isFirstTextInBold: true,
                           ),
                           CustomTextField(
