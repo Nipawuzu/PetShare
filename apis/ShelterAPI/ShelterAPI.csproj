@@ -18,7 +18,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\APIAuthCommonLibrary\APIAuthCommonLibrary.csproj" />
+    <ProjectReference Include="..\CommonDTO\CommonDTOLibrary.csproj" />
     <ProjectReference Include="..\DatabaseContextLibrary\DatabaseContextLibrary.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Responses\" />
   </ItemGroup>
 
 </Project>

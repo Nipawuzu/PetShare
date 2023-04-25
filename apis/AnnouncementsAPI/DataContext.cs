@@ -12,5 +12,6 @@ namespace AnnouncementsAPI
         public DbSet<Announcement> Announcements => Set<Announcement>();
         public DbSet<Pet> Pets => Set<Pet>();
         public DbSet<Shelter> Shelters => Set<Shelter>();
+        public DbSet<Address> Addresses => Set<Address>();
     }
 }

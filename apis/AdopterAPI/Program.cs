@@ -1,13 +1,8 @@
 using AdopterAPI.Endpoints;
 using AdopterAPI;
-using AdopterAPI.Requests;
 using APIAuthCommonLibrary;
-using DatabaseContextLibrary.models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Net.Http;
-using System.Security.Claims;
+using CommonDTOLibrary.Models;
 
 const string ConnectionString = "Server=tcp:petshareserver2.database.windows.net,1433;Initial Catalog=PetShareDatabase;Persist Security Info=False;User ID=azureuser;Password=kotysathebest123!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
 
@@ -38,14 +33,14 @@ app.MapGet("/adopter", AdopterEndpoints.GetAdopters)
 .WithOpenApi()
 .RequireAuthorization("Admin")
 .WithSummary("Get all adopters. Requires admin role.")
-.Produces(StatusCodes.Status200OK)
+.Produces(StatusCodes.Status200OK, typeof(AdopterDTO[]))
 .Produces(StatusCodes.Status401Unauthorized);
 
 app.MapGet("/adopter/{adopterId}", AdopterEndpoints.GetAdopter)
 .WithOpenApi()
 .RequireAuthorization("AdopterOrAdmin")
 .WithSummary("Get adopter by id. Requires admin role (any adopter) or adopter role (only matching id).")
-.Produces(StatusCodes.Status200OK)
+.Produces(StatusCodes.Status200OK, typeof(AdopterDTO))
 .Produces(StatusCodes.Status401Unauthorized)
 .Produces(StatusCodes.Status404NotFound);
 
@@ -67,7 +62,7 @@ app.MapGet("/adopter/{adopterId}/isVerified", AdopterEndpoints.GetAdopterVerifie
 .WithOpenApi()
 .RequireAuthorization("Shelter")
 .WithSummary("Gets info if specified adopter is verified by shelter provided in token. Requires shelter role.")
-.Produces(StatusCodes.Status200OK)
+.Produces(StatusCodes.Status200OK, typeof(bool))
 .Produces(StatusCodes.Status401Unauthorized);
 
 app.MapPut("/adopter/{adopterId}/verify", AdopterEndpoints.PutAdopterVerified)
@@ -82,7 +77,7 @@ app.MapGet("/applications", ApplicationsEndpoints.GetApplications)
 .WithOpenApi()
 .RequireAuthorization("Auth")
 .WithSummary("Gets all applications. Requires any role. For shelter, applications are filtered only for that shelter. For adopter, applications are filtered only for that adopter. Admin gets them all.")
-.Produces(StatusCodes.Status200OK)
+.Produces(StatusCodes.Status200OK, typeof(ApplicationDTO[]))
 .Produces(StatusCodes.Status401Unauthorized)
 .Produces(StatusCodes.Status400BadRequest);
 
@@ -90,7 +85,7 @@ app.MapGet("/applications/{announcementId}", ApplicationsEndpoints.GetApplicatio
 .WithOpenApi()
 .RequireAuthorization("Shelter")
 .WithSummary("Gets application for specified announcement. Requires shelter role matching with announcement's shelter.")
-.Produces(StatusCodes.Status200OK)
+.Produces(StatusCodes.Status200OK, typeof(ApplicationDTO[]))
 .Produces(StatusCodes.Status401Unauthorized);
 
 app.MapPost("/applications", ApplicationsEndpoints.PostApplication)

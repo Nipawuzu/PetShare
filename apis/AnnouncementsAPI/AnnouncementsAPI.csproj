@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\APIAuthCommonLibrary\APIAuthCommonLibrary.csproj" />
+    <ProjectReference Include="..\CommonDTO\CommonDTOLibrary.csproj" />
     <ProjectReference Include="..\DatabaseContextLibrary\DatabaseContextLibrary.csproj" />
     <ProjectReference Include="..\FileStorageService\FileStorageService.csproj" />
   </ItemGroup>

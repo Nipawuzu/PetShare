@@ -1,5 +1,4 @@
-﻿using AnnouncementsAPI.Responses;
-using Microsoft.AspNetCore.Mvc.Testing;
+﻿using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net;
@@ -32,6 +31,20 @@ namespace APIs_tests
                    }));
 
             client = application.CreateClient();
+            MockServices();
+        }
+
+        private void MockServices()
+        {
+            using (var scope = application.Services.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetService<DataContext>();
+                if(dbContext != null) MockDatabase(dbContext);
+            }
+        }
+
+        protected virtual void MockDatabase(DataContext context)
+        {
         }
 
         protected HttpRequestMessage CreateRequest(HttpMethod method, string url, object? body = null, string? authToken = null)
