@@ -22,7 +22,6 @@ namespace CommonDTOLibrary.Mappers
         {
             return new ApplicationDTO()
             {
-                AdopterId = application.AdopterId,
                 Announcement = application.Announcement?.MapDTO(),
                 Adopter = application.Adopter?.MapDTO(),
                 AnnouncementId = application.AnnouncementId,

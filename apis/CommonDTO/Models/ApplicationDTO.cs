@@ -7,7 +7,6 @@
         public DateTime? LastUpdateDate { get; set; }
         public Guid AnnouncementId { get; set; }
         public virtual AnnouncementDTO? Announcement { get; set; }
-        public Guid AdopterId { get; set; }
         public virtual AdopterDTO? Adopter { get; set; }
         public ApplicationStatusDTO ApplicationStatus { get; set; }
     }
