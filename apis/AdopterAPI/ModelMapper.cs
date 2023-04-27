@@ -35,7 +35,6 @@ namespace AdopterAPI
         {
             return new Application()
             {
-                AdopterId = applicationRequest.AdopterId.GetValueOrDefault(),
                 AnnouncementId = applicationRequest.AnnouncementId.GetValueOrDefault(),
                 CreationDate = DateTime.Now,
                 ApplicationStatus = ApplicationStatus.Created,

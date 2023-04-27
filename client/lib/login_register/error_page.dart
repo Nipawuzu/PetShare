@@ -8,13 +8,9 @@ class ErrorPage extends StatelessWidget {
   const ErrorPage({
     super.key,
     required this.error,
-    required this.authId,
-    required this.email,
   });
 
   final String error;
-  final String authId;
-  final String email;
 
   @override
   Widget build(BuildContext context) {
@@ -29,10 +25,7 @@ class ErrorPage extends StatelessWidget {
         ),
         TextButton(
             onPressed: () =>
-                context.read<AuthCubit>().goBackToChooseRegisterType(
-                      authId,
-                      email,
-                    ),
+                context.read<AuthCubit>().goBackToChooseRegisterType(),
             child: const TextWithBasicStyle(
               text: "Wróc do wyboru roli w systemie",
               align: TextAlign.center,

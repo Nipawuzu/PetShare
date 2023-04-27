@@ -38,23 +38,15 @@ class AuthCubit extends Cubit<AuthState> {
         case "unassigned":
           emit(ChooseRegisterTypeState(
             pageNumber: pageNumber,
-            authId: credentials.user.sub,
-            email: credentials.user.email ?? "",
           ));
           break;
         default:
-          emit(ErrorState(
-            error: 'Unexpected role: $role',
-            authId: credentials.user.sub,
-            email: credentials.user.email ?? "",
-          ));
+          emit(ErrorState(error: 'Unexpected role: $role'));
           break;
       }
     } catch (e) {
       emit(ErrorState(
         error: e.toString(),
-        authId: "",
-        email: "",
       ));
     }
   }
@@ -67,30 +59,22 @@ class AuthCubit extends Cubit<AuthState> {
     emit(const SignedOutState());
   }
 
-  Future<void> goBackToChooseRegisterType(
-    String authId,
-    String email,
-  ) async {
+  Future<void> goBackToChooseRegisterType() async {
     emit(ChooseRegisterTypeState(
       pageNumber: pageNumber,
-      authId: authId,
-      email: email,
     ));
   }
 
   Future<void> goBackToUserInformationPage(
     RegisterType type,
     NewUser user,
-    String authId,
-    String email,
   ) async {
     switch (type) {
       case RegisterType.adopter:
         if (user is NewAdopter) {
           emit(RegisterAsAdopterState(
             adopter: user,
-            authId: authId,
-            email: email,
+            email: authService.loggedInUser!.user.email ?? "",
           ));
         }
         break;
@@ -98,16 +82,13 @@ class AuthCubit extends Cubit<AuthState> {
         if (user is NewShelter) {
           emit(RegisterAsShelterState(
             shelter: user,
-            authId: authId,
-            email: email,
+            email: authService.loggedInUser!.user.email ?? "",
           ));
         }
         break;
       case RegisterType.none:
         emit(ChooseRegisterTypeState(
           pageNumber: pageNumber,
-          authId: authId,
-          email: email,
         ));
         break;
     }
@@ -116,36 +97,28 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> goToAddressPage(
     RegisterType type,
     NewUser user,
-    String authId,
-    String email,
   ) async {
     emit(AddressPageState(
       type: type,
       user: user,
-      authId: authId,
-      email: email,
     ));
   }
 
   Future<void> tryToSignUp(
     RegisterType type,
     int pageNumber,
-    String authId,
-    String email,
   ) async {
     switch (type) {
       case RegisterType.adopter:
         emit(RegisterAsAdopterState(
           adopter: NewAdopter(),
-          authId: authId,
-          email: email,
+          email: authService.loggedInUser!.user.email ?? "",
         ));
         break;
       case RegisterType.shelter:
         emit(RegisterAsShelterState(
           shelter: NewShelter(),
-          authId: authId,
-          email: email,
+          email: authService.loggedInUser!.user.email ?? "",
         ));
         break;
       case RegisterType.none:
@@ -154,14 +127,14 @@ class AuthCubit extends Cubit<AuthState> {
     this.pageNumber = pageNumber;
   }
 
-  Future<void> signUp(NewUser user, String authId) async {
+  Future<void> signUp(NewUser user) async {
     emit(const SigningInState());
     if (user is NewAdopter) {
       var id = await adopterService.sendAdopter(user);
       if (id.isNotEmpty) {
         try {
           await authService.addMetadataToUser(
-            authId,
+            authService.loggedInUser!.user.sub,
             "adopter",
             id,
           );
@@ -172,8 +145,6 @@ class AuthCubit extends Cubit<AuthState> {
         } on Exception catch (e) {
           emit(ErrorState(
             error: e.toString(),
-            authId: "",
-            email: "",
           ));
           return;
         }
@@ -183,7 +154,7 @@ class AuthCubit extends Cubit<AuthState> {
       if (id.isNotEmpty) {
         try {
           await authService.addMetadataToUser(
-            authId,
+            authService.loggedInUser!.user.sub,
             "shelter",
             id,
           );
@@ -194,8 +165,6 @@ class AuthCubit extends Cubit<AuthState> {
         } on Exception catch (e) {
           emit(ErrorState(
             error: e.toString(),
-            authId: "",
-            email: "",
           ));
           return;
         }
@@ -205,8 +174,6 @@ class AuthCubit extends Cubit<AuthState> {
     emit(
       const ErrorState(
         error: "Coś poszło nie tak. Spróbuj ponownie później",
-        authId: "",
-        email: "",
       ),
     );
   }
@@ -234,24 +201,18 @@ class SignedOutState extends AuthState {
 class ChooseRegisterTypeState extends AuthState {
   const ChooseRegisterTypeState({
     required this.pageNumber,
-    required this.authId,
-    required this.email,
   });
 
   final int pageNumber;
-  final String authId;
-  final String email;
 }
 
 class RegisterAsAdopterState extends AuthState {
   const RegisterAsAdopterState({
     error,
     required this.adopter,
-    required this.authId,
     required this.email,
   });
   final NewAdopter adopter;
-  final String authId;
   final String email;
 }
 
@@ -259,11 +220,9 @@ class RegisterAsShelterState extends AuthState {
   const RegisterAsShelterState({
     error,
     required this.shelter,
-    required this.authId,
     required this.email,
   });
   final NewShelter shelter;
-  final String authId;
   final String email;
 }
 
@@ -272,13 +231,9 @@ class AddressPageState extends AuthState {
     error,
     required this.type,
     required this.user,
-    required this.authId,
-    required this.email,
   });
   final RegisterType type;
   final NewUser user;
-  final String authId;
-  final String email;
 }
 
 class SigningInState extends AuthState {
@@ -288,13 +243,9 @@ class SigningInState extends AuthState {
 class ErrorState extends AuthState {
   const ErrorState({
     required this.error,
-    required this.authId,
-    required this.email,
   });
 
   final String error;
-  final String authId;
-  final String email;
 }
 
 enum RegisterType {

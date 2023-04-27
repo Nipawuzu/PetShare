@@ -21,9 +21,7 @@ class AnnouncementDetailsState extends ListOfAnnouncementsState {
 
 class ListOfAnnouncementsCubit extends Cubit<ListOfAnnouncementsState> {
   ListOfAnnouncementsCubit(this._announcementService, this._adopterService)
-      : super(AfterAdoptionState(
-            "Twój wniosek adopcyjny został przekazany do weryfikacji. Dziękujemy za zaufanie!",
-            false));
+      : super(ListViewState());
 
   final AnnouncementService _announcementService;
   final AdopterService _adopterService;

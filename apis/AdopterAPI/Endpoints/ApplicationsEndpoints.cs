@@ -61,10 +61,11 @@ namespace AdopterAPI.Endpoints
 
             var adopterId = Guid.Parse(issuerClaim);
 
-            if (adopterId != application.AdopterId)
-                return Results.Unauthorized();
+            if (!dbContext.Adopters.Any(adopter => adopter.Id == adopterId)) 
+                return Results.NotFound();
 
             var newApplication = application.Map();
+            newApplication.AdopterId = adopterId;
 
             dbContext.Applications.Add(newApplication);
             await dbContext.SaveChangesAsync();

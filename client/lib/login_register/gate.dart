@@ -29,29 +29,23 @@ class AuthGate extends StatelessWidget {
           } else if (state is ChooseRegisterTypeState) {
             return ChooseRegisterPage(
               pageNumber: state.pageNumber,
-              authId: state.authId,
-              email: state.email,
             );
           } else if (state is RegisterAsAdopterState) {
             return RegisterScreen(
               type: RegisterType.adopter,
               email: state.email,
               user: state.adopter,
-              authId: state.authId,
             );
           } else if (state is RegisterAsShelterState) {
             return RegisterScreen(
               type: RegisterType.shelter,
               email: state.email,
               user: state.shelter,
-              authId: state.authId,
             );
           } else if (state is AddressPageState) {
             return AddressFormPage(
               type: state.type,
               user: state.user,
-              authId: state.authId,
-              email: state.email,
             );
           } else if (state is SigningInState) {
             return const Center(
@@ -62,8 +56,6 @@ class AuthGate extends StatelessWidget {
           } else if (state is ErrorState) {
             return ErrorPage(
               error: state.error,
-              authId: state.authId,
-              email: state.email,
             );
           } else {
             return const SizedBox();

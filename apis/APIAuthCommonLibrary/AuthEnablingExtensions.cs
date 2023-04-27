@@ -82,7 +82,8 @@ namespace APIAuthCommonLibrary
                     RequireRole(ADMIN));
                 o.AddPolicy("Adopter", p => p.
                     RequireAuthenticatedUser().
-                    RequireRole(ADOPTER));
+                    RequireClaim(ROLE, ADOPTER));
+                    //RequireRole(ADOPTER));
                 o.AddPolicy("AdopterOrAdmin", p => p.
                     RequireAuthenticatedUser().
                     RequireRole(ADOPTER, ADMIN));

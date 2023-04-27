@@ -13,13 +13,11 @@ class RegisterScreen extends StatefulWidget {
     required this.type,
     required this.email,
     required this.user,
-    required this.authId,
   });
 
   final RegisterType type;
   final String email;
   final NewUser user;
-  final String authId;
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
@@ -47,10 +45,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
       leading: IconButton(
-          onPressed: () => context.read<AuthCubit>().goBackToChooseRegisterType(
-                widget.authId,
-                widget.email,
-              ),
+          onPressed: () =>
+              context.read<AuthCubit>().goBackToChooseRegisterType(),
           icon: const Icon(Icons.arrow_back)),
       titleSpacing: 0,
       title: TextWithBasicStyle(
@@ -192,8 +188,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
               context.read<AuthCubit>().goToAddressPage(
                     widget.type,
                     _user,
-                    widget.authId,
-                    widget.email,
                   );
             }
           },
@@ -213,10 +207,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        context.read<AuthCubit>().goBackToChooseRegisterType(
-              widget.authId,
-              widget.email,
-            );
+        context.read<AuthCubit>().goBackToChooseRegisterType();
         return false;
       },
       child: Scaffold(
@@ -246,13 +237,9 @@ class AddressFormPage extends StatefulWidget {
     super.key,
     required this.user,
     required this.type,
-    required this.authId,
-    required this.email,
   });
   final NewUser user;
   final RegisterType type;
-  final String authId;
-  final String email;
 
   @override
   State<AddressFormPage> createState() => _AddressFormPageState();
@@ -277,8 +264,6 @@ class _AddressFormPageState extends State<AddressFormPage> {
             context.read<AuthCubit>().goBackToUserInformationPage(
                   widget.type,
                   widget.user,
-                  widget.authId,
-                  widget.email,
                 );
           },
           icon: const Icon(Icons.arrow_back)),
@@ -355,7 +340,7 @@ class _AddressFormPageState extends State<AddressFormPage> {
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
                 widget.user.address = _address;
-                context.read<AuthCubit>().signUp(widget.user, widget.authId);
+                context.read<AuthCubit>().signUp(widget.user);
               }
             },
             child: const Center(
@@ -416,8 +401,6 @@ class _AddressFormPageState extends State<AddressFormPage> {
         context.read<AuthCubit>().goBackToUserInformationPage(
               widget.type,
               widget.user,
-              widget.authId,
-              widget.email,
             );
         return false;
       },
