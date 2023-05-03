@@ -1,10 +1,9 @@
-﻿using AdopterAPI;
-using AdopterAPI.Requests;
+﻿using AdopterAPI.Requests;
 using APIAuthCommonLibrary;
 using DatabaseContextLibrary.models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using CommonDTOLibrary.Mappers;
 
 namespace AdopterAPI.Endpoints
 {
@@ -44,7 +43,7 @@ namespace AdopterAPI.Endpoints
 
             if (adopter.Address != null)
             {
-                var newAddress = adopter.Address.Map();
+                var newAddress = adopter.Address.MapDB();
                 dbContext.Address.Add(newAddress);
                 await dbContext.SaveChangesAsync();
                 newAdopter.AddressId = newAddress.Id;

@@ -1,8 +1,4 @@
-﻿using DatabaseContextLibrary.models;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-
-namespace AdopterAPI.Data
+﻿namespace CommonDTOLibrary.Models
 {
     public class AdopterDTO
     {

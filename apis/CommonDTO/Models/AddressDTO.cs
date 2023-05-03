@@ -1,4 +1,4 @@
-﻿namespace ShelterAPI.Data
+﻿namespace CommonDTOLibrary.Models
 {
     public class AddressDTO
     {

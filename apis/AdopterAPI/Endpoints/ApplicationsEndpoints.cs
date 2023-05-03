@@ -1,9 +1,9 @@
-﻿using AdopterAPI;
-using AdopterAPI.Requests;
+﻿using AdopterAPI.Requests;
 using APIAuthCommonLibrary;
 using DatabaseContextLibrary.models;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using CommonDTOLibrary.Mappers;
 
 namespace AdopterAPI.Endpoints
 {
@@ -22,12 +22,23 @@ namespace AdopterAPI.Endpoints
             {
                 case "Shelter":
                     var shelterId = Guid.Parse(issuerClaim);
-                    return Results.Ok(await dbContext.Applications.Include("Announcement").Where(a => a.Announcement!.Pet.ShelterId == shelterId).ToListAsync());
+                    var applications = await dbContext.Applications
+                        .Include("Announcement")
+                        .Where(a => a.Announcement!.Pet.ShelterId == shelterId)
+                        .ToListAsync();
+                    return Results.Ok(applications.MapDTO());
                 case "Adopter":
                     var adopterId = Guid.Parse(issuerClaim);
-                    return Results.Ok(await dbContext.Applications.Include("Announcement").Where(a => a.AdopterId == adopterId).ToListAsync());
+                    applications = await dbContext.Applications
+                        .Include("Announcement")
+                        .Where(a => a.AdopterId == adopterId)
+                        .ToListAsync();
+                    return Results.Ok(applications.MapDTO());
                 case "Admin":
-                    return Results.Ok(await dbContext.Applications.Include("Announcement").ToListAsync());
+                    applications = await dbContext.Applications
+                        .Include("Announcement")
+                        .ToListAsync();
+                    return Results.Ok(applications.MapDTO());
                 default:
                     return Results.BadRequest();
             }
@@ -48,7 +59,7 @@ namespace AdopterAPI.Endpoints
             if (applications.Any() && applications.First().Announcement!.Pet.ShelterId != shelterId)
                 return Results.Unauthorized();
 
-            return Results.Ok(applications);
+            return Results.Ok(applications.MapDTO());
         }
 
         public static async Task<IResult> PostApplication(DataContext dbContext, PostApplicationRequest application, HttpContext httpContext)

@@ -1,8 +1,8 @@
 ﻿using AnnouncementsAPI.Requests;
-using AnnouncementsAPI.Responses;
 using APIAuthCommonLibrary;
 using FileStorageLibrary;
 using Microsoft.EntityFrameworkCore;
+using CommonDTOLibrary.Mappers;
 
 namespace AnnouncementsAPI.Endpoints
 {
@@ -13,17 +13,28 @@ namespace AnnouncementsAPI.Endpoints
             if (!AuthorizeUser(httpContext, out _, out var userId))
                 return Results.Unauthorized();
 
-            var res = await context.Pets.Where(p => p.ShelterId == userId).Select(p => p.MapDTO()).ToListAsync();
+            var res = await context.Pets
+                .Include(x => x.Shelter)
+                .ThenInclude(x => x.Address)
+                .Where(p => p.ShelterId == userId)
+                .Select(p => p.MapDTO())
+                .ToListAsync();
+
             return Results.Ok(res);
         }
 
         public static async Task<IResult> GetById(DataContext context, IStorage storage, Guid petId)
         {
-            var pet = await context.Pets.FirstOrDefaultAsync(p => p.Id == petId);
+            var pet = await context.Pets
+                .Include(x => x.Shelter)
+                .ThenInclude(x => x.Address)
+                .FirstOrDefaultAsync(p => p.Id == petId);
+
             if (pet is null)
                 return Results.NotFound("Pet doesn't exist.");
 
-            var res = new GetPetResponse(pet, await pet.GetPhotoUrl(storage));
+            var res = pet.MapDTO();
+            await res.AttachPhotoUrl(storage);
             return Results.Ok(res);
         }
 
@@ -37,10 +48,10 @@ namespace AnnouncementsAPI.Endpoints
             context.Pets.Add(pet);
             await context.SaveChangesAsync();
 
-            return Results.Created(pet.Id.ToString(), pet.MapDTO());
+            return Results.Created(pet.Id.ToString(), null);
         }
 
-        public static async Task<IResult> Put(DataContext context, IStorage storage, PutPetRequest petRequest, Guid petId, HttpContext httpContext)
+        public static async Task<IResult> Put(DataContext context, PutPetRequest petRequest, Guid petId, HttpContext httpContext)
         {
             var pet = await context.Pets.FirstOrDefaultAsync(p => p.Id == petId);
             if (pet is null)
