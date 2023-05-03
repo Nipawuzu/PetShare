@@ -33,7 +33,7 @@ class AfterAdoptionPage extends StatelessWidget {
             ),
             TextButton(
               onPressed: () =>
-                  context.read<ListOfAnnouncementsCubit>().goBack(),
+                  context.read<GridOfAnnouncementsCubit>().goBack(),
               child: const TextWithBasicStyle(
                 text: "Wróć do widoku ogłoszeń",
                 align: TextAlign.center,

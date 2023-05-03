@@ -2,8 +2,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:pet_share/announcements/added_announcements/announcement_tile.dart';
 import 'package:pet_share/announcements/added_announcements/cubit.dart';
-import 'package:pet_share/announcements/added_announcements/view.dart';
 import 'package:pet_share/announcements/models/announcement.dart';
 import 'package:pet_share/announcements/models/pet.dart';
 import 'package:pet_share/common_widgets/custom_text_field.dart';
@@ -16,7 +16,7 @@ class AnnouncementAndPetDetails extends StatelessWidget {
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
       leading: IconButton(
-          onPressed: () => context.read<ListOfAnnouncementsCubit>().goBack(),
+          onPressed: () => context.read<GridOfAnnouncementsCubit>().goBack(),
           icon: const Icon(Icons.arrow_back)),
       actions: <Widget>[
         _buildPopUpMenuButton(context),
@@ -65,7 +65,7 @@ class AnnouncementAndPetDetails extends StatelessWidget {
           if (value != null && value)
             {
               context
-                  .read<ListOfAnnouncementsCubit>()
+                  .read<GridOfAnnouncementsCubit>()
                   .deleteAnnouncement(announcement),
             }
         });
@@ -209,7 +209,7 @@ class AnnouncementAndPetDetails extends StatelessWidget {
               padding: const EdgeInsets.all(4.0),
               child: ElevatedButton(
                 onPressed: () {
-                  context.read<ListOfAnnouncementsCubit>().adopt(
+                  context.read<GridOfAnnouncementsCubit>().adopt(
                       "1ae57d7b-acfe-456f-3f70-08db3c140a81", announcement);
                 },
                 child: const BoldTextWithBasicStyle(
@@ -227,7 +227,7 @@ class AnnouncementAndPetDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        context.read<ListOfAnnouncementsCubit>().goBack();
+        context.read<GridOfAnnouncementsCubit>().goBack();
         return false;
       },
       child: Scaffold(
@@ -387,19 +387,26 @@ class PetDetails extends StatelessWidget {
 
 class TextWithBasicStyle extends StatelessWidget {
   const TextWithBasicStyle(
-      {super.key, required this.text, this.textScaleFactor = 1.0, this.align});
+      {super.key,
+      required this.text,
+      this.textScaleFactor = 1.0,
+      this.align,
+      this.bold = false});
 
   final String text;
   final double textScaleFactor;
+  final bool bold;
   final TextAlign? align;
+
   @override
   Widget build(BuildContext context) {
     return Text(
       text,
       textScaleFactor: textScaleFactor,
       textAlign: align,
-      style: const TextStyle(
+      style: TextStyle(
         fontFamily: "Quicksand",
+        fontWeight: bold ? FontWeight.bold : FontWeight.normal,
       ),
     );
   }

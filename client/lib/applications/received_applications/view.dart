@@ -146,8 +146,7 @@ class ApplicationTile extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: ImageWidget(
-                  size: 100, image: application.announcement.pet.photoUrl),
+              child: ImageWidget(image: application.announcement.pet.photoUrl),
             ),
             Expanded(
               child: Column(

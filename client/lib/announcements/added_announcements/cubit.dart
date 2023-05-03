@@ -5,7 +5,7 @@ import 'package:pet_share/services/announcements/service.dart';
 
 class ListOfAnnouncementsState {}
 
-class ListViewState extends ListOfAnnouncementsState {}
+class GridViewState extends ListOfAnnouncementsState {}
 
 class AfterAdoptionState extends ListOfAnnouncementsState {
   AfterAdoptionState(this.message, this.success);
@@ -19,16 +19,15 @@ class AnnouncementDetailsState extends ListOfAnnouncementsState {
   Announcement announcement;
 }
 
-class ListOfAnnouncementsCubit extends Cubit<ListOfAnnouncementsState> {
-  ListOfAnnouncementsCubit(this._announcementService, this._adopterService)
-      : super(AfterAdoptionState(
-            "Twój wniosek adopcyjny został przekazany do weryfikacji. Dziękujemy za zaufanie!",
-            false));
+class GridOfAnnouncementsCubit extends Cubit<ListOfAnnouncementsState> {
+  GridOfAnnouncementsCubit(this._announcementService, this._adopterService)
+      : super(GridViewState());
 
   final AnnouncementService _announcementService;
   final AdopterService _adopterService;
+
   void goBack() {
-    emit(ListViewState());
+    emit(GridViewState());
   }
 
   void seeDetails(Announcement announcement) {
@@ -38,7 +37,7 @@ class ListOfAnnouncementsCubit extends Cubit<ListOfAnnouncementsState> {
   void deleteAnnouncement(Announcement announcement) {
     announcement.status = AnnouncementStatus.removed;
     _announcementService.updateStatus(announcement.id, announcement.status);
-    emit(ListViewState());
+    emit(GridViewState());
   }
 
   Future<void> adopt(String adopterId, Announcement announcement) async {
@@ -55,4 +54,6 @@ class ListOfAnnouncementsCubit extends Cubit<ListOfAnnouncementsState> {
           false));
     }
   }
+
+  void like(String adopterId, String announcementId, bool isLiked) {}
 }
