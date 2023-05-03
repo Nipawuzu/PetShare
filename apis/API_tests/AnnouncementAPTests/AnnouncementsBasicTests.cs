@@ -1,13 +1,14 @@
 ﻿using AnnouncementsAPI;
 using AnnouncementsAPI.Requests;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Configuration;
 using System.Net;
 
 namespace APIs_tests.AnnouncementAPTests
 {
     public class AnnouncementsBasicTests : APITests<ProgramAnnouncementsAPI, DataContext>
     {
-        private const string SHELTER_TOKEN = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkMDc5NmI4NS04MjYzLTQwYzMtZGQ1NC0wOGRiM2MxNWYxMDgiLCJleHAiOjE5MTYyMzkwMjIsImF1ZCI6WyJBQUEiXSwicm9sZXMiOlsiU2hlbHRlciJdfQ.isOtJ-x-QWUTmbDLlauAbIMOON46sGGOAXMGQK5tzH8";
+        private const string SHELTER_TOKEN = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYl9pZCI6ImQwNzk2Yjg1LTgyNjMtNDBjMy1kZDU0LTA4ZGIzYzE1ZjEwOCIsImV4cCI6MTkxNjIzOTAyMiwiYXVkIjpbIkFBQSJdLCJyb2xlcyI6WyJzaGVsdGVyIl19.JG0k0AbZLZnoCBc7FSr1LUE2s6Eo6Yzzlm6wA-2iK5k";
 
         [Fact]
         public async void GetAllAnnouncementsAsShelter()

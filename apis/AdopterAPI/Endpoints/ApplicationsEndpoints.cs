@@ -20,13 +20,13 @@ namespace AdopterAPI.Endpoints
 
             switch (roleClaim)
             {
-                case "Shelter":
+                case "shelter":
                     var shelterId = Guid.Parse(issuerClaim);
                     return Results.Ok(await dbContext.Applications.Include("Announcement").Where(a => a.Announcement!.Pet.ShelterId == shelterId).ToListAsync());
-                case "Adopter":
+                case "adopter":
                     var adopterId = Guid.Parse(issuerClaim);
                     return Results.Ok(await dbContext.Applications.Include("Announcement").Where(a => a.AdopterId == adopterId).ToListAsync());
-                case "Admin":
+                case "admin":
                     return Results.Ok(await dbContext.Applications.Include("Announcement").ToListAsync());
                 default:
                     return Results.BadRequest();

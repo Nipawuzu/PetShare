@@ -25,7 +25,7 @@ namespace AdopterAPI.Endpoints
             if (identity is null || issuerClaim is null || roleClaim is null)
                 return Results.Unauthorized();
 
-            if (roleClaim == "Adopter")
+            if (roleClaim == "adopter")
             {
                 var claimAdopterId = Guid.Parse(issuerClaim);
                 if (claimAdopterId != adopterId)

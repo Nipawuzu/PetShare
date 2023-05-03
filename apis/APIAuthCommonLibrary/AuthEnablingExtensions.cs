@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.DataProtection;
 
 namespace APIAuthCommonLibrary
 {
@@ -15,7 +16,6 @@ namespace APIAuthCommonLibrary
         private const string SHELTER = "shelter";
         private const string ADMIN = "admin";
         private const string ADOPTER = "adopter";
-        private const string ROLE = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role";
 
         public static void AddSwaggerGenWithSecurity(this IServiceCollection services, string apiName, string apiVersion)
         {
@@ -50,8 +50,20 @@ namespace APIAuthCommonLibrary
             });
         }
 
-        public static void AddCustomAuthentication(this IServiceCollection services, string audience, string authority)
+        public static void AddCustomAuthentication(this IServiceCollection services, string audience, string authority, string secret = "")
         {
+#if TEST
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, c =>
+                {
+                    c.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateAudience = false,
+                        ValidateIssuer = false,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret)),
+                    };
+                });
+#else
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
              .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, c =>
              {
@@ -63,6 +75,7 @@ namespace APIAuthCommonLibrary
                      ValidateIssuerSigningKey = false,
                  };
              });
+#endif
         }
 
         public static void AddCustomAuthorization(this IServiceCollection services)
@@ -82,8 +95,7 @@ namespace APIAuthCommonLibrary
                     RequireRole(ADMIN));
                 o.AddPolicy("Adopter", p => p.
                     RequireAuthenticatedUser().
-                    RequireClaim(ROLE, ADOPTER));
-                    //RequireRole(ADOPTER));
+                    RequireRole(ADOPTER));
                 o.AddPolicy("AdopterOrAdmin", p => p.
                     RequireAuthenticatedUser().
                     RequireRole(ADOPTER, ADMIN));
