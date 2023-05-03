@@ -1,11 +1,9 @@
-﻿using DatabaseContextLibrary.models;
-
-namespace AnnouncementsAPI.Data
+﻿namespace CommonDTOLibrary.Models
 {
     public class PetDTO
     {
         public Guid Id { get; set; }
-        public Shelter Shelter { get; set; }
+        public ShelterDTO Shelter { get; set; }
         public string Name { get; set; }
         public string Species { get; set; }
         public string Breed { get; set; }

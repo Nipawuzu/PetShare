@@ -1,12 +1,10 @@
 ﻿using AdopterAPI;
-using AdopterAPI.Data;
 using AdopterAPI.Requests;
-using Azure.Core;
+using CommonDTOLibrary.Models;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
 using System.Net;
-using System.Net.NetworkInformation;
 
 namespace APIs_tests.AdopterAPITests
 {
@@ -194,22 +192,7 @@ namespace APIs_tests.AdopterAPITests
                 UserName = adopterDTO.UserName,
                 Email = adopterDTO.Email,
                 PhoneNumber = adopterDTO.PhoneNumber,
-                Address = ToNewAddress(adopterDTO.Address),
-            };
-        }
-
-        private static NewAddress? ToNewAddress(AddressDTO? addressDTO)
-        {
-            if (addressDTO == null)
-                return null;
-
-            return new NewAddress
-            {
-                City = addressDTO.City,
-                Country = addressDTO.Country,
-                PostalCode = addressDTO.PostalCode,
-                Province = addressDTO.Province,
-                Street = addressDTO.Street,
+                Address = adopterDTO.Address,
             };
         }
     }

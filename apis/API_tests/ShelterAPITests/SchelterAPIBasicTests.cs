@@ -1,9 +1,9 @@
+
 ﻿using FluentAssertions;
 using Microsoft.Extensions.Configuration;
+﻿using CommonDTOLibrary.Models;
 using ShelterAPI;
-using ShelterAPI.Data;
 using ShelterAPI.Requests;
-using ShelterAPI.Responses;
 using System.Net;
 
 namespace APIs_tests.ShelterAPITests
@@ -19,7 +19,7 @@ namespace APIs_tests.ShelterAPITests
         {
             var postShelterRequest = new PostShelterRequest()
             {
-                Address = new NewAddress()
+                Address = new AddressDTO()
                 {
                     Street = shelter.Address.Street,
                     Province = shelter.Address.Province,
@@ -46,7 +46,7 @@ namespace APIs_tests.ShelterAPITests
             var shelterId = await PostNewShelter(shelter);
 
             var getRequest = CreateRequest(HttpMethod.Get, $"{Urls.Shelter}/{shelterId}", authToken: SHELTER_TOKEN);
-            var getResult = await SendRequest<GetShelterResponse>(getRequest);
+            var getResult = await SendRequest<ShelterDTO>(getRequest);
 
             getResult.Should().BeEquivalentTo(shelter, o => o.Excluding(x => x.Id).Excluding(x => x.IsAuthorized));
         }
@@ -55,7 +55,7 @@ namespace APIs_tests.ShelterAPITests
         public async void GetAllShelters()
         {
             var getRequest = CreateRequest(HttpMethod.Get, Urls.Shelter, authToken: SHELTER_TOKEN);
-            await SendRequest<GetSheltersResponse>(getRequest);
+            await SendRequest<ShelterDTO[]>(getRequest);
         }
 
         [Theory]
