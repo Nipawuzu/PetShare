@@ -16,7 +16,7 @@ class AnnouncementService {
   final Dio _dio;
   final String _url;
   final String _token =
-      "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkMDc5NmI4NS04MjYzLTQwYzMtZGQ1NC0wOGRiM2MxNWYxMDgiLCJleHAiOjE5MTYyMzkwMjIsImF1ZCI6WyJBQUEiXSwicm9sZXMiOlsiU2hlbHRlciJdfQ.isOtJ-x-QWUTmbDLlauAbIMOON46sGGOAXMGQK5tzH8";
+      "Bearer";
 
   Future<String> sendPet(NewPet pet) async {
     var response = await _dio.post(
