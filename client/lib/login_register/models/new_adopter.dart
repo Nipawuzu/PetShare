@@ -1,9 +1,5 @@
-import 'package:json_annotation/json_annotation.dart';
 import 'new_shelter.dart';
 
-part 'new_adopter.g.dart';
-
-@JsonSerializable()
 class NewUser {
   NewUser(
       {this.userName = '',
@@ -19,13 +15,8 @@ class NewUser {
   String isoCode;
   String email;
   NewAddress? address;
-
-  Map<String, dynamic> toJson() => _$NewUserToJson(this);
-  factory NewUser.fromJson(Map<String, dynamic> json) =>
-      _$NewUserFromJson(json);
 }
 
-@JsonSerializable()
 class NewAdopter extends NewUser {
   NewAdopter(
       {this.firstName = '',
@@ -47,9 +38,4 @@ class NewAdopter extends NewUser {
 
   String firstName;
   String lastName;
-
-  @override
-  Map<String, dynamic> toJson() => _$NewAdopterToJson(this);
-  factory NewAdopter.fromJson(Map<String, dynamic> json) =>
-      _$NewAdopterFromJson(json);
 }

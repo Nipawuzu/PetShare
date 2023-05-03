@@ -41,6 +41,7 @@ namespace CommonDTOLibrary.Mappers
                 Species = pet.Species,
                 Birthday = pet.Birthday,
                 Breed = pet.Breed,
+                Sex = pet.Sex,
                 Description = pet.Description,
                 Shelter = pet.Shelter.MapDTO(),
             };

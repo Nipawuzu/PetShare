@@ -1,11 +1,6 @@
-import 'package:json_annotation/json_annotation.dart';
 import 'package:pet_share/services/generics/post_address_request.dart';
-
 import 'new_adopter.dart';
 
-part 'new_shelter.g.dart';
-
-@JsonSerializable()
 class NewShelter extends NewUser {
   NewShelter(
       {this.fullShelterName = '',
@@ -25,14 +20,8 @@ class NewShelter extends NewUser {
         );
 
   String fullShelterName;
-
-  @override
-  Map<String, dynamic> toJson() => _$NewShelterToJson(this);
-  factory NewShelter.fromJson(Map<String, dynamic> json) =>
-      _$NewShelterFromJson(json);
 }
 
-@JsonSerializable()
 class NewAddress {
   NewAddress(
       {this.street = '',
@@ -46,10 +35,6 @@ class NewAddress {
   String province;
   String postalCode;
   String country;
-
-  Map<String, dynamic> toJson() => _$NewAddressToJson(this);
-  factory NewAddress.fromJson(Map<String, dynamic> json) =>
-      _$NewAddressFromJson(json);
 
   PostAddressRequest toPostAddressRequest() => PostAddressRequest(
       street: street,

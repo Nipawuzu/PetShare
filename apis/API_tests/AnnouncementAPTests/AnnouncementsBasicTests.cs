@@ -56,6 +56,7 @@ namespace APIs_tests.AnnouncementAPTests
                 Name = "Czaki",
                 Description = "Spokojny, wytresowany futrzak szuka przyjaciela",
                 Species = "pies",
+                Sex = Sex.Male
             };
 
             var req = CreateRequest(HttpMethod.Post, Urls.Pets, body: postPetRequest, authToken: SHELTER_TOKEN);

@@ -25,6 +25,10 @@ void main() {
     await tester.tap(find.text('Wybierz'));
     await tester.pumpAndSettle();
     await tester.enterText(find.byKey(const Key('breed')), 'test breed');
+
+    await tester.tap(find.byKey(const Key('sex')));
+    await tester.pumpAndSettle();
+
     await tester.enterText(find.byKey(const Key('description')), 'test desc');
     await tester.enterText(find.byKey(const Key('species')), 'test species');
     await tester.tap(find.byKey(const Key('next')));
