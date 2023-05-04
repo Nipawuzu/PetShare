@@ -46,17 +46,14 @@ class AnnouncementService {
       "file": MultipartFile.fromBytes(photo, filename: petId),
     });
 
-    print("wysyłam");
     var response = await _dio.post(
       "$_url/pet/$petId/photo",
       data: formData,
       options: Options(headers: {
         "Authorization": _token,
-        // "HttpHeaders.contentTypeHeader": "application/json",
       }),
     );
 
-    print("wysłano");
     return response.statusCode == StatusCode.OK;
   }
 
