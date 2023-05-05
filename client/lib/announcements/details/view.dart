@@ -22,7 +22,6 @@ class _AnnouncementAndPetDetailsState extends State<AnnouncementAndPetDetails>
   late AnimationController _colorAnimationController;
   late AnimationController _textAnimationController;
   late Animation _colorTween, _iconColorTween, _textColorTween;
-  late Animation<Offset> _transTween;
 
   @override
   void initState() {
@@ -37,9 +36,6 @@ class _AnnouncementAndPetDetailsState extends State<AnnouncementAndPetDetails>
 
     _textAnimationController =
         AnimationController(vsync: this, duration: const Duration(seconds: 0));
-
-    _transTween = Tween(begin: const Offset(-10, 40), end: const Offset(-10, 0))
-        .animate(_textAnimationController);
 
     super.initState();
   }
