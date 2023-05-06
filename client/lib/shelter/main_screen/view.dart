@@ -4,7 +4,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:pet_share/applications/received_applications/view.dart';
 import 'package:pet_share/applications/service.dart';
-import 'package:provider/provider.dart';
 import 'package:username_gen/username_gen.dart';
 
 class ShelterMainScreen extends StatefulWidget {
@@ -192,7 +191,7 @@ class _ShelterMainScreenState extends State<ShelterMainScreen>
                   child: ClipOval(
                     child: CachedNetworkImage(
                       fit: BoxFit.cover,
-                      imageUrl: "https://cataas.com/cat?=${index}",
+                      imageUrl: "https://cataas.com/cat?=$index",
                     ),
                   ),
                 ),
