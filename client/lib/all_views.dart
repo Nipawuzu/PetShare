@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pet_share/announcements/added_announcements/view.dart';
 import 'package:pet_share/announcements/form/view.dart';
 import 'package:pet_share/applications/received_applications/view.dart';
+import 'package:pet_share/shelter/main_screen/view.dart';
 
 class AllViews extends StatelessWidget {
   const AllViews({super.key});
@@ -27,6 +28,10 @@ class AllViews extends StatelessWidget {
           ViewsListTile(
             text: "Oferty adopcji",
             child: ReceivedApplications(context.read()),
+          ),
+          const ViewsListTile(
+            text: "Widok sheltera",
+            child: ShelterMainScreen(),
           ),
         ],
       ),

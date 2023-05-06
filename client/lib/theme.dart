@@ -5,7 +5,7 @@ class AppTheme {
     chipTheme: ChipThemeData(
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(10))),
-      backgroundColor: Colors.orange.shade300,
+      backgroundColor: Colors.orange.shade200,
       elevation: 2,
       brightness: Brightness.light,
       labelStyle: const TextStyle(
@@ -84,8 +84,16 @@ class AppTheme {
       labelLarge: TextStyle(
         fontFamily: "Quicksand",
       ),
+      headlineMedium: TextStyle(
+        color: Color.fromRGBO(97, 97, 97, 1), //Colors.grey.shade700
+        fontSize: 48,
+        fontWeight: FontWeight.w600,
+        fontFamily: "Montserrat",
+      ),
       bodyMedium: TextStyle(
-        fontFamily: "Quicksand",
+        color: Color.fromRGBO(97, 97, 97, 1), //Colors.grey.shade700
+        fontSize: 20,
+        fontFamily: "Montserrat",
       ),
     ),
     appBarTheme: const AppBarTheme(

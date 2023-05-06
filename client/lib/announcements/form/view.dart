@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:pet_share/announcements/form/cubit.dart';
 import 'package:pet_share/announcements/models/new_announcement.dart';
 import 'package:pet_share/announcements/models/new_pet.dart';
+import 'package:pet_share/common_widgets/cat_progess_indicator.dart';
 import 'package:pet_share/services/announcements/service.dart';
 
 class NewAnnouncementForm extends StatefulWidget {
@@ -31,23 +32,10 @@ class _NewAnnouncementFormState extends State<NewAnnouncementForm> {
           } else if (state is DetailsFormState) {
             return AnnouncementFormPage(state: state);
           } else if (state is SendingFormState) {
-            return Scaffold(
-              body: Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: const [
-                    CircularProgressIndicator(),
-                    SizedBox(
-                      height: 16,
-                    ),
-                    Text(
-                      "Wysyłanie ogłoszenia...",
-                      textScaleFactor: 1.5,
-                    ),
-                  ],
-                ),
-              ),
-            );
+            return const Scaffold(
+                body: CatProgressIndicator(
+              text: Text("Wysyłanie ogłoszenia..."),
+            ));
           } else if (state is FormSentState) {
             Future.delayed(
               const Duration(seconds: 2),
@@ -445,7 +433,7 @@ class _AnnouncementFormPageState extends State<AnnouncementFormPage> {
             ),
             child: ConstrainedBox(
               constraints: const BoxConstraints(
-                  maxHeight: 250, minWidth: double.maxFinite),
+                  minHeight: 250, minWidth: double.maxFinite),
               child: _announcement.pet?.photo != null
                   ? Image.memory(_announcement.pet!.photo!, fit: BoxFit.cover)
                   : const Icon(
