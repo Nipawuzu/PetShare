@@ -1,7 +1,9 @@
+import 'dart:math';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:pet_share/announcements/details/view.dart';
 import 'package:pet_share/applications/application.dart';
-import 'package:pet_share/common_widgets/custom_text_field.dart';
-import 'package:pet_share/shelter.dart';
 import 'package:pet_share/utils/datetime_format.dart';
 
 class ApplicationDetails extends StatelessWidget {
@@ -9,32 +11,186 @@ class ApplicationDetails extends StatelessWidget {
 
   final Application application;
 
+  PreferredSizeWidget _buildAppBar(BuildContext context) {
+    return AppBar(
+      iconTheme: const IconThemeData(color: Colors.white),
+      title: const Text(
+        "Wniosek o adopcję",
+        style: TextStyle(color: Colors.white),
+      ),
+      titleSpacing: 5,
+      backgroundColor: Colors.transparent,
+    );
+  }
+
+  Widget _buildPetInfo(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        ConstrainedBox(
+          constraints: const BoxConstraints.tightFor(
+            height: 400,
+          ),
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: Colors.grey.shade200,
+            ),
+            child: CachedNetworkImage(
+                imageUrl: "https://cataas.com/cat?=", fit: BoxFit.cover),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 2.0),
+          child: ClipRRect(
+            borderRadius: const BorderRadius.only(
+              bottomLeft: Radius.circular(10),
+            ),
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border(
+                  left: BorderSide(
+                    color: Colors.orange.shade500,
+                    width: 6,
+                  ),
+                ),
+                gradient: LinearGradient(
+                  transform: const GradientRotation(pi / 4),
+                  stops: const [0.015, 0.4, 0.5, 0.85, 1],
+                  colors: [
+                    Colors.white,
+                    Colors.grey.shade50,
+                    Colors.grey.shade100,
+                    Colors.grey.shade200,
+                    Colors.grey.shade300,
+                  ],
+                ),
+              ),
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                child: Wrap(
+                  spacing: 8.0,
+                  runSpacing: -8.0,
+                  children: [
+                    Chip(
+                      label: Text("Imię: ${application.announcement.pet.name}"),
+                    ),
+                    Chip(
+                        label: Text(
+                            "Rasa: ${application.announcement.pet.breed}")),
+                    Chip(
+                        label: Text(
+                            "Data wniosku: ${application.dateOfApplication.formatDay()}")),
+                    ActionChip(
+                      onPressed: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => AnnouncementAndPetDetails(
+                              announcement: application.announcement),
+                        ),
+                      ),
+                      backgroundColor: Colors.grey.shade200,
+                      label: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: const [
+                          Text("Ogłoszenie"),
+                          Icon(
+                            Icons.arrow_forward_ios,
+                            size: 14,
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildApplicationData(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Card(
+            child: ConstrainedBox(
+              constraints:
+                  const BoxConstraints.tightFor(width: double.infinity),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Imię i nazwisko",
+                      style: Theme.of(context).textTheme.headlineSmall,
+                    ),
+                    const SizedBox(
+                      height: 8.0,
+                    ),
+                    Text(
+                      application.user.userName,
+                      style: Theme.of(context).primaryTextTheme.labelLarge,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Card(
+            child: ConstrainedBox(
+              constraints:
+                  const BoxConstraints.tightFor(width: double.infinity),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Adres zamieszkania",
+                      style: Theme.of(context).textTheme.headlineSmall,
+                    ),
+                    const SizedBox(
+                      height: 8.0,
+                    ),
+                    Text(
+                      application.user.address.toString(),
+                      style: Theme.of(context).primaryTextTheme.labelLarge,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBody(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildPetInfo(context),
+        _buildApplicationData(context),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text("Wniosek o adopcję")),
-        bottomNavigationBar: const ApplicationBottomAppBar(),
-        body: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  application.announcement.title,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                      fontSize: 30,
-                      fontFamily: "Quicksand",
-                      fontWeight: FontWeight.bold),
-                ),
-              ),
-              UserData(application.user),
-              ApplicationData(application),
-            ],
-          ),
-        ));
+      extendBodyBehindAppBar: true,
+      appBar: _buildAppBar(context),
+      body: _buildBody(context),
+      bottomNavigationBar: const ApplicationBottomAppBar(),
+    );
   }
 }
 
@@ -77,86 +233,6 @@ class ApplicationBottomAppBar extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class UserData extends StatelessWidget {
-  const UserData(this.user, {super.key});
-
-  final User user;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          "Dane składającego: ",
-          style: TextStyle(
-              fontFamily: "Quicksand",
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-              color: Colors.orange),
-        ),
-        CustomTextField(
-          firstText: "Imię i nazwisko: ",
-          secondText: user.userName,
-          isFirstTextInBold: true,
-        ),
-        CustomTextField(
-          firstText: "Adres: ",
-          secondText: user.address.toString(),
-          isFirstTextInBold: true,
-        ),
-        const Text(
-          "Kontakt:",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        CustomTextField(
-          firstText: "Email: ",
-          secondText: user.email,
-          isFirstTextInBold: true,
-        ),
-        CustomTextField(
-          firstText: "Telefon: ",
-          secondText: user.phoneNumber,
-          isFirstTextInBold: true,
-        ),
-      ],
-    );
-  }
-}
-
-class ApplicationData extends StatelessWidget {
-  const ApplicationData(this.application, {super.key});
-
-  final Application application;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          "Wniosek: ",
-          style: TextStyle(
-              fontFamily: "Quicksand",
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-              color: Colors.orange),
-        ),
-        CustomTextField(
-          firstText: "Data utworzenia: ",
-          secondText: application.dateOfApplication.formatDay(),
-          isFirstTextInBold: true,
-        ),
-        CustomTextField(
-          firstText: "Data modyfikacji: ",
-          secondText: application.lastUpdateDate.formatDay(),
-          isFirstTextInBold: true,
-        ),
-      ],
     );
   }
 }
