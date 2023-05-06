@@ -83,6 +83,7 @@ flutter:
     - images/success.png
     - images/fail.png
     - images/dog_reading.jpg
+    - images/running_cat.gif
   fonts:
     - family: Quicksand
       fonts:

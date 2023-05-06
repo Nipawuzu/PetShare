@@ -5,6 +5,7 @@ import 'package:pet_share/applications/application.dart';
 import 'package:pet_share/applications/details/view.dart';
 import 'package:pet_share/applications/received_applications/cubit.dart';
 import 'package:pet_share/applications/service.dart';
+import 'package:pet_share/common_widgets/cat_progess_indicator.dart';
 import 'package:pet_share/utils/datetime_format.dart';
 
 class ReceivedApplications extends StatelessWidget {
@@ -42,10 +43,8 @@ class LoadingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      body: Center(
-        child: CircularProgressIndicator(
-          color: Colors.orange,
-        ),
+      body: CatProgressIndicator(
+        text: Text("Wczytywanie wniosków..."),
       ),
     );
   }
