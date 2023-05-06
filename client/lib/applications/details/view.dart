@@ -46,26 +46,36 @@ class ApplicationBottomAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BottomAppBar(
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(4.0),
-              child: ElevatedButton(
-                  onPressed: () {}, child: const Text("Zaakceptuj")),
-            ),
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(4.0),
-              child: ElevatedButton(
-                onPressed: () {},
-                child: const Text("Odrzuć"),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 4),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: ElevatedButton(
+                    style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(Colors.grey.shade100)),
+                    onPressed: () {},
+                    child: const Text("Kontakt")),
               ),
             ),
-          ),
-        ],
+            const SizedBox(
+              width: 16,
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: ElevatedButton(
+                  onPressed: () {},
+                  child: const Text("Decyzja"),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

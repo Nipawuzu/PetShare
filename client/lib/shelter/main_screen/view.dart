@@ -1,8 +1,10 @@
-import 'dart:ffi';
 import 'dart:math';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:pet_share/applications/received_applications/view.dart';
+import 'package:pet_share/applications/service.dart';
+import 'package:provider/provider.dart';
 import 'package:username_gen/username_gen.dart';
 
 class ShelterMainScreen extends StatefulWidget {
@@ -102,27 +104,10 @@ class _ShelterMainScreenState extends State<ShelterMainScreen>
               child: Image.asset(
                 "images/dog_reading.jpg",
                 fit: BoxFit.fitWidth,
-                width: 150.0,
                 alignment: Alignment.bottomCenter,
               ),
             )
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildList(BuildContext context) {
-    return Expanded(
-      child: ListView.builder(
-        itemCount: 10,
-        itemBuilder: (context, index) => Card(
-          child: ListTile(
-            leading: const Icon(Icons.pets),
-            title: const Text("Wniosek adopcyjny"),
-            subtitle: const Text("Imię: Jan Kowalski"),
-            trailing: const Icon(Icons.arrow_forward_ios),
-          ),
         ),
       ),
     );
@@ -194,6 +179,13 @@ class _ShelterMainScreenState extends State<ShelterMainScreen>
             itemCount: 20,
             itemBuilder: (context, index) => Card(
               child: ListTile(
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => ReceivedApplications(
+                      ApplicationService(),
+                    ),
+                  ),
+                ),
                 contentPadding: const EdgeInsets.all(8.0),
                 leading: SizedBox.square(
                   dimension: 50,
