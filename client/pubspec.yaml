@@ -52,6 +52,7 @@ dependencies:
   http_parser: ^4.0.2
   http_mock_adapter: ^0.4.2
   intl_phone_number_input: ^0.7.3+1
+  username_gen: ^1.0.4
 
 dev_dependencies:
   flutter_test:
@@ -81,6 +82,7 @@ flutter:
     - images/adoption.png
     - images/success.png
     - images/fail.png
+    - images/dog_reading.jpg
   fonts:
     - family: Quicksand
       fonts:
