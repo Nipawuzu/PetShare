@@ -5,7 +5,7 @@ class AppTheme {
     chipTheme: ChipThemeData(
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(10))),
-      backgroundColor: Colors.orange.shade300,
+      backgroundColor: Colors.orange.shade200,
       elevation: 2,
       brightness: Brightness.light,
       labelStyle: const TextStyle(

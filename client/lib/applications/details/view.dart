@@ -37,7 +37,7 @@ class ApplicationDetails extends StatelessWidget {
               color: Colors.grey.shade200,
             ),
             child: CachedNetworkImage(
-                imageUrl: "https://cataas.com/cat?=", fit: BoxFit.cover),
+                imageUrl: "https://cataas.com/cat?=3", fit: BoxFit.cover),
           ),
         ),
         Padding(
@@ -113,12 +113,13 @@ class ApplicationDetails extends StatelessWidget {
 
   Widget _buildApplicationData(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Card(
+            color: Colors.grey.shade50,
             child: ConstrainedBox(
               constraints:
                   const BoxConstraints.tightFor(width: double.infinity),
@@ -143,7 +144,11 @@ class ApplicationDetails extends StatelessWidget {
               ),
             ),
           ),
+          const SizedBox(
+            height: 4.0,
+          ),
           Card(
+            color: Colors.grey.shade50,
             child: ConstrainedBox(
               constraints:
                   const BoxConstraints.tightFor(width: double.infinity),
