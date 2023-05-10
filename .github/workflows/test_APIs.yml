@@ -31,4 +31,4 @@ jobs:
       - name: Build APIs
         run: dotnet build --no-restore Backend.sln
       - name: Test APIs
-        run: dotnet test --no-restore --verbosity normal
+        run: dotnet test /p:DefineConstants="TEST" --no-restore --verbosity normal
