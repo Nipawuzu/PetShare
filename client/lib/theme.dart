@@ -2,7 +2,18 @@ import 'package:flutter/material.dart';
 
 class AppTheme {
   static ThemeData light = ThemeData(
-    chipTheme: ChipThemeData(backgroundColor: Colors.orange.shade300),
+    chipTheme: ChipThemeData(
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(10))),
+      backgroundColor: Colors.orange.shade200,
+      elevation: 2,
+      brightness: Brightness.light,
+      labelStyle: const TextStyle(
+        fontFamily: "Quicksand",
+        fontWeight: FontWeight.w600,
+        color: Colors.black,
+      ),
+    ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: MaterialStateColor.resolveWith((Set<MaterialState> states) {
@@ -73,8 +84,16 @@ class AppTheme {
       labelLarge: TextStyle(
         fontFamily: "Quicksand",
       ),
+      headlineMedium: TextStyle(
+        color: Color.fromRGBO(97, 97, 97, 1), //Colors.grey.shade700
+        fontSize: 48,
+        fontWeight: FontWeight.w600,
+        fontFamily: "Montserrat",
+      ),
       bodyMedium: TextStyle(
-        fontFamily: "Quicksand",
+        color: Color.fromRGBO(97, 97, 97, 1), //Colors.grey.shade700
+        fontSize: 20,
+        fontFamily: "Montserrat",
       ),
     ),
     appBarTheme: const AppBarTheme(
