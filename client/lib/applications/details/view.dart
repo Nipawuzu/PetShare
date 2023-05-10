@@ -90,9 +90,9 @@ class ApplicationDetails extends StatelessWidget {
                         ),
                       ),
                       backgroundColor: Colors.grey.shade200,
-                      label: Row(
+                      label: const Row(
                         mainAxisSize: MainAxisSize.min,
-                        children: const [
+                        children: [
                           Text("Ogłoszenie"),
                           Icon(
                             Icons.arrow_forward_ios,
