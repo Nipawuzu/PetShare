@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:pet_share/announcements/form/cubit.dart';
 import 'package:pet_share/announcements/models/new_announcement.dart';
 import 'package:pet_share/announcements/models/new_pet.dart';
+import 'package:pet_share/common_widgets/cat_progess_indicator.dart';
 import 'package:pet_share/announcements/models/pet.dart';
 import 'package:pet_share/services/announcements/service.dart';
 
@@ -32,34 +33,21 @@ class _NewAnnouncementFormState extends State<NewAnnouncementForm> {
           } else if (state is DetailsFormState) {
             return AnnouncementFormPage(state: state);
           } else if (state is SendingFormState) {
-            return Scaffold(
-              body: Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: const [
-                    CircularProgressIndicator(),
-                    SizedBox(
-                      height: 16,
-                    ),
-                    Text(
-                      "Wysyłanie ogłoszenia...",
-                      textScaleFactor: 1.5,
-                    ),
-                  ],
-                ),
-              ),
-            );
+            return const Scaffold(
+                body: CatProgressIndicator(
+              text: Text("Wysyłanie ogłoszenia..."),
+            ));
           } else if (state is FormSentState) {
             Future.delayed(
               const Duration(seconds: 2),
               () => Navigator.of(context).pop(),
             );
 
-            return Scaffold(
+            return const Scaffold(
               body: Center(
                   child: Row(
                 mainAxisSize: MainAxisSize.min,
-                children: const [
+                children: [
                   Text(
                     "Ogłoszenie zostało wysłane",
                     textScaleFactor: 1.5,
@@ -74,13 +62,13 @@ class _NewAnnouncementFormState extends State<NewAnnouncementForm> {
               () => Navigator.of(context).pop(),
             );
 
-            return Scaffold(
+            return const Scaffold(
               body: Center(
                   child: Padding(
-                padding: const EdgeInsets.all(50.0),
+                padding: EdgeInsets.all(50.0),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
-                  children: const [
+                  children: [
                     Flexible(
                       child: Text(
                         "Wystąpił błąd poczas próby wysłania ogłoszenia. Spróbuj ponownie później.",
@@ -145,8 +133,8 @@ class _PetFormPageState extends State<PetFormPage> {
   }
 
   Widget _buildPetList(BuildContext context) {
-    return Column(
-      children: const [],
+    return const Column(
+      children: [],
     );
   }
 
@@ -190,10 +178,10 @@ class _PetFormPageState extends State<PetFormPage> {
       key: const Key('name'),
       initialValue: _pet.name,
       onSaved: (newValue) => _pet.name = newValue.toString(),
-      decoration: InputDecoration(
+      decoration: const InputDecoration(
         label: Row(
           mainAxisSize: MainAxisSize.min,
-          children: const [
+          children: [
             Text("Imię zwierzątka"),
             SizedBox(width: 1),
             Text('*', style: TextStyle(color: Colors.red)),
@@ -214,9 +202,9 @@ class _PetFormPageState extends State<PetFormPage> {
       readOnly: true,
       controller: _datePickerController,
       decoration: InputDecoration(
-          label: Row(
+          label: const Row(
             mainAxisSize: MainAxisSize.min,
-            children: const [
+            children: [
               Text("Data urodzenia"),
               SizedBox(width: 1),
               Text('*', style: TextStyle(color: Colors.red)),
@@ -246,10 +234,10 @@ class _PetFormPageState extends State<PetFormPage> {
       key: const Key('species'),
       initialValue: _pet.species,
       onSaved: (newValue) => _pet.species = newValue?.trim() ?? '',
-      decoration: InputDecoration(
+      decoration: const InputDecoration(
         label: Row(
           mainAxisSize: MainAxisSize.min,
-          children: const [
+          children: [
             Text("Gatunek"),
             SizedBox(width: 1),
             Text('*', style: TextStyle(color: Colors.red)),
@@ -467,7 +455,7 @@ class _AnnouncementFormPageState extends State<AnnouncementFormPage> {
             ),
             child: ConstrainedBox(
               constraints: const BoxConstraints(
-                  maxHeight: 250, minWidth: double.maxFinite),
+                  minHeight: 250, minWidth: double.maxFinite),
               child: _announcement.pet?.photo != null
                   ? Image.memory(_announcement.pet!.photo!, fit: BoxFit.cover)
                   : const Icon(

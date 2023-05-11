@@ -5,7 +5,10 @@ import 'package:pet_share/announcements/details/view.dart';
 import 'cubit.dart';
 
 class ErrorPage extends StatelessWidget {
-  const ErrorPage({super.key, required this.error});
+  const ErrorPage({
+    super.key,
+    required this.error,
+  });
 
   final String error;
 

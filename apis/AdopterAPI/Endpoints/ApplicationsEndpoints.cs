@@ -20,21 +20,21 @@ namespace AdopterAPI.Endpoints
 
             switch (roleClaim)
             {
-                case "Shelter":
+                case "shelter":
                     var shelterId = Guid.Parse(issuerClaim);
                     var applications = await dbContext.Applications
                         .Include("Announcement")
                         .Where(a => a.Announcement!.Pet.ShelterId == shelterId)
                         .ToListAsync();
                     return Results.Ok(applications.MapDTO());
-                case "Adopter":
+                case "adopter":
                     var adopterId = Guid.Parse(issuerClaim);
                     applications = await dbContext.Applications
                         .Include("Announcement")
                         .Where(a => a.AdopterId == adopterId)
                         .ToListAsync();
                     return Results.Ok(applications.MapDTO());
-                case "Admin":
+                case "admin":
                     applications = await dbContext.Applications
                         .Include("Announcement")
                         .ToListAsync();
@@ -72,10 +72,11 @@ namespace AdopterAPI.Endpoints
 
             var adopterId = Guid.Parse(issuerClaim);
 
-            if (adopterId != application.AdopterId)
-                return Results.Unauthorized();
+            if (!dbContext.Adopters.Any(adopter => adopter.Id == adopterId)) 
+                return Results.NotFound();
 
             var newApplication = application.Map();
+            newApplication.AdopterId = adopterId;
 
             dbContext.Applications.Add(newApplication);
             await dbContext.SaveChangesAsync();

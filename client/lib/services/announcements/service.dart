@@ -15,8 +15,11 @@ class AnnouncementService {
 
   final Dio _dio;
   final String _url;
-  final String _token =
-      "Bearer";
+  String _token = "Bearer ";
+
+  void setToken(String token) {
+    _token = "Bearer $token";
+  }
 
   Future<String> sendPet(NewPet pet) async {
     var response = await _dio.post(
@@ -47,6 +50,9 @@ class AnnouncementService {
     var response = await _dio.post(
       "$_url/pet/$petId/photo",
       data: formData,
+      options: Options(headers: {
+        "Authorization": _token,
+      }),
     );
 
     return response.statusCode == StatusCode.OK;

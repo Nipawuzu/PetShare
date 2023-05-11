@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pet_share/announcements/form/view.dart';
+import 'package:pet_share/common_widgets/cat_progess_indicator.dart';
 import 'package:pet_share/services/announcements/service.dart';
 
 import 'announcements_api_mock.dart';
@@ -10,7 +11,8 @@ void main() {
 
   Widget buildMediaQueryForTests(Widget widget) {
     return MediaQuery(
-        data: const MediaQueryData(), child: MaterialApp(home: widget));
+        data: const MediaQueryData(size: Size(1080, 1920)),
+        child: MaterialApp(home: widget));
   }
 
   testWidgets('Send new announcement form with new pet', (tester) async {
@@ -38,7 +40,7 @@ void main() {
     await tester.enterText(find.byKey(const Key('description')), 'test desc');
     await tester.tap(find.byKey(const Key('submit')));
     await tester.pump();
-    tester.element(find.byType(CircularProgressIndicator));
+    tester.element(find.byType(CatProgressIndicator));
     await tester.pumpAndSettle();
     tester.element(find.byIcon(Icons.done));
     await tester.pumpAndSettle(const Duration(seconds: 2));

@@ -13,7 +13,7 @@ builder.Services.AddSwaggerGenWithSecurity("AnnouncementsAPI", "v1");
 
 builder.Services.AddDbContext<DataContext>(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("DataBase")));
 
-builder.Services.AddCustomAuthentication(builder.Configuration["Auth0:Secret"]!);
+builder.Services.AddCustomAuthentication(builder.Configuration["Auth0:Audience"]!, builder.Configuration["Auth0:Authority"]!, builder.Configuration["Auth0:Secret"]!);
 
 builder.Services.AddCustomAuthorization();
 
@@ -83,7 +83,7 @@ app.MapGet("/pet/{petId}", PetEndpoints.GetById)
 
 app.MapPost("/pet", PetEndpoints.Post)
 .WithOpenApi()
-.RequireAuthorization("Shelter")
+.RequireAuthorization("Auth")
 .WithSummary("Posts new pet. Requires shelter role. Gets shelter id from auth claims.")
 .Produces(200)
 .Produces(401);
