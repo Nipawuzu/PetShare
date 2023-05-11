@@ -10,11 +10,6 @@ namespace APIs_tests.AdopterAPITests
 {
     public class AdopterEndpointsTests : APITests<ProgramAdopterAPI, DataContext>
     {
-        private const string ADMIN_TOKEN = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYl9pZCI6IjNmYTg1ZjY0LTU3MTctNDU2Mi1iM2ZjLTJjOTYzZjY2YWZhNiIsImV4cCI6MTkxNjIzOTAyMiwiYXVkIjpbIkFBQSJdLCJyb2xlcyI6WyJhZG1pbiJdfQ.h-TDwIjjROA3ntfwgaAJexDVMcB9Poqlfluw3TtmmIA";
-        private const string SHELTER_TOKEN = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYl9pZCI6ImQwNzk2Yjg1LTgyNjMtNDBjMy1kZDU0LTA4ZGIzYzE1ZjEwOCIsImV4cCI6MTkxNjIzOTAyMiwiYXVkIjpbIkFBQSJdLCJyb2xlcyI6WyJzaGVsdGVyIl19.JG0k0AbZLZnoCBc7FSr1LUE2s6Eo6Yzzlm6wA-2iK5k";
-        private const string ADOPTER_TOKEN = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYl9pZCI6IjFhZTU3ZDdiLWFjZmUtNDU2Zi0zZjcwLTA4ZGIzYzE0MGE4MSIsImV4cCI6MTkxNjIzOTAyMiwiYXVkIjpbIkFBQSJdLCJyb2xlcyI6WyJhZG9wdGVyIl19.WXryabyaLeJMe5EdOjPj85patI947TBvl8SpA7peAL8";
-        private const string? NO_TOKEN = null;
-
         [Theory]
         [InlineData(NO_TOKEN, HttpStatusCode.Unauthorized)]
         [InlineData(ADOPTER_TOKEN, HttpStatusCode.Forbidden)]
