@@ -116,9 +116,9 @@ class _ReceivedApplicationListState extends State<ReceivedApplicationList> {
               ),
             ),
           ),
-          leading: Column(
+          leading: const Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: const [Icon(Icons.pets)]),
+              children: [Icon(Icons.pets)]),
           title: Text(widget.applications[index].user.userName),
           subtitle: Text(
               "Data: ${widget.applications[index].dateOfApplication.formatDay()}"),

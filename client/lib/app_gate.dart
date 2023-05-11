@@ -5,6 +5,7 @@ import 'package:pet_share/services/announcements/service.dart';
 import 'package:pet_share/applications/service.dart';
 import 'package:pet_share/environment.dart';
 import 'package:pet_share/login_register/gate.dart';
+import 'package:pet_share/services/auth/service.dart';
 import 'package:pet_share/services/shelter/service.dart';
 import 'package:provider/provider.dart';
 
@@ -28,6 +29,11 @@ class AppMainGate extends StatelessWidget {
         Provider(
           create: (context) => ShelterService(Dio(), Environment.shelterApiUrl),
         ),
+        Provider(
+          create: (context) {
+            return AuthService(Dio());
+          },
+        )
       ],
       child: const AuthGate(),
     );

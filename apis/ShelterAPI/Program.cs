@@ -13,7 +13,7 @@ builder.Services.AddSwaggerGenWithSecurity("ShelterAPI", "v1");
 
 builder.Services.AddDbContext<DataContext>(opt => opt.UseSqlServer(ConnectionString));
 
-builder.Services.AddCustomAuthentication(builder.Configuration["Auth0:Secret"]!);
+builder.Services.AddCustomAuthentication(builder.Configuration["Auth0:Audience"]!, builder.Configuration["Auth0:Authority"]!, builder.Configuration["Auth0:Secret"]!);
 builder.Services.AddCustomAuthorization();
 
 var app = builder.Build();

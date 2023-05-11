@@ -1,4 +1,4 @@
-package com.example.repo
+package com.petshare.petshare
 
 import io.flutter.embedding.android.FlutterActivity
 
