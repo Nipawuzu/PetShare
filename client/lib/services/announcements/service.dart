@@ -25,12 +25,13 @@ class AnnouncementService {
     var response = await _dio.post(
       "$_url/pet",
       data: PostPetRequest(
-        name: pet.name,
-        birthday: pet.birthday,
-        breed: pet.breed,
-        description: pet.description,
-        species: pet.species,
-      ).toJson(),
+              name: pet.name,
+              birthday: pet.birthday,
+              breed: pet.breed,
+              description: pet.description,
+              species: pet.species,
+              sex: pet.sex)
+          .toJson(),
       options: Options(headers: {
         "Authorization": _token,
         "HttpHeaders.contentTypeHeader": "application/json",

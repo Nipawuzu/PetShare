@@ -9,6 +9,7 @@ import 'package:pet_share/announcements/form/cubit.dart';
 import 'package:pet_share/announcements/models/new_announcement.dart';
 import 'package:pet_share/announcements/models/new_pet.dart';
 import 'package:pet_share/common_widgets/cat_progess_indicator.dart';
+import 'package:pet_share/announcements/models/pet.dart';
 import 'package:pet_share/services/announcements/service.dart';
 
 class NewAnnouncementForm extends StatefulWidget {
@@ -259,6 +260,23 @@ class _PetFormPageState extends State<PetFormPage> {
     );
   }
 
+  Widget _buildSexField(BuildContext context) {
+    return DropdownButtonFormField(
+      key: const Key('sex'),
+      onSaved: (newValue) => _pet.sex = newValue ?? Sex.unknown,
+      decoration: const InputDecoration(
+        labelText: "Płeć",
+      ),
+      items: Sex.values.map<DropdownMenuItem<Sex>>((Sex value) {
+        return DropdownMenuItem<Sex>(
+          value: value,
+          child: Text(sexToString(value)),
+        );
+      }).toList(),
+      onChanged: (Sex? newValue) => {},
+    );
+  }
+
   Widget _buildDescriptionField(BuildContext context) {
     return ConstrainedBox(
       constraints: const BoxConstraints(maxHeight: 216),
@@ -348,6 +366,10 @@ class _PetFormPageState extends State<PetFormPage> {
               height: 16,
             ),
             _buildBreedField(context),
+            const SizedBox(
+              height: 16,
+            ),
+            _buildSexField(context),
             const SizedBox(
               height: 16,
             ),

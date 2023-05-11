@@ -24,6 +24,7 @@ namespace AnnouncementsAPI
                 Birthday = petRequest.Birthday,
                 Species = petRequest.Species,
                 Breed = petRequest.Breed,
+                Sex = petRequest.Sex,
                 Description = petRequest.Description,
             };
         }
