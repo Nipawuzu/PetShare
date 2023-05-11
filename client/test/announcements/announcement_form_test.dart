@@ -11,7 +11,8 @@ void main() {
 
   Widget buildMediaQueryForTests(Widget widget) {
     return MediaQuery(
-        data: const MediaQueryData(), child: MaterialApp(home: widget));
+        data: const MediaQueryData(size: Size(1080, 1920)),
+        child: MaterialApp(home: widget));
   }
 
   testWidgets('Send new announcement form with new pet', (tester) async {
