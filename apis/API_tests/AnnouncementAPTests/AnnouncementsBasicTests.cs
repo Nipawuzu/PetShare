@@ -166,7 +166,7 @@ namespace APIs_tests.AnnouncementAPTests
                 Street = "Test street",
             };
 
-            context.Addresses.Add(address);
+            context.Address.Add(address);
             context.SaveChanges();
 
             var shelter = new Shelter()
