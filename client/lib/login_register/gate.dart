@@ -17,6 +17,8 @@ class AuthGate extends StatelessWidget {
       create: (_) => AuthCubit(
         adopterService: context.read(),
         shelterService: context.read(),
+        authService: context.read(),
+        announcementsService: context.read(),
       ),
       child: BlocBuilder<AuthCubit, AuthState>(
         builder: (context, state) {
@@ -31,13 +33,13 @@ class AuthGate extends StatelessWidget {
           } else if (state is RegisterAsAdopterState) {
             return RegisterScreen(
               type: RegisterType.adopter,
-              email: "email",
+              email: state.email,
               user: state.adopter,
             );
           } else if (state is RegisterAsShelterState) {
             return RegisterScreen(
               type: RegisterType.shelter,
-              email: "email2",
+              email: state.email,
               user: state.shelter,
             );
           } else if (state is AddressPageState) {

@@ -1,18 +1,22 @@
 ﻿using AnnouncementsAPI;
 using AnnouncementsAPI.Requests;
+using APIs_tests.ShelterAPITests;
+using DatabaseContextLibrary.models;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Configuration;
 using System.Net;
 
 namespace APIs_tests.AnnouncementAPTests
 {
     public class AnnouncementsBasicTests : APITests<ProgramAnnouncementsAPI, DataContext>
     {
-        private const string SHELTER_TOKEN = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkMDc5NmI4NS04MjYzLTQwYzMtZGQ1NC0wOGRiM2MxNWYxMDgiLCJleHAiOjE5MTYyMzkwMjIsImF1ZCI6WyJBQUEiXSwicm9sZXMiOlsiU2hlbHRlciJdfQ.isOtJ-x-QWUTmbDLlauAbIMOON46sGGOAXMGQK5tzH8";
+        private const string SHELTER_TOKEN = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYl9pZCI6ImQwNzk2Yjg1LTgyNjMtNDBjMy1kZDU0LTA4ZGIzYzE1ZjEwOCIsImV4cCI6MTkxNjIzOTAyMiwiYXVkIjpbIkFBQSJdLCJyb2xlcyI6WyJzaGVsdGVyIl19.JG0k0AbZLZnoCBc7FSr1LUE2s6Eo6Yzzlm6wA-2iK5k";
+        private const string SHELTER_ID = "d0796b85-8263-40c3-dd54-08db3c15f108";
 
         [Fact]
         public async void GetAllAnnouncementsAsShelter()
         {
-            var req = CreateRequest(HttpMethod.Get, Urls.Announcements, authToken: SHELTER_TOKEN);
+            var req = CreateRequest(HttpMethod.Get, Urls.AnnouncementsForShelter, authToken: SHELTER_TOKEN);
             var res = await client.SendAsync(req);
 
             Assert.Equal(HttpStatusCode.OK, res.StatusCode);
@@ -53,6 +57,7 @@ namespace APIs_tests.AnnouncementAPTests
                 Name = "Czaki",
                 Description = "Spokojny, wytresowany futrzak szuka przyjaciela",
                 Species = "pies",
+                Sex = Sex.Male
             };
 
             var req = CreateRequest(HttpMethod.Post, Urls.Pets, body: postPetRequest, authToken: SHELTER_TOKEN);
@@ -138,13 +143,44 @@ namespace APIs_tests.AnnouncementAPTests
             {
                 Description = "Opis nowego ogłoszenia testowego",
                 Title = "Testowe ogłoszenie",
-                Status = DatabaseContextLibrary.models.AnnouncementStatus.Closed,
+                Status = AnnouncementStatus.Closed,
             };
 
             var req = CreateRequest(HttpMethod.Get, $"{Urls.Announcements}/{announcementId}", body: putAnnouncementRequest, authToken: SHELTER_TOKEN);
             var res = await client.SendAsync(req);
 
             Assert.Equal(HttpStatusCode.OK, res.StatusCode);
+        }
+
+        protected override void MockDatabase(DataContext context)
+        {
+            var foundSheler = context.Shelters.Find(Guid.Parse(SHELTER_ID));
+            if (foundSheler != null) return;
+
+            var address = new Address()
+            {
+                City = "Test city",
+                Country = "Test country",
+                PostalCode = "00000",
+                Province = "Test province",
+                Street = "Test street",
+            };
+
+            context.Address.Add(address);
+            context.SaveChanges();
+
+            var shelter = new Shelter()
+            {
+                Id = Guid.Parse(SHELTER_ID),
+                AddressId = address.Id,
+                Email = "test@test.pl",
+                FullShelterName = "Test full shelter name",
+                PhoneNumber = "000000000",
+                UserName = "Test username",
+            };
+
+            context.Shelters.Add(shelter);
+            context.SaveChanges();
         }
     }
 }

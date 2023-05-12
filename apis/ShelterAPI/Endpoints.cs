@@ -1,23 +1,22 @@
 ﻿using DatabaseContextLibrary.models;
 using Microsoft.EntityFrameworkCore;
 using ShelterAPI.Requests;
-using ShelterAPI.Responses;
+using CommonDTOLibrary.Mappers;
 
 namespace ShelterAPI
 {
     public static class Endpoints
     {
-        public static async Task<IResult> GetShelter(DataContext context)
+        public static async Task<IResult> GetShelters(DataContext context)
         {
             var shelters = await context.Shelters.Include("Address").Select(s => s.MapDTO()).ToArrayAsync();
-            var res = new GetSheltersResponse(shelters);
-            return Results.Ok(res);
+            return Results.Ok(shelters);
         }
 
-        public static async Task<IResult> GetShelters(DataContext context, Guid shelterId)
+        public static async Task<IResult> GetShelter(DataContext context, Guid shelterId)
         {
             return await context.Shelters.Include("Address").FirstOrDefaultAsync(s => s.Id == shelterId) is Shelter shelter ?
-                Results.Ok(new GetShelterResponse(shelter)) :
+                Results.Ok(shelter.MapDTO()) :
                 Results.NotFound("Sorry, shelter not found");
         }
 
@@ -27,7 +26,7 @@ namespace ShelterAPI
 
             if (shelter.Address != null)
             {
-                var newAddress = shelter.Address.Map();
+                var newAddress = shelter.Address.MapDB();
                 context.Address.Add(newAddress);
                 await context.SaveChangesAsync();
                 newShelter.AddressId = newAddress.Id;

@@ -1,6 +1,4 @@
-﻿using DatabaseContextLibrary.models;
-
-namespace ShelterAPI.Data
+﻿namespace CommonDTOLibrary.Models
 {
     public class ShelterDTO
     {

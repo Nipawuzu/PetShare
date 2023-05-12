@@ -1,4 +1,5 @@
 using APIAuthCommonLibrary;
+using CommonDTOLibrary.Models;
 using Microsoft.EntityFrameworkCore;
 using ShelterAPI;
 
@@ -12,7 +13,7 @@ builder.Services.AddSwaggerGenWithSecurity("ShelterAPI", "v1");
 
 builder.Services.AddDbContext<DataContext>(opt => opt.UseSqlServer(ConnectionString));
 
-builder.Services.AddCustomAuthentication(builder.Configuration["Auth0:Secret"]!);
+builder.Services.AddCustomAuthentication(builder.Configuration["Auth0:Audience"]!, builder.Configuration["Auth0:Authority"]!, builder.Configuration["Auth0:Secret"]!);
 builder.Services.AddCustomAuthorization();
 
 var app = builder.Build();
@@ -25,17 +26,17 @@ app.UseAuthorization();
 
 app.UseHttpsRedirection();
 
-app.MapGet("/shelter", Endpoints.GetShelter)
+app.MapGet("/shelter", Endpoints.GetShelters)
 .WithOpenApi()
 .RequireAuthorization("Auth")
 .WithSummary("Gets all shelters.")
-.Produces(StatusCodes.Status200OK);
+.Produces(StatusCodes.Status200OK, typeof(ShelterDTO[]));
 
-app.MapGet("/shelter/{shelterId}", Endpoints.GetShelters)
+app.MapGet("/shelter/{shelterId}", Endpoints.GetShelter)
 .WithOpenApi()
 .RequireAuthorization("Auth")
 .WithSummary("Gets shelter by id.")
-.Produces(StatusCodes.Status200OK)
+.Produces(StatusCodes.Status200OK, typeof(ShelterDTO))
 .Produces(StatusCodes.Status404NotFound);
 
 app.MapPost("/shelter", Endpoints.PostShelter)

@@ -1,4 +1,4 @@
-﻿using AnnouncementsAPI.Data;
+﻿using CommonDTOLibrary.Models;
 using DatabaseContextLibrary.models;
 using FileStorageLibrary;
 

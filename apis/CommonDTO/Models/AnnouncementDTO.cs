@@ -1,6 +1,4 @@
-﻿using DatabaseContextLibrary.models;
-
-namespace AnnouncementsAPI.Data
+﻿namespace CommonDTOLibrary.Models
 {
     public class AnnouncementDTO
     {
@@ -10,7 +8,15 @@ namespace AnnouncementsAPI.Data
         public DateTime CreationDate { get; set; }
         public DateTime? ClosingDate { get; set; }
         public DateTime LastUpdateDate { get; set; }
-        public AnnouncementStatus Status { get; set; }
+        public AnnouncementStatusDTO Status { get; set; }
         public PetDTO Pet { get; set; }
+    }
+
+    public enum AnnouncementStatusDTO
+    {
+        Open,
+        Closed,
+        DuringVerification,
+        Deleted
     }
 }

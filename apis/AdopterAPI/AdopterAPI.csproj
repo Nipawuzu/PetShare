@@ -4,6 +4,7 @@
     <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>b53adc59-c167-4466-9b5d-87771101ddd7</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\APIAuthCommonLibrary\APIAuthCommonLibrary.csproj" />
+    <ProjectReference Include="..\CommonDTO\CommonDTOLibrary.csproj" />
     <ProjectReference Include="..\DatabaseContextLibrary\DatabaseContextLibrary.csproj" />
   </ItemGroup>
 

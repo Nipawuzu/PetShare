@@ -5,8 +5,7 @@ import 'package:pet_share/applications/application.dart';
 import 'package:pet_share/applications/details/view.dart';
 import 'package:pet_share/applications/received_applications/cubit.dart';
 import 'package:pet_share/applications/service.dart';
-import 'package:pet_share/common_widgets/custom_text_field.dart';
-import 'package:pet_share/common_widgets/image.dart';
+import 'package:pet_share/common_widgets/cat_progess_indicator.dart';
 import 'package:pet_share/utils/datetime_format.dart';
 
 class ReceivedApplications extends StatelessWidget {
@@ -44,34 +43,45 @@ class LoadingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      body: Center(
-        child: CircularProgressIndicator(
-          color: Colors.orange,
-        ),
+      body: CatProgressIndicator(
+        text: Text("Wczytywanie wniosków..."),
       ),
     );
   }
 }
 
-class ReceivedApplicationList extends StatelessWidget {
+enum SortMethod { newlyAdded, recentlyUpdated }
+
+class ReceivedApplicationList extends StatefulWidget {
   const ReceivedApplicationList(
       {required this.message, required this.applications, super.key});
 
   final String message;
   final List<Application> applications;
 
+  @override
+  State<ReceivedApplicationList> createState() =>
+      _ReceivedApplicationListState();
+}
+
+class _ReceivedApplicationListState extends State<ReceivedApplicationList> {
+  SortMethod pickedSortMethod = SortMethod.newlyAdded;
+
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
-      title: const Text("Aplikacje adopcyjne"),
+      title: const Text("Wnioski adopcyjne"),
       actions: <Widget>[
         PopupMenuButton(
+          icon: const Icon(Icons.sort),
           itemBuilder: (context) => [
-            const PopupMenuItem<int>(
-                value: 0,
-                child: TextWithBasicStyle(text: "Najnowsze zgłoszenia")),
-            const PopupMenuItem<int>(
-              value: 1,
-              child: TextWithBasicStyle(text: "Niedawno zmodyfikowane"),
+            CheckedPopupMenuItem<int>(
+                checked: pickedSortMethod == SortMethod.newlyAdded,
+                value: SortMethod.newlyAdded.index,
+                child: const TextWithBasicStyle(text: "Najnowsze zgłoszenia")),
+            CheckedPopupMenuItem<int>(
+              checked: pickedSortMethod == SortMethod.recentlyUpdated,
+              value: SortMethod.recentlyUpdated.index,
+              child: const TextWithBasicStyle(text: "Niedawno zmodyfikowane"),
             )
           ],
           onSelected: (value) {
@@ -86,9 +96,35 @@ class ReceivedApplicationList extends StatelessWidget {
                     .read<ListOfApplicationsCubit>()
                     .changeToRecentlyUpdatedApplications();
             }
+
+            pickedSortMethod = SortMethod.values[value];
           },
         ),
       ],
+    );
+  }
+
+  Widget _buildList(BuildContext context) {
+    return ListView.builder(
+      itemCount: widget.applications.length,
+      itemBuilder: (context, index) => Card(
+        child: ListTile(
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => ApplicationDetails(
+                widget.applications[index],
+              ),
+            ),
+          ),
+          leading: const Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [Icon(Icons.pets)]),
+          title: Text(widget.applications[index].user.userName),
+          subtitle: Text(
+              "Data: ${widget.applications[index].dateOfApplication.formatDay()}"),
+          trailing: const Icon(Icons.arrow_forward_ios),
+        ),
+      ),
     );
   }
 
@@ -98,9 +134,9 @@ class ReceivedApplicationList extends StatelessWidget {
       appBar: _buildAppBar(context),
       body: Column(children: [
         Padding(
-          padding: const EdgeInsets.only(bottom: 5.0, top: 5.0),
+          padding: const EdgeInsets.symmetric(vertical: 32.0),
           child: Text(
-            message,
+            widget.message,
             textAlign: TextAlign.center,
             style: const TextStyle(
                 fontSize: 30,
@@ -112,11 +148,7 @@ class ReceivedApplicationList extends StatelessWidget {
           child: RefreshIndicator(
             onRefresh: () =>
                 context.read<ListOfApplicationsCubit>().refreshApplications(),
-            child: ListView.builder(
-              itemCount: applications.length,
-              itemBuilder: (context, index) =>
-                  ApplicationTile(applications[index]),
-            ),
+            child: _buildList(context),
           ),
         )
       ]),

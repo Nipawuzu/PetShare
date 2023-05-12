@@ -24,6 +24,6 @@ class Address {
 
   @override
   String toString() {
-    return "$country, $province, $city - $street";
+    return "$country, $province\nul. $street\n$postalCode $city";
   }
 }

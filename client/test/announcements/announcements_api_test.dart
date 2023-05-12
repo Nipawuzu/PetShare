@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:pet_share/announcements/models/announcement.dart';
 import 'package:pet_share/announcements/models/new_announcement.dart';
 import 'package:pet_share/announcements/models/new_pet.dart';
+import 'package:pet_share/announcements/models/pet.dart';
 import 'package:pet_share/services/announcements/service.dart';
 
 import 'announcements_api_mock.dart';
@@ -19,6 +20,7 @@ void main() {
           birthday: DateTime.now(),
           name: "Test name",
           breed: "Test breed",
+          sex: Sex.female,
           description: "Test description",
           species: "Test species");
 

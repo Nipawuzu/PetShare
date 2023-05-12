@@ -1,6 +1,7 @@
 using AnnouncementsAPI;
 using AnnouncementsAPI.Endpoints;
 using APIAuthCommonLibrary;
+using CommonDTOLibrary.Models;
 using FileStorageLibrary;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,7 +13,7 @@ builder.Services.AddSwaggerGenWithSecurity("AnnouncementsAPI", "v1");
 
 builder.Services.AddDbContext<DataContext>(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("DataBase")));
 
-builder.Services.AddCustomAuthentication(builder.Configuration["Auth0:Secret"]!);
+builder.Services.AddCustomAuthentication(builder.Configuration["Auth0:Audience"]!, builder.Configuration["Auth0:Authority"]!, builder.Configuration["Auth0:Secret"]!);
 
 builder.Services.AddCustomAuthorization();
 
@@ -32,14 +33,14 @@ app.MapGet("/announcements", AnnouncementsEndpoints.GetWithFilters)
 .WithOpenApi()
 .RequireAuthorization("Auth")
 .WithSummary("Gets all announcements filtered with query parameters")
-.Produces(200)
+.Produces(200, typeof(AnnouncementDTO[]))
 .Produces(401);
 
 app.MapGet("/announcements/{announcementId}", AnnouncementsEndpoints.GetById)
 .WithOpenApi()
 .RequireAuthorization("Auth")
 .WithSummary("Gets announcement by id.")
-.Produces(200)
+.Produces(200, typeof(AnnouncementDTO))
 .Produces(404)
 .Produces(401);
 
@@ -47,7 +48,7 @@ app.MapGet("/shelter/announcements", AnnouncementsEndpoints.GetForAuthorisedShel
 .WithOpenApi()
 .RequireAuthorization("Auth")
 .WithSummary("Gets all announcements for shelter. Requires shelter role. Gets shelter id from auth claims.")
-.Produces(200)
+.Produces(200, typeof(AnnouncementDTO[]))
 .Produces(401);
 
 app.MapPost("/announcements", AnnouncementsEndpoints.Post)
@@ -70,19 +71,19 @@ app.MapGet("/shelter/pets", PetEndpoints.GetAllForAuthorisedShelter)
 .WithOpenApi()
 .RequireAuthorization("Shelter")
 .WithSummary("Gets all pets for shelter. Requires shelter role. Gets shelter id from auth claims.")
-.Produces(200)
+.Produces(200, typeof(PetDTO[]))
 .Produces(401);
 
 app.MapGet("/pet/{petId}", PetEndpoints.GetById)
 .WithOpenApi()
 .RequireAuthorization("Auth")
 .WithSummary("Gets pet by id.")
-.Produces(200)
+.Produces(200, typeof(PetDTO))
 .Produces(404);
 
 app.MapPost("/pet", PetEndpoints.Post)
 .WithOpenApi()
-.RequireAuthorization("Shelter")
+.RequireAuthorization("Auth")
 .WithSummary("Posts new pet. Requires shelter role. Gets shelter id from auth claims.")
 .Produces(200)
 .Produces(401);

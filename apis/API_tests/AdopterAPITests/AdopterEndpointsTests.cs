@@ -1,19 +1,18 @@
 ﻿using AdopterAPI;
-using AdopterAPI.Data;
 using AdopterAPI.Requests;
-using Azure.Core;
+using CommonDTOLibrary.Models;
 using FluentAssertions;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
 using System.Net;
-using System.Net.NetworkInformation;
 
 namespace APIs_tests.AdopterAPITests
 {
     public class AdopterEndpointsTests : APITests<ProgramAdopterAPI, DataContext>
     {
-        private const string ADMIN_TOKEN = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiIzZmE4NWY2NC01NzE3LTQ1NjItYjNmYy0yYzk2M2Y2NmFmYTYiLCJleHAiOjE5MTYyMzkwMjIsImF1ZCI6WyJBQUEiXSwicm9sZXMiOlsiQWRtaW4iXX0.1SnWaA5brkWD2l4yG3ZWczqfvH07tTHWQs9Bmn70q4Q";
-        private const string SHELTER_TOKEN = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkMDc5NmI4NS04MjYzLTQwYzMtZGQ1NC0wOGRiM2MxNWYxMDgiLCJleHAiOjE5MTYyMzkwMjIsImF1ZCI6WyJBQUEiXSwicm9sZXMiOlsiU2hlbHRlciJdfQ.isOtJ-x-QWUTmbDLlauAbIMOON46sGGOAXMGQK5tzH8";
-        private const string ADOPTER_TOKEN = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiIxYWU1N2Q3Yi1hY2ZlLTQ1NmYtM2Y3MC0wOGRiM2MxNDBhODEiLCJleHAiOjE5MTYyMzkwMjIsImF1ZCI6WyJBQUEiXSwicm9sZXMiOlsiQWRvcHRlciJdfQ.US96dERXVR2BaNIFkCb8SFLUOwaP_U9WiemXKicX1C8";
+        private const string ADMIN_TOKEN = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYl9pZCI6IjNmYTg1ZjY0LTU3MTctNDU2Mi1iM2ZjLTJjOTYzZjY2YWZhNiIsImV4cCI6MTkxNjIzOTAyMiwiYXVkIjpbIkFBQSJdLCJyb2xlcyI6WyJhZG1pbiJdfQ.h-TDwIjjROA3ntfwgaAJexDVMcB9Poqlfluw3TtmmIA";
+        private const string SHELTER_TOKEN = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYl9pZCI6ImQwNzk2Yjg1LTgyNjMtNDBjMy1kZDU0LTA4ZGIzYzE1ZjEwOCIsImV4cCI6MTkxNjIzOTAyMiwiYXVkIjpbIkFBQSJdLCJyb2xlcyI6WyJzaGVsdGVyIl19.JG0k0AbZLZnoCBc7FSr1LUE2s6Eo6Yzzlm6wA-2iK5k";
+        private const string ADOPTER_TOKEN = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYl9pZCI6IjFhZTU3ZDdiLWFjZmUtNDU2Zi0zZjcwLTA4ZGIzYzE0MGE4MSIsImV4cCI6MTkxNjIzOTAyMiwiYXVkIjpbIkFBQSJdLCJyb2xlcyI6WyJhZG9wdGVyIl19.WXryabyaLeJMe5EdOjPj85patI947TBvl8SpA7peAL8";
         private const string? NO_TOKEN = null;
 
         [Theory]
@@ -193,22 +192,7 @@ namespace APIs_tests.AdopterAPITests
                 UserName = adopterDTO.UserName,
                 Email = adopterDTO.Email,
                 PhoneNumber = adopterDTO.PhoneNumber,
-                Address = ToNewAddress(adopterDTO.Address),
-            };
-        }
-
-        private static NewAddress? ToNewAddress(AddressDTO? addressDTO)
-        {
-            if (addressDTO == null)
-                return null;
-
-            return new NewAddress
-            {
-                City = addressDTO.City,
-                Country = addressDTO.Country,
-                PostalCode = addressDTO.PostalCode,
-                Province = addressDTO.Province,
-                Street = addressDTO.Street,
+                Address = adopterDTO.Address,
             };
         }
     }

@@ -28,6 +28,7 @@ extension AnnouncementsAPIMock on Dio {
                 ),
                 birthday: DateTime.now(),
                 breed: "breed",
+                sex: Sex.male,
                 description: "description",
                 name: "name",
                 species: "species",
