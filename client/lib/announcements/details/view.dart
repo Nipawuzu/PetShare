@@ -4,8 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:pet_share/announcements/added_announcements/announcement_tile.dart';
-import 'package:pet_share/announcements/added_announcements/cubit.dart';
+import 'package:pet_share/announcements/details/cubit.dart';
 import 'package:pet_share/announcements/models/announcement.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -68,8 +67,7 @@ class _AnnouncementAndPetDetailsState extends State<AnnouncementAndPetDetails>
                   fontWeight: FontWeight.bold)),
           leading: IconButton(
               color: _iconColorTween.value,
-              onPressed: () =>
-                  context.read<ListOfAnnouncementsCubit>().goBack(),
+              onPressed: () => Navigator.of(context).pop(),
               icon: const Icon(
                 Icons.arrow_back,
               )),
@@ -123,8 +121,9 @@ class _AnnouncementAndPetDetailsState extends State<AnnouncementAndPetDetails>
           if (value != null && value)
             {
               context
-                  .read<GridOfAnnouncementsCubit>()
+                  .read<AnnouncementDetailsCubit>()
                   .deleteAnnouncement(announcement),
+              Navigator.pop(context),
             }
         });
   }
@@ -276,9 +275,9 @@ class _AnnouncementAndPetDetailsState extends State<AnnouncementAndPetDetails>
                 child: ElevatedButton(
                   key: const Key('next'),
                   onPressed: () {
-                    context.read<GridOfAnnouncementsCubit>().adopt(
-                        "1ae57d7b-acfe-456f-3f70-08db3c140a81",
-                        widget.announcement);
+                    context
+                        .read<AnnouncementDetailsCubit>()
+                        .adopt("", widget.announcement);
                   },
                   child: const Text("Aplikuj"),
                 ),
@@ -292,19 +291,13 @@ class _AnnouncementAndPetDetailsState extends State<AnnouncementAndPetDetails>
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        context.read<GridOfAnnouncementsCubit>().goBack();
-        return false;
-      },
-      child: NotificationListener<ScrollNotification>(
-        onNotification: _scrollListener,
-        child: Scaffold(
-          extendBodyBehindAppBar: true,
-          appBar: _buildAppBar(context),
-          bottomNavigationBar: _buildBottomAppBar(context),
-          body: _buildInputs(context),
-        ),
+    return NotificationListener<ScrollNotification>(
+      onNotification: _scrollListener,
+      child: Scaffold(
+        extendBodyBehindAppBar: true,
+        appBar: _buildAppBar(context),
+        bottomNavigationBar: _buildBottomAppBar(context),
+        body: _buildInputs(context),
       ),
     );
   }

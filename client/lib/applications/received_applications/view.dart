@@ -6,6 +6,8 @@ import 'package:pet_share/applications/details/view.dart';
 import 'package:pet_share/applications/received_applications/cubit.dart';
 import 'package:pet_share/applications/service.dart';
 import 'package:pet_share/common_widgets/cat_progess_indicator.dart';
+import 'package:pet_share/common_widgets/custom_text_field.dart';
+import 'package:pet_share/common_widgets/image.dart';
 import 'package:pet_share/utils/datetime_format.dart';
 
 class ReceivedApplications extends StatelessWidget {

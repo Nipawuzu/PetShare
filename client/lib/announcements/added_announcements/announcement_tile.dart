@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:like_button/like_button.dart';
-import 'package:pet_share/announcements/added_announcements/cubit.dart';
 import 'package:pet_share/announcements/details/view.dart';
 import 'package:pet_share/announcements/models/announcement.dart';
 import 'package:pet_share/common_widgets/image.dart';
@@ -56,11 +54,7 @@ class AnnouncementTile extends StatelessWidget {
                         );
                       },
                       onTap: (isLiked) {
-                        if (announcement.id != null) {
-                          context
-                              .read<GridOfAnnouncementsCubit>()
-                              .like("", announcement.id!, !isLiked);
-                        }
+                        if (announcement.id != null) {}
 
                         return Future.value(!isLiked);
                       },

@@ -3,41 +3,32 @@ import 'package:pet_share/announcements/models/announcement.dart';
 import 'package:pet_share/services/adopter/service.dart';
 import 'package:pet_share/services/announcements/service.dart';
 
-class ListOfAnnouncementsState {}
+class AnnouncementDetailsState {}
 
-class GridViewState extends ListOfAnnouncementsState {}
-
-class AfterAdoptionState extends ListOfAnnouncementsState {
+class AfterAdoptionState extends AnnouncementDetailsState {
   AfterAdoptionState(this.message, this.success);
 
   final String message;
   final bool success;
 }
 
-class AnnouncementDetailsState extends ListOfAnnouncementsState {
-  AnnouncementDetailsState({required this.announcement});
+class DetailsState extends AnnouncementDetailsState {
+  DetailsState({required this.announcement});
   Announcement announcement;
 }
 
-class GridOfAnnouncementsCubit extends Cubit<ListOfAnnouncementsState> {
-  GridOfAnnouncementsCubit(this._announcementService, this._adopterService)
-      : super(GridViewState());
+class AnnouncementDetailsCubit extends Cubit<AnnouncementDetailsState> {
+  AnnouncementDetailsCubit(
+      this._announcementService, this._adopterService, this.announcement)
+      : super(DetailsState(announcement: announcement));
 
   final AnnouncementService _announcementService;
   final AdopterService _adopterService;
-
-  void goBack() {
-    emit(GridViewState());
-  }
-
-  void seeDetails(Announcement announcement) {
-    emit(AnnouncementDetailsState(announcement: announcement));
-  }
+  final Announcement announcement;
 
   void deleteAnnouncement(Announcement announcement) {
     announcement.status = AnnouncementStatus.removed;
     _announcementService.updateStatus(announcement.id, announcement.status);
-    emit(GridViewState());
   }
 
   Future<void> adopt(String adopterId, Announcement announcement) async {

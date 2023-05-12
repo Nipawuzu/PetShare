@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pet_share/announcements/added_announcements/cubit.dart';
 import 'package:pet_share/announcements/details/view.dart';
 
 class AfterAdoptionPage extends StatelessWidget {
@@ -32,10 +30,12 @@ class AfterAdoptionPage extends StatelessWidget {
               textScaleFactor: 2,
             ),
             TextButton(
-              onPressed: () =>
-                  context.read<GridOfAnnouncementsCubit>().goBack(),
+              onPressed: () => {
+                Navigator.pop(context),
+                Navigator.pop(context),
+              },
               child: const TextWithBasicStyle(
-                text: "Wróć do widoku ogłoszeń",
+                text: "Wróć do widoku głównego",
                 align: TextAlign.center,
                 textScaleFactor: 1.4,
               ),
