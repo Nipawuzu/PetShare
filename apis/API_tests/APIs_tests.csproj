@@ -6,6 +6,12 @@
     <Nullable>enable</Nullable>
 
     <IsPackable>false</IsPackable>
+
+    <Configurations>Debug;Release;Test</Configurations>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Test|AnyCPU'">
+    <DefineConstants>$(DefineConstants);/p:DefineConstants="TEST"</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
