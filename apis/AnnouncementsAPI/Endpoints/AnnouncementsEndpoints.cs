@@ -4,6 +4,9 @@ using DatabaseContextLibrary.models;
 using FileStorageLibrary;
 using Microsoft.EntityFrameworkCore;
 using CommonDTOLibrary.Mappers;
+using DatabaseContextLibrary.Models;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
 
 namespace AnnouncementsAPI.Endpoints
 {
@@ -17,13 +20,20 @@ namespace AnnouncementsAPI.Endpoints
             string[]? locations,
             int? minAge,
             int? maxAge,
-            string[]? shelterNames)
+            string[]? shelterNames,
+            HttpContext httpContext)
         {
+            var isAdopter = false;
+            if (AuthorizeUser(httpContext, out var role, out var adopterId) && role == Role.Adopter)
+            {
+                isAdopter = true;
+            }
+
             var announcements = context.Announcements
-                .Include(x => x.Pet)
-                .ThenInclude(x => x.Shelter)
-                .ThenInclude(x => x.Address)
-                .AsQueryable();
+            .Include(x => x.Pet)
+            .ThenInclude(x => x.Shelter)
+            .ThenInclude(x => x.Address)
+            .AsQueryable();
 
             if (species != null && species.Any())
                 announcements = announcements.Where(a => species.Contains(a.Pet.Species));
@@ -41,11 +51,16 @@ namespace AnnouncementsAPI.Endpoints
             if (shelterNames != null && shelterNames.Any())
                 announcements = announcements.Where(a => shelterNames.Contains(a.Pet.Shelter.FullShelterName));
 
-            var res = await announcements.Select(a => a.MapDTO()).ToListAsync();
+            var res = await announcements.Select(a => a.Map()).ToListAsync();
 
             foreach (var a in res)
             {
                 await a.Pet.AttachPhotoUrl(storage);
+                if (isAdopter)
+                {
+                    a.IsLiked = await context.AdopterLikedAnnouncementsLinkingTables.AnyAsync(
+                        alalt => alalt.AnnouncementId == a.Id && alalt.AdopterId == adopterId);
+                }
             }
 
             return Results.Ok(res);
@@ -123,7 +138,7 @@ namespace AnnouncementsAPI.Endpoints
             if (announcement is null)
                 return Results.NotFound("Announcement doesn't exist.");
 
-            if(!AuthorizeUser(httpContext, out var role, out var userId))
+            if (!AuthorizeUser(httpContext, out var role, out var userId))
                 return Results.Unauthorized();
 
             Pet? announcementPet;
@@ -151,6 +166,64 @@ namespace AnnouncementsAPI.Endpoints
             announcement.LastUpdateDate = DateTime.Now;
 
             await context.SaveChangesAsync();
+
+            return Results.Ok();
+        }
+
+        public static async Task<IResult> PutLiked(DataContext dbContext, PutAdopterLikeAnnouncementRequest likedAnnoucement, HttpContext httpContext)
+        {
+            var identity = httpContext.User.Identity as ClaimsIdentity;
+            var issuerClaim = identity?.GetIssuer();
+
+            if (identity is null || issuerClaim is null)
+                return Results.Unauthorized();
+
+            var adopterId = Guid.Parse(issuerClaim);
+
+            if (likedAnnoucement.IsLiked)
+            {
+                var liked = await dbContext.AdopterLikedAnnouncementsLinkingTables.FirstOrDefaultAsync(alalt =>
+                    alalt.AdopterId == adopterId && alalt.AnnouncementId == likedAnnoucement.AnnouncementId);
+
+                if (liked != null)
+                    return Results.Ok();
+
+                dbContext.AdopterLikedAnnouncementsLinkingTables.Add(new AdopterLikedAnnouncementsLinkingTable()
+                {
+                    AdopterId = adopterId,
+                    AnnouncementId = likedAnnoucement.AnnouncementId
+                });
+                await dbContext.SaveChangesAsync();
+            }
+            else
+            {
+                var liked = await dbContext.AdopterLikedAnnouncementsLinkingTables.FirstOrDefaultAsync(alalt =>
+                   alalt.AdopterId == adopterId && alalt.AnnouncementId == likedAnnoucement.AnnouncementId);
+
+                if (liked == null)
+                    return Results.Ok();
+
+                dbContext.AdopterLikedAnnouncementsLinkingTables.Remove(liked!);
+                await dbContext.SaveChangesAsync();
+            }
+
+            return Results.Ok();
+        }
+
+        public static async Task<IResult> GetLiked(DataContext dbContext, HttpContext httpContext)
+        {
+            var identity = httpContext.User.Identity as ClaimsIdentity;
+            var issuerClaim = identity?.GetIssuer();
+
+            if (identity is null || issuerClaim is null)
+                return Results.Unauthorized();
+
+            var adopterId = Guid.Parse(issuerClaim);
+
+            var liked = dbContext.AdopterLikedAnnouncementsLinkingTables.Include("Announcement").Where(alalt =>
+                alalt.AdopterId == adopterId);
+
+            var res = await liked.Select(a => a.Announcement.MapDTO()).ToListAsync();
 
             return Results.Ok();
         }

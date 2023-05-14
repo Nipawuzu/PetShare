@@ -1,13 +1,14 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'put_announcement.dart';
+part of 'put_announcement_request.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-PutAnnouncement _$PutAnnouncementFromJson(Map<String, dynamic> json) =>
-    PutAnnouncement(
+PutAnnouncementRequest _$PutAnnouncementRequestFromJson(
+        Map<String, dynamic> json) =>
+    PutAnnouncementRequest(
       title: json['title'] as String? ?? '',
       description: json['description'] as String? ?? '',
       petId: json['petId'] as String?,
@@ -15,7 +16,8 @@ PutAnnouncement _$PutAnnouncementFromJson(Map<String, dynamic> json) =>
           json['status'], const AnnouncementStatusConverter().fromJson),
     );
 
-Map<String, dynamic> _$PutAnnouncementToJson(PutAnnouncement instance) =>
+Map<String, dynamic> _$PutAnnouncementRequestToJson(
+        PutAnnouncementRequest instance) =>
     <String, dynamic>{
       'petId': instance.petId,
       'title': instance.title,

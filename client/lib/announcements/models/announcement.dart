@@ -16,6 +16,7 @@ class Announcement {
   Pet pet;
   String title;
   String description;
+  bool? isLiked;
   @AnnouncementStatusConverter()
   AnnouncementStatus status;
   String? id;

@@ -13,13 +13,16 @@ Announcement _$AnnouncementFromJson(Map<String, dynamic> json) => Announcement(
       status: json['status'] == null
           ? AnnouncementStatus.open
           : const AnnouncementStatusConverter().fromJson(json['status'] as int),
-    )..id = json['id'] as String?;
+    )
+      ..isLiked = json['isLiked'] as bool?
+      ..id = json['id'] as String?;
 
 Map<String, dynamic> _$AnnouncementToJson(Announcement instance) =>
     <String, dynamic>{
       'pet': instance.pet,
       'title': instance.title,
       'description': instance.description,
+      'isLiked': instance.isLiked,
       'status': const AnnouncementStatusConverter().toJson(instance.status),
       'id': instance.id,
     };

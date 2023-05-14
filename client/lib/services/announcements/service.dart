@@ -7,8 +7,9 @@ import 'package:pet_share/announcements/models/new_announcement.dart';
 import 'package:pet_share/announcements/models/new_pet.dart';
 import 'package:pet_share/services/announcements/requests/post_announcement_request.dart';
 import 'package:pet_share/services/announcements/requests/post_pet_request.dart';
+import 'package:pet_share/services/announcements/requests/put_announcement_like_request.dart';
 
-import 'requests/put_announcement.dart';
+import 'requests/put_announcement_request.dart';
 
 class AnnouncementService {
   AnnouncementService(this._dio, this._url);
@@ -96,7 +97,7 @@ class AnnouncementService {
 
   Future<bool> updateStatus(
       String? announcementId, AnnouncementStatus newStatus) async {
-    var announcement = PutAnnouncement(
+    var announcement = PutAnnouncementRequest(
       status: newStatus,
       petId: null,
       title: null,
@@ -112,5 +113,18 @@ class AnnouncementService {
     );
 
     return response.statusCode == StatusCode.OK;
+  }
+
+  Future<void> likeAnnouncement(String announcementId, bool isLiked) async {
+    var announcementLiked = PutAnnouncementLikeRequest(
+        announcementId: announcementId, isLiked: isLiked);
+    await _dio.put(
+      "$_url/announcements/like",
+      data: announcementLiked.toJson(),
+      options: Options(headers: {
+        "Authorization": _token,
+        "HttpHeaders.contentTypeHeader": "application/json",
+      }),
+    );
   }
 }

@@ -1,5 +1,6 @@
 using AnnouncementsAPI;
 using AnnouncementsAPI.Endpoints;
+using AnnouncementsAPI.Responses;
 using APIAuthCommonLibrary;
 using CommonDTOLibrary.Models;
 using FileStorageLibrary;
@@ -32,8 +33,8 @@ app.UseHttpsRedirection();
 app.MapGet("/announcements", AnnouncementsEndpoints.GetWithFilters)
 .WithOpenApi()
 .RequireAuthorization("Auth")
-.WithSummary("Gets all announcements filtered with query parameters")
-.Produces(200, typeof(AnnouncementDTO[]))
+.WithSummary("Gets all announcements filtered with query parameters and with information if announcement is liked by adopter. Gets adopter id from auth claims.")
+.Produces(200, typeof(GetAnnouncementsWithFiltersResponse[]))
 .Produces(401);
 
 app.MapGet("/announcements/{announcementId}", AnnouncementsEndpoints.GetById)
@@ -65,6 +66,20 @@ app.MapPut("/announcements/{announcementId}", AnnouncementsEndpoints.Put)
 .WithSummary("Updates announcements. Null values are omitted. Requires admin (any announcement) or shelter (only matching shelterId) role. ")
 .Produces(StatusCodes.Status200OK)
 .Produces(StatusCodes.Status400BadRequest)
+.Produces(StatusCodes.Status401Unauthorized);
+
+app.MapPut("/announcements/like", AnnouncementsEndpoints.PutLiked)
+.WithOpenApi()
+.RequireAuthorization("Adopter")
+.WithSummary("Add announcement to liked announcements for adopter provided in token. Requires adopter role.")
+.Produces(StatusCodes.Status200OK)
+.Produces(StatusCodes.Status401Unauthorized);
+
+app.MapGet("/announcements/allLiked", AnnouncementsEndpoints.GetLiked)
+    .WithOpenApi()
+.RequireAuthorization("Adopter")
+.WithSummary("Gets all liked announcements for adopter provided in token. Requires adopter role.")
+.Produces(StatusCodes.Status200OK, typeof(AnnouncementDTO[]))
 .Produces(StatusCodes.Status401Unauthorized);
 
 app.MapGet("/shelter/pets", PetEndpoints.GetAllForAuthorisedShelter)

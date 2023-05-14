@@ -91,6 +91,7 @@ class AnnouncementTilesGrid extends StatelessWidget {
           ),
           child: AnnouncementTile(
             announcement: announcements[index],
+            announcementService: announcementService,
           ),
         ),
       ),

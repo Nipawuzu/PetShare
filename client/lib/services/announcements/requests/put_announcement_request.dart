@@ -2,11 +2,11 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:pet_share/announcements/models/announcement.dart';
 import 'package:pet_share/utils/announcementstatus_converter.dart';
 
-part 'put_announcement.g.dart';
+part 'put_announcement_request.g.dart';
 
 @JsonSerializable()
-class PutAnnouncement {
-  PutAnnouncement({
+class PutAnnouncementRequest {
+  PutAnnouncementRequest({
     this.title = '',
     this.description = '',
     this.petId,
@@ -19,7 +19,7 @@ class PutAnnouncement {
   @AnnouncementStatusConverter()
   AnnouncementStatus? status;
 
-  Map<String, dynamic> toJson() => _$PutAnnouncementToJson(this);
-  factory PutAnnouncement.fromJson(Map<String, dynamic> json) =>
-      _$PutAnnouncementFromJson(json);
+  Map<String, dynamic> toJson() => _$PutAnnouncementRequestToJson(this);
+  factory PutAnnouncementRequest.fromJson(Map<String, dynamic> json) =>
+      _$PutAnnouncementRequestFromJson(json);
 }

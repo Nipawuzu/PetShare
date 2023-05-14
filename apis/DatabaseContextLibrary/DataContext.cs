@@ -1,5 +1,6 @@
 ﻿global using Microsoft.EntityFrameworkCore;
 using DatabaseContextLibrary.models;
+using DatabaseContextLibrary.Models;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,6 +20,7 @@ namespace DatabaseContextLibrary
         public DbSet<Adopter> Adopters => Set<Adopter>();
         public DbSet<AdopterShelterLinkingTable> AdopterShelterLinkingTable => Set<AdopterShelterLinkingTable>();
         public DbSet<Application> Applications => Set<Application>();
+        public DbSet<AdopterLikedAnnouncementsLinkingTable> AdopterLikedAnnouncementsLinkingTables => Set<AdopterLikedAnnouncementsLinkingTable>();
     }
 
 
