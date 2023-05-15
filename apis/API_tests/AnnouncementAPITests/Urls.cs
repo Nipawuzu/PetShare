@@ -1,5 +1,5 @@
 ﻿
-namespace APIs_tests.AnnouncementAPTests
+namespace APIs_tests.AnnouncementAPITests
 {
     internal class Urls
     {
