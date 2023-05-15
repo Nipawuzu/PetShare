@@ -1,0 +1,30 @@
+name: Dev merge workflows
+
+on:
+  push:
+    paths:
+      - "apis/**"
+      - "!apis/API_tests/**"
+  workflow_dispatch:
+
+jobs:
+  deploy_shelter_api:
+    uses: ./.github/workflows/deploy_API.yml
+    with:
+      project_name: ShelterAPI
+    secrets:
+      azure_app_service_publish_profile: ${{ secrets.PUBLISH_PROFILE_SHELTER_API_DEV }}
+  
+  deploy_announcements_api:
+    uses: ./.github/workflows/deploy_API.yml
+    with:
+      project_name: AnnouncementsAPI
+    secrets:
+      azure_app_service_publish_profile: ${{ secrets.PUBLISH_PROFILE_ANNOUNCEMENT_API_DEV }}
+  
+  deploy_adopter_api:
+    uses: ./.github/workflows/deploy_API.yml
+    with:
+      project_name: AdopterAPI
+    secrets:
+      azure_app_service_publish_profile: ${{ secrets.PUBLISH_PROFILE_ADOPTER_API_DEV }}
