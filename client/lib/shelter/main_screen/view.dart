@@ -1,10 +1,14 @@
-import 'dart:math';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import "package:collection/collection.dart";
+import 'package:pet_share/announcements/form/view.dart';
+import 'package:pet_share/announcements/models/pet.dart';
+import 'package:pet_share/application.dart';
 import 'package:pet_share/applications/received_applications/view.dart';
-import 'package:pet_share/applications/service.dart';
-import 'package:username_gen/username_gen.dart';
+import 'package:pet_share/common_widgets/cat_progess_indicator.dart';
+import 'package:pet_share/common_widgets/list_header_view.dart';
+import 'package:pet_share/services/adopter/service.dart';
 
 class ShelterMainScreen extends StatefulWidget {
   const ShelterMainScreen({super.key});
@@ -15,28 +19,6 @@ class ShelterMainScreen extends StatefulWidget {
 
 class _ShelterMainScreenState extends State<ShelterMainScreen>
     with TickerProviderStateMixin {
-  late AnimationController _bannerAnimationController;
-  late Animation<double> _bannerAnimation;
-  final ScrollController _petListScrollController = ScrollController();
-
-  bool _bannerIsVisible = true;
-  bool _bannerCanMove = true;
-  bool _bannerIsMoving = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _bannerAnimationController = AnimationController(
-      vsync: this,
-    );
-    _bannerAnimation = CurvedAnimation(
-      parent: _bannerAnimationController,
-      curve: Curves.linear,
-    );
-
-    _bannerAnimationController.value = 1;
-  }
-
   PreferredSizeWidget _buildAppbar(BuildContext context) {
     return AppBar(
       leading: IconButton(
@@ -54,168 +36,200 @@ class _ShelterMainScreenState extends State<ShelterMainScreen>
     );
   }
 
-  Widget _buildWelcome(BuildContext context) {
-    return FadeTransition(
-      opacity: _bannerAnimation,
-      child: SizeTransition(
-        sizeFactor: _bannerAnimation,
-        axis: Axis.vertical,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+  Widget _buildWelcomeWithNoPets(BuildContext context) {
+    return RichText(
+      text: TextSpan(
+        text: "Cześć!\n",
+        style: Theme.of(context).primaryTextTheme.headlineMedium,
+        children: [
+          TextSpan(
+            text: "Nie masz jeszcze żadnych\nwniosków do rozpatrzenia",
+            style: Theme.of(context).primaryTextTheme.bodyMedium,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWelcomeWithNumberOfApplications(
+      BuildContext context, List<MapEntry<Pet, List<Application>>> pets) {
+    var numberOfApplications = 0;
+    for (var pair in pets) {
+      numberOfApplications += pair.value
+          .where((application) =>
+              application.status == ApplicationStatusDTO.created)
+          .length;
+    }
+
+    return RichText(
+      text: TextSpan(
+        text: "Cześć!\n",
+        style: Theme.of(context).primaryTextTheme.headlineMedium,
+        children: [
+          TextSpan(
+            text: "Czeka na ciebie ",
+            style: Theme.of(context).primaryTextTheme.bodyMedium,
+            children: [
+              TextSpan(
+                text: "$numberOfApplications\n",
+                style: Theme.of(context).primaryTextTheme.bodyMedium?.copyWith(
+                      color: _interestToColor(numberOfApplications),
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+              const TextSpan(text: "wniosków do rozpatrzenia!")
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWelcome(
+      BuildContext context, List<MapEntry<Pet, List<Application>>> pets) {
+    return Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 16.0,
+        ),
+        child: Column(
           children: [
             Expanded(
               flex: 5,
-              child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Cześć!",
-                        style:
-                            Theme.of(context).primaryTextTheme.headlineMedium,
-                      ),
-                      const SizedBox(height: 8),
-                      RichText(
-                        text: TextSpan(
-                          text: "Czeka na ciebie ",
-                          style: Theme.of(context).primaryTextTheme.bodyMedium,
-                          children: [
-                            TextSpan(
-                              text: "10",
-                              style: Theme.of(context)
-                                  .primaryTextTheme
-                                  .bodyMedium
-                                  ?.copyWith(
-                                    color: _interestToColor(10),
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                            ),
-                            const TextSpan(text: "  wniosków do rozpatrzenia!")
-                          ],
-                        ),
-                      ),
-                    ],
-                  )),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Image.asset(
+                    "images/dog_reading.jpg",
+                    fit: BoxFit.cover,
+                  ),
+                ],
+              ),
             ),
             Expanded(
-              flex: 4,
-              child: Image.asset(
-                "images/dog_reading.jpg",
-                fit: BoxFit.fitWidth,
-                alignment: Alignment.bottomCenter,
+              flex: 3,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Expanded(
+                    child: FittedBox(
+                      fit: BoxFit.fitWidth,
+                      alignment: Alignment.bottomLeft,
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(
+                          minHeight: 1,
+                          minWidth: 1,
+                        ),
+                        child: pets.isEmpty
+                            ? _buildWelcomeWithNoPets(context)
+                            : _buildWelcomeWithNumberOfApplications(
+                                context, pets),
+                      ),
+                    ),
+                  ),
+                  Flexible(
+                    child: InputChip(
+                      onPressed: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                NewAnnouncementForm(context.read())),
+                      ),
+                      label:
+                          const Row(mainAxisSize: MainAxisSize.min, children: [
+                        Text("Dodaj ogłoszenie"),
+                        SizedBox(
+                          width: 4,
+                        ),
+                        Icon(
+                          Icons.create,
+                          size: 12,
+                        )
+                      ]),
+                      backgroundColor: Colors.grey.shade200,
+                    ),
+                  ),
+                ],
               ),
+            ),
+            const SizedBox(
+              height: 16,
             )
           ],
+        ));
+  }
+
+  Widget _buildPetList(
+      BuildContext context, List<MapEntry<Pet, List<Application>>> pets) {
+    return SliverList(
+      delegate: SliverChildBuilderDelegate(
+        childCount: pets.length,
+        (context, index) => Card(
+          child: ListTile(
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => ReceivedApplications(
+                  context.read(),
+                ),
+              ),
+            ),
+            contentPadding: const EdgeInsets.all(8.0),
+            leading: SizedBox.square(
+              dimension: 50,
+              child: ClipOval(
+                child: pets[index].key.photoUrl != null
+                    ? CachedNetworkImage(
+                        fit: BoxFit.cover,
+                        imageUrl: pets[index].key.photoUrl!,
+                      )
+                    : const Icon(Icons.pets_outlined),
+              ),
+            ),
+            title: Text(
+              pets[index].key.name,
+              overflow: TextOverflow.ellipsis,
+            ),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Chip(
+                  shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(20))),
+                  label: Text((index * 10).toString()),
+                  backgroundColor: _interestToColor(index * 10),
+                ),
+                const SizedBox(width: 8),
+                const Icon(Icons.arrow_forward_ios),
+              ],
+            ),
+          ),
         ),
       ),
     );
   }
 
-  late Offset _startDragPoint = const Offset(0, 0);
+  Widget _buildBody(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: FutureBuilder(
+        future: context.read<AdopterService>().getApplications(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CatProgressIndicator());
+          }
 
-  _pointerDownHandler(PointerDownEvent details) {
-    if (_petListScrollController.offset >
-        _petListScrollController.initialScrollOffset) {
-      _bannerCanMove = false;
-      return;
-    }
+          if (snapshot.hasError || (snapshot.data == null)) {
+            return const Center(child: Text("Wystąpił błąd"));
+          }
 
-    _startDragPoint = details.position;
-    _bannerCanMove = true;
-  }
+          var pets =
+              groupBy(snapshot.data!, (Application a) => a.announcement.pet)
+                  .entries
+                  .toList();
 
-  _pointerMoveHandler(PointerMoveEvent details) {
-    if (!_bannerCanMove) return;
-
-    var dy = (details.position.dy - _startDragPoint.dy) / 300;
-    double value = min(max(dy, -1), 1);
-
-    if (_bannerAnimationController.value == 0 && !_bannerIsVisible) {
-      if (_bannerAnimationController.value + value > 0) {
-        setState(() {
-          _bannerIsMoving = true;
-        });
-      } else {
-        return;
-      }
-    }
-
-    _bannerIsMoving = true;
-    _bannerAnimationController.value += value;
-    _startDragPoint = details.position;
-  }
-
-  _pointerUpHandler(PointerUpEvent details) {
-    if (!_bannerIsMoving) return;
-
-    var showBanner = _bannerAnimationController.value > 0.25;
-    _bannerIsMoving = false;
-
-    _bannerAnimationController
-        .animateTo(showBanner ? 1 : 0,
-            duration: const Duration(milliseconds: 200))
-        .whenComplete(() {
-      setState(() {
-        _bannerIsVisible = showBanner;
-      });
-    });
-  }
-
-  Widget _buildPetList(BuildContext context) {
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Listener(
-          onPointerDown: _pointerDownHandler,
-          onPointerMove: _pointerMoveHandler,
-          onPointerUp: _pointerUpHandler,
-          child: ListView.builder(
-            physics: !_bannerIsVisible && !_bannerIsMoving
-                ? const ScrollPhysics()
-                : const NeverScrollableScrollPhysics(),
-            controller: _petListScrollController,
-            itemCount: 20,
-            itemBuilder: (context, index) => Card(
-              child: ListTile(
-                onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => ReceivedApplications(
-                      ApplicationService(),
-                    ),
-                  ),
-                ),
-                contentPadding: const EdgeInsets.all(8.0),
-                leading: SizedBox.square(
-                  dimension: 50,
-                  child: ClipOval(
-                    child: CachedNetworkImage(
-                      fit: BoxFit.cover,
-                      imageUrl: "https://cataas.com/cat?=$index",
-                    ),
-                  ),
-                ),
-                title: Text(
-                  UsernameGen.generateWith(),
-                  overflow: TextOverflow.ellipsis,
-                ),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Chip(
-                      shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(20))),
-                      label: Text((index * 10).toString()),
-                      backgroundColor: _interestToColor(index * 10),
-                    ),
-                    const SizedBox(width: 8),
-                    const Icon(Icons.arrow_forward_ios),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
+          return ListHeaderView(
+              header: _buildWelcome(context, pets),
+              slivers: [_buildPetList(context, pets)]);
+        },
       ),
     );
   }
@@ -238,15 +252,6 @@ class _ShelterMainScreenState extends State<ShelterMainScreen>
     }
 
     return Colors.red.shade400;
-  }
-
-  Widget _buildBody(BuildContext context) {
-    return Column(
-      children: [
-        _buildWelcome(context),
-        _buildPetList(context),
-      ],
-    );
   }
 
   @override

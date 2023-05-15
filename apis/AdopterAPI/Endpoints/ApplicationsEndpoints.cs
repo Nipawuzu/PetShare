@@ -24,6 +24,9 @@ namespace AdopterAPI.Endpoints
                     var shelterId = Guid.Parse(issuerClaim);
                     var applications = await dbContext.Applications
                         .Include("Announcement")
+                        .Include("Adopter")
+                        .Include("Adopter.Address")
+                        .Include("Announcement.Pet")
                         .Where(a => a.Announcement!.Pet.ShelterId == shelterId)
                         .ToListAsync();
                     return Results.Ok(applications.MapDTO());

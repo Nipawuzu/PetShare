@@ -15,6 +15,7 @@ extension AnnouncementsAPIMock on Dio {
       var res = Announcement(
               pet: Pet(
                 shelter: Shelter(
+                  id: "ca89146a-a3b1-4b9f-8abe-1834f764ea90",
                   email: "email",
                   fullShelterName: "fullShelterName",
                   phoneNumber: "phoneNumber",
