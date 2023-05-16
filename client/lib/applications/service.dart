@@ -12,7 +12,7 @@ class ApplicationService {
       Application(
         announcement: Announcement(
           title: "Mega fajny piesek",
-          status: AnnouncementStatus.open,
+          status: AnnouncementStatus.Open,
           pet: Pet(
             name: "Bobik",
             species: "Pies",

@@ -1,3 +1,5 @@
+// ignore_for_file: constant_identifier_names
+
 import 'package:json_annotation/json_annotation.dart';
 import 'package:pet_share/shelter.dart';
 import 'package:pet_share/utils/sex_converter.dart';
@@ -11,7 +13,7 @@ class Pet {
       this.species = "",
       this.birthday,
       this.breed = "",
-      this.sex = Sex.unknown,
+      this.sex = Sex.Unknown,
       this.description = "",
       this.photoUrl,
       required this.shelter});
@@ -20,7 +22,6 @@ class Pet {
   String name;
   String species;
   String breed;
-  @SexConverter()
   Sex sex;
   DateTime? birthday;
   String description;
@@ -32,21 +33,21 @@ class Pet {
 }
 
 enum Sex {
-  unknown,
-  male,
-  female,
-  doesNotApply,
+  Unknown,
+  Male,
+  Female,
+  DoesNotApply,
 }
 
 String sexToString(Sex sex) {
   switch (sex) {
-    case Sex.unknown:
+    case Sex.Unknown:
       return "nieznana";
-    case Sex.male:
+    case Sex.Male:
       return "chłop";
-    case Sex.female:
+    case Sex.Female:
       return "baba";
-    case Sex.doesNotApply:
+    case Sex.DoesNotApply:
       return "nie dotyczy";
   }
 }

@@ -31,7 +31,7 @@ class AuthGate extends StatelessWidget {
               case "adopter":
                 return const AllViews();
               case "shelter":
-                return const ShelterMainScreen();
+                return const AllViews();
               case "admin":
                 break;
             }

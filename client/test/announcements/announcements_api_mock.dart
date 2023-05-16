@@ -29,12 +29,12 @@ extension AnnouncementsAPIMock on Dio {
                 ),
                 birthday: DateTime.now(),
                 breed: "breed",
-                sex: Sex.male,
+                sex: Sex.Male,
                 description: "description",
                 name: "name",
                 species: "species",
               ),
-              status: AnnouncementStatus.open,
+              status: AnnouncementStatus.Open,
               title: "title",
               description: "description")
           .toJson();

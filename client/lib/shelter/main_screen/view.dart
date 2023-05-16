@@ -57,7 +57,7 @@ class _ShelterMainScreenState extends State<ShelterMainScreen>
     for (var pair in pets) {
       numberOfApplications += pair.value
           .where((application) =>
-              application.status == ApplicationStatusDTO.created)
+              application.applicationStatus == ApplicationStatusDTO.Created)
           .length;
     }
 
@@ -161,9 +161,15 @@ class _ShelterMainScreenState extends State<ShelterMainScreen>
   Widget _buildPetList(
       BuildContext context, List<MapEntry<Pet, List<Application>>> pets) {
     return SliverList(
-      delegate: SliverChildBuilderDelegate(
-        childCount: pets.length,
-        (context, index) => Card(
+      delegate:
+          SliverChildBuilderDelegate(childCount: pets.length, (context, index) {
+        var applicationsCount = pets[index]
+            .value
+            .where((application) =>
+                application.applicationStatus == ApplicationStatusDTO.Created)
+            .length;
+
+        return Card(
           child: ListTile(
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute(
@@ -194,16 +200,16 @@ class _ShelterMainScreenState extends State<ShelterMainScreen>
                 Chip(
                   shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(20))),
-                  label: Text((index * 10).toString()),
-                  backgroundColor: _interestToColor(index * 10),
+                  label: Text(applicationsCount.toString()),
+                  backgroundColor: _interestToColor(applicationsCount),
                 ),
                 const SizedBox(width: 8),
                 const Icon(Icons.arrow_forward_ios),
               ],
             ),
           ),
-        ),
-      ),
+        );
+      }),
     );
   }
 

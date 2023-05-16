@@ -22,4 +22,5 @@ class Adopter extends User {
       _$AdopterFromJson(json);
 }
 
-enum AdopterStatusDTO { active, blocked, deleted }
+// ignore: constant_identifier_names
+enum AdopterStatusDTO { Active, Blocked, Deleted }

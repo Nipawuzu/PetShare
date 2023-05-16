@@ -263,7 +263,7 @@ class _PetFormPageState extends State<PetFormPage> {
   Widget _buildSexField(BuildContext context) {
     return DropdownButtonFormField(
       key: const Key('sex'),
-      onSaved: (newValue) => _pet.sex = newValue ?? Sex.unknown,
+      onSaved: (newValue) => _pet.sex = newValue ?? Sex.Unknown,
       decoration: const InputDecoration(
         labelText: "Płeć",
       ),

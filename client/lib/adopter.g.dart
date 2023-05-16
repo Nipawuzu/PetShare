@@ -25,7 +25,7 @@ Map<String, dynamic> _$AdopterToJson(Adopter instance) => <String, dynamic>{
     };
 
 const _$AdopterStatusDTOEnumMap = {
-  AdopterStatusDTO.active: 'active',
-  AdopterStatusDTO.blocked: 'blocked',
-  AdopterStatusDTO.deleted: 'deleted',
+  AdopterStatusDTO.Active: 'Active',
+  AdopterStatusDTO.Blocked: 'Blocked',
+  AdopterStatusDTO.Deleted: 'Deleted',
 };

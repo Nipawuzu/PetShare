@@ -390,26 +390,26 @@ class Header extends StatelessWidget {
 
   String _statusToString(AnnouncementStatus status) {
     switch (status) {
-      case AnnouncementStatus.open:
+      case AnnouncementStatus.Open:
         return "Szuka domu";
-      case AnnouncementStatus.closed:
+      case AnnouncementStatus.Closed:
         return "Już ma swoj dom";
-      case AnnouncementStatus.removed:
+      case AnnouncementStatus.Removed:
         return "Usunięto";
-      case AnnouncementStatus.inVerification:
+      case AnnouncementStatus.InVerification:
         return "Jest odwiedzane";
     }
   }
 
   Color _statusToColor(AnnouncementStatus status) {
     switch (status) {
-      case AnnouncementStatus.open:
+      case AnnouncementStatus.Open:
         return Colors.green.shade300;
-      case AnnouncementStatus.closed:
+      case AnnouncementStatus.Closed:
         return Colors.red.shade300;
-      case AnnouncementStatus.removed:
+      case AnnouncementStatus.Removed:
         return Colors.red.shade700;
-      case AnnouncementStatus.inVerification:
+      case AnnouncementStatus.InVerification:
         return Colors.blue;
     }
   }

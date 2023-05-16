@@ -9,7 +9,7 @@ class Application {
   Application(
       {required this.adopter,
       required this.announcement,
-      required this.status,
+      required this.applicationStatus,
       required this.id,
       required this.creationDate,
       required this.lastUpdateDate,
@@ -20,11 +20,12 @@ class Application {
   String announcementId;
   Announcement announcement;
   Adopter adopter;
-  ApplicationStatusDTO status;
+  ApplicationStatusDTO applicationStatus;
 
   Map<String, dynamic> toJson() => _$ApplicationToJson(this);
   factory Application.fromJson(Map<String, dynamic> json) =>
       _$ApplicationFromJson(json);
 }
 
-enum ApplicationStatusDTO { created, accepted, rejected, withdrawn, deleted }
+// ignore: constant_identifier_names
+enum ApplicationStatusDTO { Created, Accepted, Rejected, Withdrawn, Deleted }
