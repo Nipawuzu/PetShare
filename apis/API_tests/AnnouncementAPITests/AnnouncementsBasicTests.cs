@@ -1,16 +1,13 @@
 ﻿using AnnouncementsAPI;
 using AnnouncementsAPI.Requests;
-using APIs_tests.ShelterAPITests;
 using DatabaseContextLibrary.models;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.Configuration;
 using System.Net;
 
-namespace APIs_tests.AnnouncementAPTests
+namespace APIs_tests.AnnouncementAPITests
 {
     public class AnnouncementsBasicTests : APITests<ProgramAnnouncementsAPI, DataContext>
     {
-        //nst string SHELTER_TOKEN = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYl9pZCI6ImQwNzk2Yjg1LTgyNjMtNDBjMy1kZDU0LTA4ZGIzYzE1ZjEwOCIsImV4cCI6MTkxNjIzOTAyMiwiYXVkIjpbIkFBQSJdLCJyb2xlcyI6WyJzaGVsdGVyIl19.JG0k0AbZLZnoCBc7FSr1LUE2s6Eo6Yzzlm6wA-2iK5k";
         private const string SHELTER_ID = "d0796b85-8263-40c3-dd54-08db3c15f108";
 
         [Fact]
