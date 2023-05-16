@@ -51,6 +51,25 @@ class _ShelterMainScreenState extends State<ShelterMainScreen>
     );
   }
 
+  String _formatWaiting(int numberOfApplications) {
+    if (numberOfApplications < 5 && numberOfApplications > 1) return "Czekają";
+
+    return "Czeka";
+  }
+
+  String _formatApplications(int numberOfApplications) {
+    switch (numberOfApplications % 10) {
+      case 1:
+        return "wniosek";
+      case 2:
+      case 3:
+      case 4:
+        return "$numberOfApplications wnioski";
+      default:
+        return "$numberOfApplications wniosków";
+    }
+  }
+
   Widget _buildWelcomeWithNumberOfApplications(
       BuildContext context, List<MapEntry<Pet, List<Application>>> pets) {
     var numberOfApplications = 0;
@@ -67,7 +86,7 @@ class _ShelterMainScreenState extends State<ShelterMainScreen>
         style: Theme.of(context).primaryTextTheme.headlineMedium,
         children: [
           TextSpan(
-            text: "Czeka na ciebie ",
+            text: "${_formatWaiting(numberOfApplications)} na ciebie ",
             style: Theme.of(context).primaryTextTheme.bodyMedium,
             children: [
               TextSpan(
@@ -77,7 +96,9 @@ class _ShelterMainScreenState extends State<ShelterMainScreen>
                       fontWeight: FontWeight.bold,
                     ),
               ),
-              const TextSpan(text: "wniosków do rozpatrzenia!")
+              TextSpan(
+                  text:
+                      "${_formatApplications(numberOfApplications)} do rozpatrzenia!")
             ],
           ),
         ],

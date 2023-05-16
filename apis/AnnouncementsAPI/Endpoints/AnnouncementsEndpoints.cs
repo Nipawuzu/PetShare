@@ -11,7 +11,6 @@ namespace AnnouncementsAPI.Endpoints
     {
         public static async Task<IResult> GetWithFilters(
             DataContext context,
-            IStorage storage,
             string[]? species,
             string[]? breeds,
             string[]? locations,
@@ -42,18 +41,11 @@ namespace AnnouncementsAPI.Endpoints
                 announcements = announcements.Where(a => shelterNames.Contains(a.Pet.Shelter.FullShelterName));
 
             var res = await announcements.Select(a => a.MapDTO()).ToListAsync();
-
-            foreach (var a in res)
-            {
-                await a.Pet.AttachPhotoUrl(storage);
-            }
-
             return Results.Ok(res);
         }
 
         public static async Task<IResult> GetById(
             DataContext context,
-            IStorage storage,
             Guid announcementId)
         {
             var announcement = await context.Announcements
@@ -66,13 +58,11 @@ namespace AnnouncementsAPI.Endpoints
                 return Results.NotFound("Announcement doesn't exist.");
 
             var res = announcement.MapDTO();
-            await res.Pet.AttachPhotoUrl(storage);
             return Results.Ok(res);
         }
 
         public static async Task<IResult> GetForAuthorisedShelter(
             DataContext context,
-            IStorage storage,
             HttpContext httpContext)
         {
             if (!AuthorizeUser(httpContext, out var role, out var userId) || role != Role.Shelter)
@@ -85,8 +75,6 @@ namespace AnnouncementsAPI.Endpoints
                 .Where(x => x.Pet.ShelterId == userId);
 
             var res = await announcements.Select(a => a.MapDTO()).ToListAsync();
-            foreach (var a in res) await a.Pet.AttachPhotoUrl(storage);
-
             return Results.Ok(res);
         }
 

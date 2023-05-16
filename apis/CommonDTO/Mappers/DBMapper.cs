@@ -1,5 +1,6 @@
 ﻿using CommonDTOLibrary.Models;
 using DatabaseContextLibrary.models;
+using FileStorageLibrary;
 
 namespace CommonDTOLibrary.Mappers
 {
@@ -44,6 +45,7 @@ namespace CommonDTOLibrary.Mappers
                 Sex = pet.Sex,
                 Description = pet.Description,
                 Shelter = pet.Shelter.MapDTO(),
+                PhotoUrl = GoogleFileStorage.GetDownloadUrl(pet.Id.ToString()),
             };
         }
 

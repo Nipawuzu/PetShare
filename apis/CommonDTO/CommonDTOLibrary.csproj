@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DatabaseContextLibrary\DatabaseContextLibrary.csproj" />
+    <ProjectReference Include="..\FileStorageService\FileStorageService.csproj" />
   </ItemGroup>
 
 </Project>
