@@ -9,6 +9,10 @@ on:
       project_name:
         required: true
         type: string
+      dev_deploy:
+        required: false
+        type: boolean
+        default: false
     secrets:
       azure_app_service_publish_profile:
         required: true
@@ -55,10 +59,20 @@ jobs:
         with:
           name: ${{inputs.project_name}}
       - name: Deploy to Azure Web App
+        if: ! ${{inputs.dev_deploy}}
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'petshare-${{inputs.project_name}}'
+          slot-name: 'Production'
+          publish-profile: ${{secrets.azure_app_service_publish_profile}}
+          package: .
+      - name: Deploy to Azure Web App - DEV
+        if: ${{inputs.dev_deploy}}
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: 'petshare-${{inputs.project_name}}-dev'
           slot-name: 'Production'
           publish-profile: ${{secrets.azure_app_service_publish_profile}}
           package: .
