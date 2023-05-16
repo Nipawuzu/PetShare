@@ -12,6 +12,7 @@ jobs:
     uses: ./.github/workflows/deploy_API.yml
     with:
       project_name: ShelterAPI
+      dev_deploy: true
     secrets:
       azure_app_service_publish_profile: ${{ secrets.PUBLISH_PROFILE_SHELTER_API_DEV }}
   
@@ -19,6 +20,7 @@ jobs:
     uses: ./.github/workflows/deploy_API.yml
     with:
       project_name: AnnouncementsAPI
+      dev_deploy: true
     secrets:
       azure_app_service_publish_profile: ${{ secrets.PUBLISH_PROFILE_ANNOUNCEMENT_API_DEV }}
   
@@ -26,5 +28,6 @@ jobs:
     uses: ./.github/workflows/deploy_API.yml
     with:
       project_name: AdopterAPI
+      dev_deploy: true
     secrets:
       azure_app_service_publish_profile: ${{ secrets.PUBLISH_PROFILE_ADOPTER_API_DEV }}
