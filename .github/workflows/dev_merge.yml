@@ -2,6 +2,8 @@ name: Dev merge workflows
 
 on:
   push:
+    branches:
+      - "dev"
     paths:
       - "apis/**"
       - "!apis/API_tests/**"
