@@ -4,6 +4,8 @@ using DatabaseContextLibrary.models;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using CommonDTOLibrary.Mappers;
+using EmailLibrary;
+using Microsoft.Extensions.Configuration;
 
 namespace AdopterAPI.Endpoints
 {
@@ -87,9 +89,9 @@ namespace AdopterAPI.Endpoints
             return Results.Created(newApplication.Id.ToString(), newApplication);
         }
 
-        public static async Task<IResult> PutApplicationAccept(DataContext dbContext, Guid applicationId, HttpContext httpContext)
+        public static async Task<IResult> PutApplicationAccept(DataContext dbContext, Guid applicationId, HttpContext httpContext, IConfiguration configuration)
         {
-            var application = await dbContext.Applications.Include(app => app.Announcement).FirstOrDefaultAsync(a => a.Id == applicationId);
+            var application = await dbContext.Applications.Include(app => app.Announcement).Include(app => app.Adopter).Include(app => app.Announcement.Pet).FirstOrDefaultAsync(a => a.Id == applicationId);
 
             if (application is null)
                 return Results.BadRequest("Application doesn't exist.");
@@ -107,12 +109,16 @@ namespace AdopterAPI.Endpoints
 
             application.ApplicationStatus = ApplicationStatus.Accepted;
             await dbContext.SaveChangesAsync();
+
+            var emailSender = new ApplicationStatusChangedEmailSender(configuration);
+            await emailSender.SendAcceptanceEmail(application.Adopter!.Email, application.Announcement!.Pet.Name);
+
             return Results.Ok();
         }
 
-        public static async Task<IResult> PutApplicationReject(DataContext dbContext, Guid applicationId, HttpContext httpContext)
+        public static async Task<IResult> PutApplicationReject(DataContext dbContext, Guid applicationId, HttpContext httpContext, IConfiguration configuration)
         {
-            var application = await dbContext.Applications.Include("Announcement").FirstOrDefaultAsync(a => a.Id == applicationId);
+            var application = await dbContext.Applications.Include(app => app.Announcement).Include(app => app.Adopter).Include(app => app.Announcement.Pet).FirstOrDefaultAsync(a => a.Id == applicationId);
 
             if (application is null)
                 return Results.BadRequest("Application doesn't exist.");
@@ -130,6 +136,10 @@ namespace AdopterAPI.Endpoints
 
             application.ApplicationStatus = ApplicationStatus.Rejected;
             await dbContext.SaveChangesAsync();
+
+            var emailSender = new ApplicationStatusChangedEmailSender(configuration);
+            await emailSender.SendRejectionEmail(application.Adopter!.Email, application.Announcement!.Pet.Name);
+
             return Results.Ok();
         }
 

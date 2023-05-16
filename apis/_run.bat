@@ -10,6 +10,7 @@ set APIS[2]=ShelterAPI
 set APIS[2].PORT=7060
 
 for /l %%x in (0, 1, %APIS_COUNT%) do (
-    cd %%a\bin\Debug\%NET_VERSION%\*
-    start ./!APIS[%%x]!\bin\Debug\%NET_VERSION%\!APIS[%%x]!.exe --urls=https://localhost:!APIS[%%x].PORT!
+    start cmd /k dotnet run --project !APIS[%%x]! --urls=https://localhost:!APIS[%%x].PORT!
 )
+
+./_ports.bat
