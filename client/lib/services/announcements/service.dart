@@ -99,7 +99,6 @@ class AnnouncementService {
 
   Future<List<Announcement>> getObservedAnnouncements() async {
     // TODO: delete the mock implementation
-
     return Future.delayed(
       const Duration(seconds: 2),
       () => [

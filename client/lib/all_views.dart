@@ -52,7 +52,7 @@ class AllViews extends StatelessWidget {
                         scheme: dotenv.env['AUTH0_CUSTOM_SCHEME'])
                     .logout();
               },
-              child: Text("Wyloguj"))
+              child: const Text("Wyloguj"))
         ],
       ),
     );

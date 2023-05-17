@@ -5,7 +5,6 @@ import 'package:pet_share/login_register/choose_register_page.dart';
 import 'package:pet_share/login_register/cubit.dart';
 import 'package:pet_share/login_register/register_page.dart';
 import 'package:pet_share/login_register/welcome_screen.dart';
-import 'package:pet_share/shelter/main_screen/view.dart';
 import 'package:pet_share/utils/access_token_parser.dart';
 
 import 'error_page.dart';

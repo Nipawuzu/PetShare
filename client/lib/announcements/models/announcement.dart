@@ -2,7 +2,6 @@
 
 import 'package:json_annotation/json_annotation.dart';
 import 'package:pet_share/announcements/models/pet.dart';
-import 'package:pet_share/utils/announcementstatus_converter.dart';
 
 part 'announcement.g.dart';
 

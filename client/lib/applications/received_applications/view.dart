@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pet_share/announcements/details/view.dart';
 import 'package:pet_share/applications/application.dart';
-import 'package:pet_share/applications/details/view.dart';
 import 'package:pet_share/applications/received_applications/cubit.dart';
 import 'package:pet_share/applications/service.dart';
 import 'package:pet_share/common_widgets/cat_progess_indicator.dart';

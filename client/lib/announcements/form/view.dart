@@ -207,8 +207,8 @@ class _PetFormPageState extends State<PetFormPage> {
         label: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text("Imię zwierzątka"),
-            SizedBox(width: 1),
+            const Text("Imię zwierzątka"),
+            const SizedBox(width: 1),
             Text('*',
                 style: TextStyle(color: Theme.of(context).colorScheme.error)),
           ],
