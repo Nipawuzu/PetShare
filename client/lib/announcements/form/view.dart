@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:bottom_picker/bottom_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
 import 'package:intl/intl.dart';
 import 'package:pet_share/announcements/form/cubit.dart';
 import 'package:pet_share/announcements/models/new_announcement.dart';
@@ -139,6 +139,7 @@ class _PetFormPageState extends State<PetFormPage> {
 
   Widget _buildImage(BuildContext context) {
     return FormField<Uint8List>(
+      key: const Key('image'),
       validator: (value) => value == null ? "Dodaj zdjęcie zwierzątka" : null,
       onSaved: (newValue) => _pet.photo = newValue,
       builder: (field) => Column(
@@ -158,7 +159,7 @@ class _PetFormPageState extends State<PetFormPage> {
                     color: field.hasError ? Colors.red : Colors.grey.shade200)),
             child: InkWell(
               onTap: () async {
-                var img = await ImagePicker().pickImage(
+                var img = await ImagePickerPlatform.instance.pickImage(
                   source: ImageSource.gallery,
                 );
                 var imgBytes = await img?.readAsBytes();
