@@ -13,9 +13,7 @@ Pet _$PetFromJson(Map<String, dynamic> json) => Pet(
           ? null
           : DateTime.parse(json['birthday'] as String),
       breed: json['breed'] as String? ?? "",
-      sex: json['sex'] == null
-          ? Sex.unknown
-          : const SexConverter().fromJson(json['sex'] as int),
+      sex: $enumDecodeNullable(_$SexEnumMap, json['sex']) ?? Sex.Unknown,
       description: json['description'] as String? ?? "",
       photoUrl: json['photoUrl'] as String?,
       shelter: Shelter.fromJson(json['shelter'] as Map<String, dynamic>),
@@ -26,9 +24,16 @@ Map<String, dynamic> _$PetToJson(Pet instance) => <String, dynamic>{
       'name': instance.name,
       'species': instance.species,
       'breed': instance.breed,
-      'sex': const SexConverter().toJson(instance.sex),
+      'sex': _$SexEnumMap[instance.sex]!,
       'birthday': instance.birthday?.toIso8601String(),
       'description': instance.description,
       'photoUrl': instance.photoUrl,
       'shelter': instance.shelter,
     };
+
+const _$SexEnumMap = {
+  Sex.Unknown: 'Unknown',
+  Sex.Male: 'Male',
+  Sex.Female: 'Female',
+  Sex.DoesNotApply: 'DoesNotApply',
+};

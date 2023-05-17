@@ -99,13 +99,13 @@ class AnnouncementService {
 
   Future<List<Announcement>> getObservedAnnouncements() async {
     // TODO: delete the mock implementation
-
     return Future.delayed(
       const Duration(seconds: 2),
       () => [
         Announcement(
             pet: Pet(
                 shelter: Shelter(
+                  id: "ca89146a-a3b1-4b9f-8abe-1834f764ea90",
                   address: Address(
                     city: "Warszawa",
                     country: "Polska",
@@ -124,7 +124,7 @@ class AnnouncementService {
                 description: "Bardzo fajny piesek do przygarniecia",
                 name: "Ares",
                 photoUrl: null,
-                sex: Sex.male),
+                sex: Sex.Male),
             title: "Ares do adopcji",
             description: "Fajny piesek Ares szuka domu"),
       ],

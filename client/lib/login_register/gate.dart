@@ -5,6 +5,7 @@ import 'package:pet_share/login_register/choose_register_page.dart';
 import 'package:pet_share/login_register/cubit.dart';
 import 'package:pet_share/login_register/register_page.dart';
 import 'package:pet_share/login_register/welcome_screen.dart';
+import 'package:pet_share/utils/access_token_parser.dart';
 
 import 'error_page.dart';
 
@@ -23,6 +24,16 @@ class AuthGate extends StatelessWidget {
       child: BlocBuilder<AuthCubit, AuthState>(
         builder: (context, state) {
           if (state is SignedInState) {
+            var role =
+                AccessTokenParser().getRole(state.credentials.accessToken);
+            switch (role) {
+              case "adopter":
+                return const AllViews();
+              case "shelter":
+                return const AllViews();
+              case "admin":
+                break;
+            }
             return const AllViews();
           } else if (state is SignedOutState) {
             return const WelcomeScreen();

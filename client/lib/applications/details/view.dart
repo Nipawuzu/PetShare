@@ -3,8 +3,7 @@ import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:pet_share/announcements/details/view.dart';
-import 'package:pet_share/applications/application.dart';
-import 'package:pet_share/utils/datetime_format.dart';
+import 'package:pet_share/application.dart';
 
 class ApplicationDetails extends StatelessWidget {
   const ApplicationDetails(this.application, {super.key});
@@ -37,7 +36,9 @@ class ApplicationDetails extends StatelessWidget {
               color: Colors.grey.shade200,
             ),
             child: CachedNetworkImage(
-                imageUrl: "https://cataas.com/cat?=3", fit: BoxFit.cover),
+                imageUrl: application.announcement.pet.photoUrl ??
+                    "https://cataas.com/cat?=3",
+                fit: BoxFit.cover),
           ),
         ),
         Padding(
@@ -80,8 +81,8 @@ class ApplicationDetails extends StatelessWidget {
                         label: Text(
                             "Rasa: ${application.announcement.pet.breed}")),
                     Chip(
-                        label: Text(
-                            "Data wniosku: ${application.dateOfApplication.formatDay()}")),
+                        label:
+                            Text("Data wniosku: ${application.creationDate}")),
                     ActionChip(
                       onPressed: () => Navigator.of(context).push(
                         MaterialPageRoute(
@@ -136,7 +137,7 @@ class ApplicationDetails extends StatelessWidget {
                       height: 8.0,
                     ),
                     Text(
-                      application.user.userName,
+                      application.adopter.userName,
                       style: Theme.of(context).primaryTextTheme.labelLarge,
                     ),
                   ],
@@ -165,7 +166,7 @@ class ApplicationDetails extends StatelessWidget {
                       height: 8.0,
                     ),
                     Text(
-                      application.user.address.toString(),
+                      application.adopter.address.toString(),
                       style: Theme.of(context).primaryTextTheme.labelLarge,
                     ),
                   ],

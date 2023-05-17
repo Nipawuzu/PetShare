@@ -7,6 +7,7 @@ import 'package:pet_share/environment.dart';
 import 'package:pet_share/login_register/gate.dart';
 import 'package:pet_share/services/auth/service.dart';
 import 'package:pet_share/services/shelter/service.dart';
+import 'package:pet_share/theme.dart';
 import 'package:provider/provider.dart';
 
 class AppMainGate extends StatelessWidget {
@@ -35,7 +36,16 @@ class AppMainGate extends StatelessWidget {
           },
         )
       ],
-      child: const AuthGate(),
+      child: MaterialApp(
+        themeMode: ThemeMode.light,
+        theme: AppTheme.light,
+        darkTheme: AppTheme.dark,
+        home: const Scaffold(
+          body: SafeArea(
+            child: AuthGate(),
+          ),
+        ),
+      ),
     );
   }
 }
