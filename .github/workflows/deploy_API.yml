@@ -52,14 +52,21 @@ jobs:
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+    env:
+      APP_NAME: 'petshare-${{inputs.project_name}}'
 
     steps:
+      - name: Set dev app name
+        if: ${{inputs.dev_deploy}}
+        run: |
+          chcp 65001 #set code page to utf-8
+          echo ("APP_NAME=" + $env:APP_NAME + "-dev") >> $env:GITHUB_ENV
+
       - name: Download artifact from build job
         uses: actions/download-artifact@v2
         with:
           name: ${{inputs.project_name}}
       - name: Deploy to Azure Web App
-        if: ! ${{inputs.dev_deploy}}
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
@@ -67,12 +74,4 @@ jobs:
           slot-name: 'Production'
           publish-profile: ${{secrets.azure_app_service_publish_profile}}
           package: .
-      - name: Deploy to Azure Web App - DEV
-        if: ${{inputs.dev_deploy}}
-        id: deploy-to-webapp
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: 'petshare-${{inputs.project_name}}-dev'
-          slot-name: 'Production'
-          publish-profile: ${{secrets.azure_app_service_publish_profile}}
-          package: .
+          images: ""

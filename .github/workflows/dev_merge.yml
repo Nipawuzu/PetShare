@@ -1,13 +1,13 @@
 name: Dev merge workflows
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - "dev"
     paths:
       - "apis/**"
       - "!apis/API_tests/**"
-  workflow_dispatch:
 
 jobs:
   deploy_shelter_api:
