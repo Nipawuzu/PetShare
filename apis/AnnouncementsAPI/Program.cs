@@ -79,7 +79,7 @@ app.MapGet("/announcements/allLiked", AnnouncementsEndpoints.GetLiked)
     .WithOpenApi()
 .RequireAuthorization("Adopter")
 .WithSummary("Gets all liked announcements for adopter provided in token. Requires adopter role.")
-.Produces(StatusCodes.Status200OK, typeof(AnnouncementDTO[]))
+.Produces(StatusCodes.Status200OK, typeof(GetAllLikedAnnouncementsResponse))
 .Produces(StatusCodes.Status401Unauthorized);
 
 app.MapGet("/shelter/pets", PetEndpoints.GetAllForAuthorisedShelter)

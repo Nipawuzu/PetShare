@@ -7,6 +7,7 @@ using CommonDTOLibrary.Mappers;
 using DatabaseContextLibrary.Models;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
+using AnnouncementsAPI.Responses;
 
 namespace AnnouncementsAPI.Endpoints
 {
@@ -223,9 +224,11 @@ namespace AnnouncementsAPI.Endpoints
             var liked = dbContext.AdopterLikedAnnouncementsLinkingTables.Include("Announcement").Where(alalt =>
                 alalt.AdopterId == adopterId);
 
-            var res = await liked.Select(a => a.Announcement.MapDTO()).ToListAsync();
-
-            return Results.Ok();
+            var ret = new GetAllLikedAnnouncementsResponse()
+            {
+                Announcements = await liked.Select(a => a.Announcement.MapDTO()).ToArrayAsync(),
+            };
+            return Results.Ok(ret);
         }
     }
 }
