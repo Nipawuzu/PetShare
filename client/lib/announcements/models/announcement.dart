@@ -29,6 +29,6 @@ class Announcement {
 enum AnnouncementStatus {
   Open,
   Closed,
-  Removed,
+  Deleted,
   InVerification,
 }

@@ -111,13 +111,15 @@ class _ReceivedApplicationListState extends State<ReceivedApplicationList> {
       itemCount: widget.applications.length,
       itemBuilder: (context, index) => Card(
         child: ListTile(
-          onTap: () => Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => ApplicationDetails(
-                widget.applications[index],
-              ),
-            ),
-          ),
+          onTap: () {
+            // Navigator.of(context).push(
+            //   MaterialPageRoute(
+            //     builder: (context) => ApplicationDetails(
+            //       widget.applications[index],
+            //     ),
+            //   ),
+            // );
+          },
           leading: const Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [Icon(Icons.pets)]),
@@ -166,11 +168,11 @@ class ApplicationTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => ApplicationDetails(application),
-        ),
-      ),
+      onTap: () {
+        // Navigator.of(context).push(MaterialPageRoute(
+        //   builder: (context) => ApplicationDetails(application),
+        // ));
+      },
       child: Container(
         margin: const EdgeInsets.fromLTRB(10, 10, 10, 0),
         decoration: BoxDecoration(

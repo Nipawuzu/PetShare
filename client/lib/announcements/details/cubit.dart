@@ -27,7 +27,7 @@ class AnnouncementDetailsCubit extends Cubit<AnnouncementDetailsState> {
   final Announcement announcement;
 
   void deleteAnnouncement(Announcement announcement) {
-    announcement.status = AnnouncementStatus.Removed;
+    announcement.status = AnnouncementStatus.Deleted;
     _announcementService.updateStatus(announcement.id, announcement.status);
   }
 

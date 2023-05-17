@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 
 class ListHeaderView extends StatefulWidget {
-  const ListHeaderView(
-      {super.key,
-      required this.slivers,
-      required this.header,
-      this.expandedHeight});
+  const ListHeaderView({
+    super.key,
+    required this.slivers,
+    required this.header,
+    this.expandedHeight,
+    this.toolbarHeight,
+    this.toolbarScreenRatio,
+  });
 
   final List<Widget> slivers;
   final Widget header;
   final double? expandedHeight;
+  final double? toolbarHeight;
+  final double? toolbarScreenRatio;
 
   @override
   State<ListHeaderView> createState() => _ListHeaderViewState();
@@ -19,11 +24,12 @@ class _ListHeaderViewState extends State<ListHeaderView> {
   Future<void>? _scrollAnimate;
   bool ignoreNotification = false;
   late double _expandedHeight;
-  final double _toolbarHeight = 0;
+  late double _toolbarHeight;
   late GlobalKey<NestedScrollViewState> _nestedScrollViewState;
 
   @override
   void initState() {
+    _toolbarHeight = widget.toolbarHeight ?? 0;
     _nestedScrollViewState = GlobalKey();
     super.initState();
   }
@@ -53,7 +59,9 @@ class _ListHeaderViewState extends State<ListHeaderView> {
             .animateTo(snapOffset,
                 duration: const Duration(milliseconds: 150),
                 curve: Curves.easeOutCubic)
-            .then((value) => ignoreNotification = false);
+            .then((value) {
+          ignoreNotification = false;
+        });
       });
     }
 
@@ -62,8 +70,9 @@ class _ListHeaderViewState extends State<ListHeaderView> {
 
   @override
   Widget build(BuildContext context) {
+    var ratio = widget.toolbarScreenRatio ?? 2 / 9;
     _expandedHeight =
-        widget.expandedHeight ?? MediaQuery.of(context).size.height * 2 / 9;
+        widget.expandedHeight ?? MediaQuery.of(context).size.height * ratio;
 
     return NotificationListener<ScrollEndNotification>(
       onNotification: onNotification,
@@ -184,4 +193,10 @@ class HeaderScrollSimulation extends ClampingScrollSimulation {
 
   @override
   bool isDone(double time) => super.isDone(time) || position >= expandedHeight;
+}
+
+class ListHeaderExpandedChanged extends Notification {
+  final bool isExpanded;
+
+  ListHeaderExpandedChanged({required this.isExpanded});
 }

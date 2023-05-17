@@ -343,12 +343,6 @@ class Body extends StatelessWidget {
   const Body({super.key, required this.announcement});
   final Announcement announcement;
 
-  final description =
-      "Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Fusce malesuada varius imperdiet. Etiam eget augue risus. Vivamus ut eros sit amet ligula consectetur placerat et et metus. Nulla mauris sem, porttitor nec bibendum ut, mollis eget neque. Nullam eget diam at sapien gravida volutpat vitae sed nibh. Aliquam cursus sollicitudin nunc ac facilisis. Donec at fringilla metus, at volutpat eros. Sed massa lectus, blandit sit amet mi non, fringilla placerat justo.";
-
-  final longDescription =
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam placerat lorem non vestibulum condimentum. Mauris efficitur nisi et erat efficitur, a varius tortor semper. Suspendisse mattis, nibh at consequat fringilla, nisl tortor fermentum urna, vestibulum facilisis enim diam eget enim. Integer scelerisque lacus a fermentum suscipit. Quisque at auctor ante, ac tristique diam. Cras varius, tellus id pulvinar malesuada, eros leo pulvinar quam, sed malesuada ex lorem in purus. Donec consequat massa at congue tempor. Nunc bibendum metus sit amet diam tristique, eget ultricies risus finibus. Nullam tempor auctor aliquam. Nunc et tristique turpis. Vestibulum eu elit tristique, gravida ante non, condimentum tellus. Aenean eget nibh egestas, lacinia lacus at, ullamcorper sem. Nulla facilisi. Nam libero turpis, cursus at posuere eu, pharetra vitae lorem. Pellentesque risus velit, vestibulum non tristique eget, laoreet vitae ipsum. Vestibulum a metus lacinia, suscipit eros id, facilisis lacus.";
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -357,19 +351,21 @@ class Body extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Tytuł ogłoszenia",
+            announcement.title,
             style: Theme.of(context).textTheme.headlineMedium,
           ),
-          const SizedBox(height: 16),
+          if (announcement.pet.description.isNotEmpty)
+            const SizedBox(height: 16),
           Text(
-            description,
+            announcement.pet.description,
             style: Theme.of(context).textTheme.bodyMedium,
             textScaleFactor: 1.2,
             textAlign: TextAlign.justify,
           ),
-          const SizedBox(height: 16),
+          if (announcement.pet.description.isNotEmpty)
+            const SizedBox(height: 16),
           Text(
-            longDescription,
+            announcement.description,
             style: Theme.of(context).textTheme.bodyMedium,
             textScaleFactor: 1.2,
             textAlign: TextAlign.justify,
@@ -394,7 +390,7 @@ class Header extends StatelessWidget {
         return "Szuka domu";
       case AnnouncementStatus.Closed:
         return "Już ma swoj dom";
-      case AnnouncementStatus.Removed:
+      case AnnouncementStatus.Deleted:
         return "Usunięto";
       case AnnouncementStatus.InVerification:
         return "Jest odwiedzane";
@@ -407,7 +403,7 @@ class Header extends StatelessWidget {
         return Colors.green.shade300;
       case AnnouncementStatus.Closed:
         return Colors.red.shade300;
-      case AnnouncementStatus.Removed:
+      case AnnouncementStatus.Deleted:
         return Colors.red.shade700;
       case AnnouncementStatus.InVerification:
         return Colors.blue;

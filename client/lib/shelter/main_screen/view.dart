@@ -9,6 +9,7 @@ import 'package:pet_share/applications/received_applications/view.dart';
 import 'package:pet_share/common_widgets/cat_progess_indicator.dart';
 import 'package:pet_share/common_widgets/list_header_view.dart';
 import 'package:pet_share/services/adopter/service.dart';
+import 'package:pet_share/shelter/pet_details/view.dart';
 
 class ShelterMainScreen extends StatefulWidget {
   const ShelterMainScreen({super.key});
@@ -192,12 +193,17 @@ class _ShelterMainScreenState extends State<ShelterMainScreen>
 
         return Card(
           child: ListTile(
+            // onTap: () => Navigator.of(context).push(
+            //   MaterialPageRoute(
+            //     builder: (context) => ReceivedApplications(
+            //       context.read(),
+            //     ),
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute(
-                builder: (context) => ReceivedApplications(
-                  context.read(),
-                ),
-              ),
+                  builder: (context) => PetDetails(
+                        pet: pets[index].key,
+                        applications: pets[index].value,
+                      )),
             ),
             contentPadding: const EdgeInsets.all(8.0),
             leading: SizedBox.square(
