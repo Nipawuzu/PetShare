@@ -110,6 +110,7 @@ flutter:
     - images/running_cat.gif
     - images/logo.png
     - icons/logo.ico
+    - images/happy_dog.gif
   fonts:
     - family: Quicksand
       fonts:
