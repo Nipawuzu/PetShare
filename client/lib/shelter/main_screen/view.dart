@@ -6,6 +6,7 @@ import 'package:pet_share/announcements/form/view.dart';
 import 'package:pet_share/announcements/models/pet.dart';
 import 'package:pet_share/applications/application.dart';
 import 'package:pet_share/common_widgets/cat_progess_indicator.dart';
+import 'package:pet_share/common_widgets/drawer.dart';
 import 'package:pet_share/common_widgets/list_header_view.dart';
 import 'package:pet_share/services/adopter/service.dart';
 import 'package:pet_share/shelter/pet_details/view.dart';
@@ -19,11 +20,13 @@ class ShelterMainScreen extends StatefulWidget {
 
 class _ShelterMainScreenState extends State<ShelterMainScreen>
     with TickerProviderStateMixin {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   PreferredSizeWidget _buildAppbar(BuildContext context) {
     return AppBar(
       leading: IconButton(
         icon: const Icon(Icons.menu),
-        onPressed: () {},
+        onPressed: () => _scaffoldKey.currentState?.openDrawer(),
       ),
       centerTitle: true,
       title: const Text('Petshare'),
@@ -289,7 +292,9 @@ class _ShelterMainScreenState extends State<ShelterMainScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: _buildAppbar(context),
+      drawer: const AppDrawer(),
       body: _buildBody(context),
     );
   }
