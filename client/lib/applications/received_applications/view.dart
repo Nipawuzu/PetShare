@@ -4,21 +4,21 @@ import 'package:pet_share/announcements/details/view.dart';
 import 'package:pet_share/applications/application.dart';
 import 'package:pet_share/applications/details/view.dart';
 import 'package:pet_share/applications/received_applications/cubit.dart';
-import 'package:pet_share/applications/service.dart';
 import 'package:pet_share/common_widgets/cat_progess_indicator.dart';
 import 'package:pet_share/common_widgets/custom_text_field.dart';
 import 'package:pet_share/common_widgets/image.dart';
+import 'package:pet_share/services/adopter/service.dart';
 import 'package:pet_share/utils/datetime_format.dart';
 
 class ReceivedApplications extends StatelessWidget {
-  const ReceivedApplications(this.applicationService, {super.key});
+  const ReceivedApplications(this.adopterService, {super.key});
 
-  final ApplicationService applicationService;
+  final AdopterService adopterService;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => ListOfApplicationsCubit(applicationService),
+      create: (_) => ListOfApplicationsCubit(adopterService),
       child: BlocBuilder<ListOfApplicationsCubit, ApplicationsViewState>(
         builder: (context, state) {
           if (state is LoadingListOfApplicationsState) {

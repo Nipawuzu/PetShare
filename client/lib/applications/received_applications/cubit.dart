@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pet_share/applications/application.dart';
-import 'package:pet_share/applications/service.dart';
+import 'package:pet_share/services/adopter/service.dart';
 
 abstract class ApplicationsViewState {}
 
@@ -38,7 +38,7 @@ class ListOfApplicationsCubit extends Cubit<ApplicationsViewState> {
     refreshApplications();
   }
 
-  final ApplicationService _service;
+  final AdopterService _service;
 
   Future<void> refreshApplications() async {
     var previousStateType = state.runtimeType;

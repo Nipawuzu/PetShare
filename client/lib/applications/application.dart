@@ -1,6 +1,9 @@
+import 'package:json_annotation/json_annotation.dart';
 import 'package:pet_share/announcements/models/announcement.dart';
 import 'package:pet_share/shelter.dart';
+part 'application.g.dart';
 
+@JsonSerializable()
 class Application {
   Application({
     required this.announcement,
@@ -23,11 +26,8 @@ class Application {
   DateTime lastUpdateDate;
   bool isWithdrew;
 
-  // ignore: todo
-  // TODO: add request to an endpoint
-  bool withdraw() {
-    isWithdrew = false;
+  Map<String, dynamic> toJson() => _$ApplicationToJson(this);
 
-    return true;
-  }
+  factory Application.fromJson(Map<String, dynamic> json) =>
+      _$ApplicationFromJson(json);
 }

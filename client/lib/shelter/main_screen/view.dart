@@ -1,9 +1,11 @@
 import 'dart:math';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:pet_share/applications/received_applications/view.dart';
-import 'package:pet_share/applications/service.dart';
+import 'package:pet_share/environment.dart';
+import 'package:pet_share/services/adopter/service.dart';
 import 'package:username_gen/username_gen.dart';
 
 class ShelterMainScreen extends StatefulWidget {
@@ -181,8 +183,7 @@ class _ShelterMainScreenState extends State<ShelterMainScreen>
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => ReceivedApplications(
-                      ApplicationService(),
-                    ),
+                        AdopterService(Dio(), Environment.adopterApiUrl)),
                   ),
                 ),
                 contentPadding: const EdgeInsets.all(8.0),
