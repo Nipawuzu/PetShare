@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:pet_share/announcements/details/view.dart';
 import 'package:pet_share/announcements/models/pet.dart';
-import 'package:pet_share/application.dart';
+import 'package:pet_share/applications/application.dart';
 import 'package:pet_share/applications/details/view.dart';
 import 'package:pet_share/common_widgets/list_header_view.dart';
 

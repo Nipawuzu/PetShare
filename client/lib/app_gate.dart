@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:pet_share/services/adopter/service.dart';
 import 'package:pet_share/services/announcements/service.dart';
-import 'package:pet_share/applications/service.dart';
 import 'package:pet_share/environment.dart';
 import 'package:pet_share/login_register/gate.dart';
 import 'package:pet_share/services/auth/service.dart';
@@ -20,9 +19,6 @@ class AppMainGate extends StatelessWidget {
         Provider(
           create: (context) =>
               AnnouncementService(Dio(), Environment.announcementsApiUrl),
-        ),
-        Provider(
-          create: (context) => ApplicationService(),
         ),
         Provider(
           create: (context) => AdopterService(Dio(), Environment.adopterApiUrl),
