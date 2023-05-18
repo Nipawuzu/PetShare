@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:http_status_code/http_status_code.dart';
-import 'package:pet_share/application.dart';
+import 'package:pet_share/applications/application.dart';
 import 'package:pet_share/login_register/models/new_adopter.dart';
 import 'package:pet_share/services/adopter/requests/post_adopter_request.dart';
 import 'package:pet_share/services/adopter/requests/post_application_request.dart';

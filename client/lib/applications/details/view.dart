@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:pet_share/announcements/details/view.dart';
-import 'package:pet_share/application.dart';
+import 'package:pet_share/applications/application.dart';
 
 class ApplicationDetails extends StatelessWidget {
   const ApplicationDetails(this.application, {super.key});
