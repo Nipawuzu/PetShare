@@ -7,6 +7,7 @@ part of 'shelter.dart';
 // **************************************************************************
 
 User _$UserFromJson(Map<String, dynamic> json) => User(
+      id: json['id'] as String,
       userName: json['userName'] as String,
       phoneNumber: json['phoneNumber'] as String,
       email: json['email'] as String,
@@ -14,6 +15,7 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
     );
 
 Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
+      'id': instance.id,
       'userName': instance.userName,
       'phoneNumber': instance.phoneNumber,
       'email': instance.email,
@@ -21,6 +23,7 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
     };
 
 Shelter _$ShelterFromJson(Map<String, dynamic> json) => Shelter(
+      id: json['id'] as String,
       userName: json['userName'] as String,
       phoneNumber: json['phoneNumber'] as String,
       email: json['email'] as String,
@@ -29,6 +32,7 @@ Shelter _$ShelterFromJson(Map<String, dynamic> json) => Shelter(
     )..isAuthorized = json['isAuthorized'] as bool;
 
 Map<String, dynamic> _$ShelterToJson(Shelter instance) => <String, dynamic>{
+      'id': instance.id,
       'userName': instance.userName,
       'phoneNumber': instance.phoneNumber,
       'email': instance.email,

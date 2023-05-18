@@ -6,12 +6,14 @@ part 'shelter.g.dart';
 @JsonSerializable()
 class User {
   User({
+    required this.id,
     required this.userName,
     required this.phoneNumber,
     required this.email,
     required this.address,
   });
 
+  String id;
   String userName;
   String phoneNumber;
   String email;
@@ -24,6 +26,7 @@ class User {
 @JsonSerializable()
 class Shelter extends User {
   Shelter({
+    required super.id,
     required super.userName,
     required super.phoneNumber,
     required super.email,

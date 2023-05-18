@@ -27,14 +27,14 @@ class AnnouncementDetailsCubit extends Cubit<AnnouncementDetailsState> {
   final Announcement announcement;
 
   void deleteAnnouncement(Announcement announcement) {
-    announcement.status = AnnouncementStatus.removed;
+    announcement.status = AnnouncementStatus.Deleted;
     _announcementService.updateStatus(announcement.id, announcement.status);
   }
 
   Future<void> adopt(String adopterId, Announcement announcement) async {
     if (announcement.id != null &&
         await _adopterService.sendApplication(adopterId, announcement.id!)) {
-      announcement.status = AnnouncementStatus.inVerification;
+      announcement.status = AnnouncementStatus.InVerification;
       _announcementService.updateStatus(announcement.id, announcement.status);
       emit(AfterAdoptionState(
           "Twój wniosek adopcyjny został przekazany do weryfikacji. Dziękujemy za zaufanie!",

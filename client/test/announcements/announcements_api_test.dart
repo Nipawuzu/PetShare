@@ -20,7 +20,7 @@ void main() {
           birthday: DateTime.now(),
           name: "Test name",
           breed: "Test breed",
-          sex: Sex.female,
+          sex: Sex.Female,
           description: "Test description",
           species: "Test species");
 
@@ -52,7 +52,7 @@ void main() {
 
     test('Update status', () async {
       var res = await service.updateStatus(
-          "cb849fa2-1033-4d6b-7c88-08db36d6f10f", AnnouncementStatus.removed);
+          "cb849fa2-1033-4d6b-7c88-08db36d6f10f", AnnouncementStatus.Deleted);
       assert(res);
     });
   });

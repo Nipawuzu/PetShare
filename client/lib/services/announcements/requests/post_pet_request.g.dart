@@ -14,7 +14,7 @@ PostPetRequest _$PostPetRequestFromJson(Map<String, dynamic> json) =>
           ? null
           : DateTime.parse(json['birthday'] as String),
       sex: json['sex'] == null
-          ? Sex.unknown
+          ? Sex.Unknown
           : const SexConverter().fromJson(json['sex'] as int),
       breed: json['breed'] as String? ?? "",
       description: json['description'] as String? ?? "",
