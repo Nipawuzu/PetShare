@@ -5,7 +5,7 @@ import "package:collection/collection.dart";
 import 'package:pet_share/announcements/form/view.dart';
 import 'package:pet_share/announcements/models/pet.dart';
 import 'package:pet_share/applications/application.dart';
-import 'package:pet_share/common_widgets/cat_progess_indicator.dart';
+import 'package:pet_share/common_widgets/gif_views.dart';
 import 'package:pet_share/common_widgets/drawer.dart';
 import 'package:pet_share/common_widgets/list_header_view.dart';
 import 'package:pet_share/services/adopter/service.dart';
@@ -109,8 +109,13 @@ class _ShelterMainScreenState extends State<ShelterMainScreen>
     );
   }
 
+  Widget _buildWelcomeWhenError(BuildContext context) {
+    return Text("Cześć!",
+        style: Theme.of(context).primaryTextTheme.headlineMedium);
+  }
+
   Widget _buildWelcome(
-      BuildContext context, List<MapEntry<Pet, List<Application>>> pets) {
+      BuildContext context, List<MapEntry<Pet, List<Application>>>? pets) {
     return Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: 16.0,
@@ -144,10 +149,12 @@ class _ShelterMainScreenState extends State<ShelterMainScreen>
                           minHeight: 1,
                           minWidth: 1,
                         ),
-                        child: pets.isEmpty
-                            ? _buildWelcomeWithNoPets(context)
-                            : _buildWelcomeWithNumberOfApplications(
-                                context, pets),
+                        child: pets == null
+                            ? _buildWelcomeWhenError(context)
+                            : pets.isEmpty
+                                ? _buildWelcomeWithNoPets(context)
+                                : _buildWelcomeWithNumberOfApplications(
+                                    context, pets),
                       ),
                     ),
                   ),
@@ -253,7 +260,20 @@ class _ShelterMainScreenState extends State<ShelterMainScreen>
           }
 
           if (snapshot.hasError || (snapshot.data == null)) {
-            return const Center(child: Text("Wystąpił błąd"));
+            return Column(
+              children: [
+                ConstrainedBox(
+                  constraints: BoxConstraints(
+                      maxHeight: MediaQuery.of(context).size.height * 2 / 9),
+                  child: _buildWelcome(context, null),
+                ),
+                const Expanded(
+                  child: RabbitErrorScreen(
+                    text: Text("Wystapił błąd podczas pobierania danych"),
+                  ),
+                ),
+              ],
+            );
           }
 
           var pets =

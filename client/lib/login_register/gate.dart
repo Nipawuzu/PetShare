@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pet_share/all_views.dart';
+import 'package:pet_share/common_widgets/gif_views.dart';
 import 'package:pet_share/login_register/choose_register_page.dart';
 import 'package:pet_share/login_register/cubit.dart';
 import 'package:pet_share/login_register/register_page.dart';
 import 'package:pet_share/login_register/welcome_screen.dart';
+import 'package:pet_share/shelter/main_screen/view.dart';
 import 'package:pet_share/utils/access_token_parser.dart';
 
 import 'error_page.dart';
@@ -30,11 +32,14 @@ class AuthGate extends StatelessWidget {
               case "adopter":
                 return const AllViews();
               case "shelter":
-                return const AllViews();
+                return const ShelterMainScreen();
               case "admin":
-                break;
+                return const AllViews();
             }
-            return const AllViews();
+
+            return const CatForbiddenView(
+              text: Text("Błąd aplikacji. Nie powinno cię tu być!"),
+            );
           } else if (state is SignedOutState) {
             return const WelcomeScreen();
           } else if (state is ChooseRegisterTypeState) {

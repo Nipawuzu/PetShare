@@ -70,4 +70,10 @@ class AuthService {
     );
     return response.data["access_token"];
   }
+
+  Future<void> logout() async {
+    await auth0
+        .webAuthentication(scheme: dotenv.env['AUTH0_CUSTOM_SCHEME'])
+        .logout();
+  }
 }

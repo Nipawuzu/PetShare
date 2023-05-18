@@ -8,8 +8,8 @@ import 'package:intl/intl.dart';
 import 'package:pet_share/announcements/form/cubit.dart';
 import 'package:pet_share/announcements/models/new_announcement.dart';
 import 'package:pet_share/announcements/models/new_pet.dart';
-import 'package:pet_share/common_widgets/cat_progess_indicator.dart';
 import 'package:pet_share/announcements/models/pet.dart';
+import 'package:pet_share/common_widgets/gif_views.dart';
 import 'package:pet_share/services/announcements/service.dart';
 
 class NewAnnouncementForm extends StatefulWidget {
@@ -58,33 +58,20 @@ class _NewAnnouncementFormState extends State<NewAnnouncementForm> {
             );
           } else if (state is FormErrorState) {
             Future.delayed(
-              const Duration(seconds: 2),
+              const Duration(seconds: 5),
               () => Navigator.of(context).pop(),
             );
 
             return const Scaffold(
-              body: Center(
-                  child: Padding(
-                padding: EdgeInsets.all(50.0),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Flexible(
-                      child: Text(
-                        "Wystąpił błąd poczas próby wysłania ogłoszenia. Spróbuj ponownie później.",
-                        textScaleFactor: 1.5,
-                      ),
-                    ),
-                    SizedBox(
-                      width: 16,
-                    ),
-                    Icon(
-                      Icons.error,
-                      color: Colors.red,
-                    )
-                  ],
+              body: RabbitErrorScreen(
+                text: Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text(
+                    "Wystąpił błąd poczas próby wysłania ogłoszenia. Spróbuj ponownie później.",
+                    textAlign: TextAlign.center,
+                  ),
                 ),
-              )),
+              ),
             );
           }
 

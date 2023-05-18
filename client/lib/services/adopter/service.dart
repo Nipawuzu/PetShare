@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:http_status_code/http_status_code.dart';
 import 'package:pet_share/applications/application.dart';
@@ -53,21 +55,27 @@ class AdopterService {
     return response.statusCode == StatusCode.CREATED && id != null;
   }
 
-  Future<List<Application>> getApplications() async {
-    var response = await _dio.get(
-      "$_url/applications",
-      options: Options(headers: {
-        "Authorization": _token,
-        "HttpHeaders.contentTypeHeader": "application/json",
-      }),
-    );
+  Future<List<Application>?> getApplications() async {
+    try {
+      var response = await _dio.get(
+        "$_url/applications",
+        options: Options(headers: {
+          "Authorization": _token,
+          "HttpHeaders.contentTypeHeader": "application/json",
+        }),
+      );
 
-    if (response.statusCode == StatusCode.OK) {
-      return (response.data as List)
-          .map((e) => Application.fromJson(e))
-          .toList();
-    } else {
-      return [];
+      if (response.statusCode == StatusCode.OK) {
+        return (response.data as List)
+            .map((e) => Application.fromJson(e))
+            .toList();
+      } else {
+        return [];
+      }
+    } catch (e) {
+      log(e.toString());
     }
+
+    return null;
   }
 }

@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
 import 'package:pet_share/announcements/form/view.dart';
-import 'package:pet_share/common_widgets/cat_progess_indicator.dart';
+import 'package:pet_share/common_widgets/gif_views.dart';
 import 'package:pet_share/services/announcements/service.dart';
 
 import 'announcements_api_mock.dart';
@@ -57,7 +57,7 @@ void main() {
     tester.element(find.byType(CatProgressIndicator));
     await tester.pumpAndSettle();
     tester.element(find.byIcon(Icons.done));
-    await tester.pumpAndSettle(const Duration(seconds: 2));
+    await tester.pumpAndSettle(const Duration(seconds: 5));
   });
 }
 

@@ -1,6 +1,6 @@
 {
-    "name": "repo",
-    "short_name": "repo",
+    "name": "PetShare",
+    "short_name": "petshare",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#hexcode",

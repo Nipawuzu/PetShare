@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:pet_share/announcements/added_announcements/added_anouncements.dart';
 import 'package:pet_share/announcements/form/view.dart';
 import 'package:pet_share/announcements/observed_announcements/observed_announcements_grid.dart';
 import 'package:pet_share/applications/received_applications/view.dart';
+import 'package:pet_share/login_register/cubit.dart';
 import 'package:pet_share/shelter/main_screen/view.dart';
-import 'package:pet_share/services/auth/service.dart';
 
 class AllViews extends StatelessWidget {
   const AllViews({super.key});
@@ -45,12 +44,7 @@ class AllViews extends StatelessWidget {
           ),
           ElevatedButton(
               onPressed: () async {
-                await context
-                    .read<AuthService>()
-                    .auth0
-                    .webAuthentication(
-                        scheme: dotenv.env['AUTH0_CUSTOM_SCHEME'])
-                    .logout();
+                await context.read<AuthCubit>().signOut();
               },
               child: const Text("Wyloguj"))
         ],

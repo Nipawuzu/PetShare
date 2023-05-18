@@ -108,6 +108,8 @@ flutter:
     - images/fail.png
     - images/dog_reading.jpg
     - images/running_cat.gif
+    - images/you_shouldnot_be_here.gif # https://gifer.com/en/7D0L
+    - images/error.gif # https://giphy.com/gifs/Fuzzballs-cute-kawaii-fuzzballs-IbrNETCZHjDjjpgKso
     - images/logo.png
     - icons/logo.ico
     - images/happy_dog.gif

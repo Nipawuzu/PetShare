@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pet_share/announcements/announcement_grid/announcement_tiles_grid.dart';
 import 'package:pet_share/announcements/details/view.dart';
-import 'package:pet_share/common_widgets/cat_progess_indicator.dart';
+import 'package:pet_share/common_widgets/gif_views.dart';
 import 'package:pet_share/services/adopter/service.dart';
 import 'package:pet_share/services/announcements/service.dart';
 
