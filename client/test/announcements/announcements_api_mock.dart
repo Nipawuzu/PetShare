@@ -15,6 +15,7 @@ extension AnnouncementsAPIMock on Dio {
       var res = Announcement(
               pet: Pet(
                 shelter: Shelter(
+                  id: "ca89146a-a3b1-4b9f-8abe-1834f764ea90",
                   email: "email",
                   fullShelterName: "fullShelterName",
                   phoneNumber: "phoneNumber",
@@ -28,11 +29,12 @@ extension AnnouncementsAPIMock on Dio {
                 ),
                 birthday: DateTime.now(),
                 breed: "breed",
+                sex: Sex.Male,
                 description: "description",
                 name: "name",
                 species: "species",
               ),
-              status: AnnouncementStatus.open,
+              status: AnnouncementStatus.Open,
               title: "title",
               description: "description")
           .toJson();

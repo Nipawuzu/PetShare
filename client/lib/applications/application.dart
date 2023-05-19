@@ -1,33 +1,31 @@
+import 'package:json_annotation/json_annotation.dart';
+import 'package:pet_share/adopter.dart';
 import 'package:pet_share/announcements/models/announcement.dart';
-import 'package:pet_share/shelter.dart';
 
+part 'application.g.dart';
+
+@JsonSerializable()
 class Application {
-  Application({
-    required this.announcement,
-    required this.user,
-    required this.dateOfApplication,
-    required this.lastUpdateDate,
-    this.isWithdrew = false,
-  });
-
-  Application.newlyCreated({
-    required this.announcement,
-    required this.user,
-  })  : dateOfApplication = DateTime.now(),
-        lastUpdateDate = DateTime.now(),
-        isWithdrew = false;
-
-  User user;
-  Announcement announcement;
-  DateTime dateOfApplication;
+  Application(
+      {required this.adopter,
+      required this.announcement,
+      required this.applicationStatus,
+      required this.id,
+      required this.creationDate,
+      required this.lastUpdateDate,
+      required this.announcementId});
+  String id;
+  DateTime creationDate;
   DateTime lastUpdateDate;
-  bool isWithdrew;
+  String announcementId;
+  Announcement announcement;
+  Adopter adopter;
+  ApplicationStatusDTO applicationStatus;
 
-  // ignore: todo
-  // TODO: add request to an endpoint
-  bool withdraw() {
-    isWithdrew = false;
-
-    return true;
-  }
+  Map<String, dynamic> toJson() => _$ApplicationToJson(this);
+  factory Application.fromJson(Map<String, dynamic> json) =>
+      _$ApplicationFromJson(json);
 }
+
+// ignore: constant_identifier_names
+enum ApplicationStatusDTO { Created, Accepted, Rejected, Withdrawn, Deleted }

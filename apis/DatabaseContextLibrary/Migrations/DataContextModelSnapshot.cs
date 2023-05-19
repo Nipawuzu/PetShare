@@ -184,6 +184,9 @@ namespace DatabaseContextLibrary.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Sex")
+                        .HasColumnType("int");
+
                     b.Property<Guid>("ShelterId")
                         .HasColumnType("uniqueidentifier");
 

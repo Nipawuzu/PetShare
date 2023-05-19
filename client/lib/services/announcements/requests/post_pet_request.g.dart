@@ -13,6 +13,9 @@ PostPetRequest _$PostPetRequestFromJson(Map<String, dynamic> json) =>
       birthday: json['birthday'] == null
           ? null
           : DateTime.parse(json['birthday'] as String),
+      sex: json['sex'] == null
+          ? Sex.Unknown
+          : const SexConverter().fromJson(json['sex'] as int),
       breed: json['breed'] as String? ?? "",
       description: json['description'] as String? ?? "",
     );
@@ -22,6 +25,7 @@ Map<String, dynamic> _$PostPetRequestToJson(PostPetRequest instance) =>
       'name': instance.name,
       'species': instance.species,
       'breed': instance.breed,
+      'sex': const SexConverter().toJson(instance.sex),
       'birthday': instance.birthday?.toIso8601String(),
       'description': instance.description,
     };

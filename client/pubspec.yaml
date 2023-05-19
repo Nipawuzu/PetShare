@@ -52,6 +52,13 @@ dependencies:
   http_parser: ^4.0.2
   http_mock_adapter: ^0.4.2
   intl_phone_number_input: ^0.7.3+1
+  flutter_staggered_grid_view: ^0.6.2
+  like_button: ^2.0.5
+  auth0_flutter: ^1.1.0
+  username_gen: ^1.0.4
+  flutter_launcher_icons: ^0.13.1
+  collection: ^1.17.1
+  image_picker_platform_interface: ^2.6.3
 
 dev_dependencies:
   flutter_test:
@@ -63,6 +70,24 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
+  
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "./icons/logo.ico"
+  min_sdk_android: 21 # android min sdk min:16, default 21
+  web:
+    generate: true
+    image_path: "./icons/logo.ico"
+    background_color: "#hexcode"
+    theme_color: "#hexcode"
+  windows:
+    generate: true
+    image_path: "./icons/logo.ico"
+    icon_size: 256 # min:48, max:256, default: 48
+  macos:
+    generate: true
+    image_path: "./icons/logo.ico"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -81,6 +106,13 @@ flutter:
     - images/adoption.png
     - images/success.png
     - images/fail.png
+    - images/dog_reading.jpg
+    - images/running_cat.gif
+    - images/you_shouldnot_be_here.gif # https://gifer.com/en/7D0L
+    - images/error.gif # https://giphy.com/gifs/Fuzzballs-cute-kawaii-fuzzballs-IbrNETCZHjDjjpgKso
+    - images/logo.png
+    - icons/logo.ico
+    - images/happy_dog.gif
   fonts:
     - family: Quicksand
       fonts:

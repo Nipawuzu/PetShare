@@ -16,7 +16,7 @@ class WelcomeScreen extends StatelessWidget {
           child: Column(children: <Widget>[
             const Padding(
               padding: EdgeInsets.all(8.0),
-              child: Text("Witamy w PetShare!",
+              child: Text("Witamy w",
                   textScaleFactor: 2.2,
                   textAlign: TextAlign.center,
                   style: TextStyle(
@@ -28,9 +28,9 @@ class WelcomeScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Image.asset(
-                "images/new_announcement.png",
+                "images/logo.png",
                 fit: BoxFit.fitWidth,
-                width: 220.0,
+                width: 280.0,
                 alignment: Alignment.bottomCenter,
               ),
             ),

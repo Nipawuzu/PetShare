@@ -1,4 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:pet_share/announcements/models/pet.dart';
+import 'package:pet_share/utils/sex_converter.dart';
 part 'post_pet_request.g.dart';
 
 @JsonSerializable()
@@ -7,6 +9,7 @@ class PostPetRequest {
     this.name = "",
     this.species = "",
     this.birthday,
+    this.sex = Sex.Unknown,
     this.breed = "",
     this.description = "",
   });
@@ -14,6 +17,8 @@ class PostPetRequest {
   String name;
   String species;
   String breed;
+  @SexConverter()
+  Sex sex;
   DateTime? birthday;
   String description;
 

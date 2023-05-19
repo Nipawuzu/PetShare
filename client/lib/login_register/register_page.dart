@@ -8,8 +8,12 @@ import 'package:pet_share/login_register/models/new_adopter.dart';
 import 'package:pet_share/login_register/models/new_shelter.dart';
 
 class RegisterScreen extends StatefulWidget {
-  const RegisterScreen(
-      {super.key, required this.type, required this.email, required this.user});
+  const RegisterScreen({
+    super.key,
+    required this.type,
+    required this.email,
+    required this.user,
+  });
 
   final RegisterType type;
   final String email;
@@ -181,7 +185,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
           onPressed: () {
             if (_formKey.currentState!.validate()) {
               _formKey.currentState!.save();
-              context.read<AuthCubit>().goToAddressPage(widget.type, _user);
+              context.read<AuthCubit>().goToAddressPage(
+                    widget.type,
+                    _user,
+                  );
             }
           },
           child: const Text(
@@ -226,7 +233,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
 }
 
 class AddressFormPage extends StatefulWidget {
-  const AddressFormPage({super.key, required this.user, required this.type});
+  const AddressFormPage({
+    super.key,
+    required this.user,
+    required this.type,
+  });
   final NewUser user;
   final RegisterType type;
 
@@ -250,9 +261,10 @@ class _AddressFormPageState extends State<AddressFormPage> {
           onPressed: () {
             _formKey.currentState!.save();
             widget.user.address = _address;
-            context
-                .read<AuthCubit>()
-                .goBackToUserInformationPage(widget.type, widget.user);
+            context.read<AuthCubit>().goBackToUserInformationPage(
+                  widget.type,
+                  widget.user,
+                );
           },
           icon: const Icon(Icons.arrow_back)),
       titleSpacing: 0,
@@ -386,9 +398,10 @@ class _AddressFormPageState extends State<AddressFormPage> {
       onWillPop: () async {
         _formKey.currentState!.save();
         widget.user.address = _address;
-        context
-            .read<AuthCubit>()
-            .goBackToUserInformationPage(widget.type, widget.user);
+        context.read<AuthCubit>().goBackToUserInformationPage(
+              widget.type,
+              widget.user,
+            );
         return false;
       },
       child: Scaffold(

@@ -1,9 +1,8 @@
 ﻿using AnnouncementsAPI.Requests;
-using AnnouncementsAPI.Responses;
 using APIAuthCommonLibrary;
 using DatabaseContextLibrary.models;
-using FileStorageLibrary;
 using Microsoft.EntityFrameworkCore;
+using CommonDTOLibrary.Mappers;
 
 namespace AnnouncementsAPI.Endpoints
 {
@@ -11,7 +10,6 @@ namespace AnnouncementsAPI.Endpoints
     {
         public static async Task<IResult> GetWithFilters(
             DataContext context,
-            IStorage storage,
             string[]? species,
             string[]? breeds,
             string[]? locations,
@@ -19,8 +17,11 @@ namespace AnnouncementsAPI.Endpoints
             int? maxAge,
             string[]? shelterNames)
         {
-            var announcements = context.Announcements.Include(x => x.Pet)
-                .ThenInclude(x => x.Shelter).ThenInclude(x => x.Address).AsQueryable();
+            var announcements = context.Announcements
+                .Include(x => x.Pet)
+                .ThenInclude(x => x.Shelter)
+                .ThenInclude(x => x.Address)
+                .AsQueryable();
 
             if (species != null && species.Any())
                 announcements = announcements.Where(a => species.Contains(a.Pet.Species));
@@ -39,44 +40,40 @@ namespace AnnouncementsAPI.Endpoints
                 announcements = announcements.Where(a => shelterNames.Contains(a.Pet.Shelter.FullShelterName));
 
             var res = await announcements.Select(a => a.MapDTO()).ToListAsync();
-
-            foreach (var a in res)
-            {
-                await a.Pet.AttachPhotoUrl(storage);
-            }
-
             return Results.Ok(res);
         }
 
         public static async Task<IResult> GetById(
             DataContext context,
-            IStorage storage,
             Guid announcementId)
         {
-            var announcement = await context.Announcements.Include("Pet").FirstOrDefaultAsync(a => a.Id == announcementId);
+            var announcement = await context.Announcements
+                .Include(x => x.Pet)
+                .ThenInclude(x => x.Shelter)
+                .ThenInclude(x => x.Address)
+                .FirstOrDefaultAsync(a => a.Id == announcementId);
 
             if (announcement is null)
                 return Results.NotFound("Announcement doesn't exist.");
 
-            var res = new GetAnnouncementResponse(announcement);
-            await res.Pet.AttachPhotoUrl(storage);
+            var res = announcement.MapDTO();
             return Results.Ok(res);
         }
 
         public static async Task<IResult> GetForAuthorisedShelter(
             DataContext context,
-            IStorage storage,
             HttpContext httpContext)
         {
             if (!AuthorizeUser(httpContext, out var role, out var userId) || role != Role.Shelter)
                 return Results.Unauthorized();
 
-            var announcements = context.Announcements.Include(x => x.Pet)
-                .ThenInclude(x => x.Shelter).ThenInclude(x => x.Address).Where(x => x.Pet.ShelterId == userId);
+            var announcements = context.Announcements
+                .Include(x => x.Pet)
+                .ThenInclude(x => x.Shelter)
+                .ThenInclude(x => x.Address)
+                .Where(x => x.Pet.ShelterId == userId);
 
             var res = await announcements.Select(a => a.MapDTO()).ToListAsync();
-            foreach (var a in res) await a.Pet.AttachPhotoUrl(storage);
-
             return Results.Ok(res);
         }
 
@@ -99,7 +96,7 @@ namespace AnnouncementsAPI.Endpoints
             context.Announcements.Add(newAnnouncement);
             await context.SaveChangesAsync();
 
-            return Results.Created(newAnnouncement.Id.ToString(), newAnnouncement.MapDTO());
+            return Results.Created(newAnnouncement.Id.ToString(), null);
         }
 
         public static async Task<IResult> Put(
