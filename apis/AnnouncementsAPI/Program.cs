@@ -68,19 +68,13 @@ app.MapPut("/announcements/{announcementId}", AnnouncementsEndpoints.Put)
 .Produces(StatusCodes.Status400BadRequest)
 .Produces(StatusCodes.Status401Unauthorized);
 
-app.MapPut("/announcements/like", AnnouncementsEndpoints.PutLiked)
+app.MapPut("/announcements/[announcementId]/like", AnnouncementsEndpoints.PutLiked)
 .WithOpenApi()
 .RequireAuthorization("Adopter")
-.WithSummary("Add announcement to liked announcements for adopter provided in token. Requires adopter role.")
+.WithSummary("Adds or deletes announcement from liked announcements. Requires adopter role. Gets adopter id from auth claims.")
 .Produces(StatusCodes.Status200OK)
-.Produces(StatusCodes.Status401Unauthorized);
-
-app.MapGet("/announcements/allLiked", AnnouncementsEndpoints.GetLiked)
-    .WithOpenApi()
-.RequireAuthorization("Adopter")
-.WithSummary("Gets all liked announcements for adopter provided in token. Requires adopter role.")
-.Produces(StatusCodes.Status200OK, typeof(GetAllLikedAnnouncementsResponse))
-.Produces(StatusCodes.Status401Unauthorized);
+.Produces(StatusCodes.Status401Unauthorized)
+.Produces(StatusCodes.Status404NotFound);
 
 app.MapGet("/shelter/pets", PetEndpoints.GetAllForAuthorisedShelter)
 .WithOpenApi()

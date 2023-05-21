@@ -22,6 +22,7 @@ namespace AnnouncementsAPI.Endpoints
             int? minAge,
             int? maxAge,
             string[]? shelterNames,
+            bool? isLiked,
             HttpContext httpContext)
         {
             var isAdopter = false;
@@ -171,7 +172,7 @@ namespace AnnouncementsAPI.Endpoints
             return Results.Ok();
         }
 
-        public static async Task<IResult> PutLiked(DataContext dbContext, PutAdopterLikeAnnouncementRequest likedAnnoucement, HttpContext httpContext)
+        public static async Task<IResult> PutLiked(DataContext dbContext, Guid announcementId, bool isLiked, HttpContext httpContext)
         {
             var identity = httpContext.User.Identity as ClaimsIdentity;
             var issuerClaim = identity?.GetIssuer();
@@ -181,10 +182,10 @@ namespace AnnouncementsAPI.Endpoints
 
             var adopterId = Guid.Parse(issuerClaim);
 
-            if (likedAnnoucement.IsLiked)
+            if (isLiked)
             {
                 var liked = await dbContext.AdopterLikedAnnouncementsLinkingTables.FirstOrDefaultAsync(alalt =>
-                    alalt.AdopterId == adopterId && alalt.AnnouncementId == likedAnnoucement.AnnouncementId);
+                    alalt.AdopterId == adopterId && alalt.AnnouncementId == announcementId);
 
                 if (liked != null)
                     return Results.Ok();
@@ -192,14 +193,14 @@ namespace AnnouncementsAPI.Endpoints
                 dbContext.AdopterLikedAnnouncementsLinkingTables.Add(new AdopterLikedAnnouncementsLinkingTable()
                 {
                     AdopterId = adopterId,
-                    AnnouncementId = likedAnnoucement.AnnouncementId
+                    AnnouncementId = announcementId
                 });
                 await dbContext.SaveChangesAsync();
             }
             else
             {
                 var liked = await dbContext.AdopterLikedAnnouncementsLinkingTables.FirstOrDefaultAsync(alalt =>
-                   alalt.AdopterId == adopterId && alalt.AnnouncementId == likedAnnoucement.AnnouncementId);
+                   alalt.AdopterId == adopterId && alalt.AnnouncementId == announcementId);
 
                 if (liked == null)
                     return Results.Ok();
@@ -209,26 +210,6 @@ namespace AnnouncementsAPI.Endpoints
             }
 
             return Results.Ok();
-        }
-
-        public static async Task<IResult> GetLiked(DataContext dbContext, HttpContext httpContext)
-        {
-            var identity = httpContext.User.Identity as ClaimsIdentity;
-            var issuerClaim = identity?.GetIssuer();
-
-            if (identity is null || issuerClaim is null)
-                return Results.Unauthorized();
-
-            var adopterId = Guid.Parse(issuerClaim);
-
-            var liked = dbContext.AdopterLikedAnnouncementsLinkingTables.Include("Announcement").Where(alalt =>
-                alalt.AdopterId == adopterId);
-
-            var ret = new GetAllLikedAnnouncementsResponse()
-            {
-                Announcements = await liked.Select(a => a.Announcement.MapDTO()).ToArrayAsync(),
-            };
-            return Results.Ok(ret);
         }
     }
 }
