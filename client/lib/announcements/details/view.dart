@@ -121,39 +121,28 @@ class _AnnouncementAndPetDetailsState extends State<AnnouncementAndPetDetails>
     ).then((value) async => {
           if (value != null && value)
             {
-              var res = await context
-                  .read<AnnouncementDetailsCubit>()
-                  .deleteAnnouncement(announcement), 
-              if (res)
-                {
-                  Navigator.pop(context),
-                }
-              else
-                {
-                  if (context
-                          .read<AnnouncementDetailsCubit>()
-                          .getLastErrorFromAnnouncementService() ==
-                      ErrorType.unauthorized)
-                    {
-                      showDialogWithError(context,
-                          "Nie jesteś uprawniony do usunięcia tego ogloszenia"),
-                    }
-                  else if (context
-                          .read<AnnouncementDetailsCubit>()
-                          .getLastErrorFromAnnouncementService() ==
-                      ErrorType.badRequest)
-                    {
-                      showDialogWithError(
-                          context, "To ogłoszenie nie istnieje"),
-                    }
-                  else
-                    {
-                      showDialogWithError(
-                          context, "Nie udało się usunąć ogłoszenia"),
-                    }
-                }
+              checkAndActOnErrors(
+                await context
+                    .read<AnnouncementDetailsCubit>()
+                    .deleteAnnouncement(announcement),
+              )
             }
         });
+  }
+
+  void checkAndActOnErrors(ServiceResponse res) {
+    if (res.data != null) {
+      Navigator.pop(context);
+    } else {
+      if (res.error == ErrorType.unauthorized) {
+        showDialogWithError(
+            context, "Nie jesteś uprawniony do usunięcia tego ogloszenia");
+      } else if (res.error == ErrorType.badRequest) {
+        showDialogWithError(context, "Nie znaleziono wybranego ogłoszenia");
+      } else {
+        showDialogWithError(context, "Nie udało się usunąć ogłoszenia");
+      }
+    }
   }
 
   void showDialogWithError(BuildContext context, String error) {

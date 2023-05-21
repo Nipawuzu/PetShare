@@ -25,7 +25,7 @@ void main() {
           species: "Test species");
 
       var res = await service.sendPet(newPet);
-      assert(res.isNotEmpty);
+      assert(res.data.isNotEmpty);
     });
 
     test('Post new announcement', () async {
@@ -36,24 +36,24 @@ void main() {
       );
 
       var res = await service.sendAnnouncement(newAnnouncement);
-      assert(res.isNotEmpty);
+      assert(res.data.isNotEmpty);
     });
 
     test('Upload new photo for pet', () async {
       var res = await service.uploadPetPhoto(
           "cb849fa2-1033-4d6b-7c88-08db36d6f10f", Uint8List(0));
-      assert(res);
+      assert(res.data);
     });
 
     test('Get announcements', () async {
       var res = await service.getAnnouncements();
-      assert(res != null && res.isNotEmpty);
+      assert(res.data != null && res.data!.isNotEmpty);
     });
 
     test('Update status', () async {
       var res = await service.updateStatus(
           "cb849fa2-1033-4d6b-7c88-08db36d6f10f", AnnouncementStatus.Deleted);
-      assert(res);
+      assert(res.data);
     });
   });
 }

@@ -45,7 +45,8 @@ class ListOfApplicationsCubit extends Cubit<ApplicationsViewState> {
     var applications = await _service.getApplications();
 
     if (previousStateType == LastlyUpdatedApplicationsListState) {
-      emit(LastlyUpdatedApplicationsListState(applications: applications.data!));
+      emit(
+          LastlyUpdatedApplicationsListState(applications: applications.data!));
     } else {
       emit(NewestApplicationsListState(applications: applications.data!));
     }

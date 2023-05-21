@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pet_share/adopter/main_screen/view.dart';
 import 'package:pet_share/all_views.dart';
 import 'package:pet_share/common_widgets/gif_views.dart';
 import 'package:pet_share/login_register/choose_register_page.dart';
@@ -30,7 +31,7 @@ class AuthGate extends StatelessWidget {
                 AccessTokenParser().getRole(state.credentials.accessToken);
             switch (role) {
               case "adopter":
-                return const AllViews();
+                return const AdopterMainScreen();
               case "shelter":
                 return const ShelterMainScreen();
               case "admin":

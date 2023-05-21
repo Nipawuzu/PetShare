@@ -281,12 +281,13 @@ class _ShelterMainScreenState extends State<ShelterMainScreen>
                       )
                     : Expanded(
                         child: Transform.scale(
-                      scale: 0.75,
-                      child: const RabbitErrorScreen(
-                            text: Text("Wystapił błąd podczas pobierania danych"),
+                          scale: 0.75,
+                          child: const RabbitErrorScreen(
+                            text:
+                                Text("Wystapił błąd podczas pobierania danych"),
                           ),
                         ),
-                  ),
+                      ),
               ],
             );
           }

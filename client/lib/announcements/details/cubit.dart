@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pet_share/announcements/models/announcement.dart';
 import 'package:pet_share/services/adopter/service.dart';
 import 'package:pet_share/services/announcements/service.dart';
+import 'package:pet_share/services/service_response.dart';
 
 class AnnouncementDetailsState {}
 
@@ -28,15 +29,16 @@ class AnnouncementDetailsCubit extends Cubit<AnnouncementDetailsState> {
   final AdopterService _adopterService;
   final Announcement announcement;
 
-  Future<bool> deleteAnnouncement(Announcement announcement) async {
+  Future<ServiceResponse<bool>> deleteAnnouncement(
+      Announcement announcement) async {
     var res = await _announcementService.updateStatus(
         announcement.id, announcement.status);
     if (res.data) {
       announcement.status = AnnouncementStatus.Deleted;
-      return true;
+      return res;
     }
 
-    return false;
+    return res;
   }
 
   Future<void> adopt(String adopterId, Announcement announcement) async {

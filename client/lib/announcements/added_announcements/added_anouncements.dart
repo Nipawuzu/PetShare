@@ -25,7 +25,9 @@ class AddedAnnouncements extends StatelessWidget {
             announcementService: announcementService,
             adopterService: adopterService,
           );
-        } else if (snapshot.hasError || snapshot.data == null || snapshot.data!.data == null) {
+        } else if (snapshot.hasError ||
+            snapshot.data == null ||
+            snapshot.data!.data == null) {
           return const Scaffold(
             body: Center(
               child: RabbitErrorScreen(
