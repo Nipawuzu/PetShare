@@ -48,7 +48,7 @@ app.MapPost("/shelter", Endpoints.PostShelter)
 .WithOpenApi()
 .RequireAuthorization("Auth")
 .WithSummary("Posts new shelter.")
-.Produces(StatusCodes.Status200OK);
+.Produces(StatusCodes.Status201Created);
 
 app.MapPut("/shelter/{shelterId}", Endpoints.PutShelter)
 .WithOpenApi()

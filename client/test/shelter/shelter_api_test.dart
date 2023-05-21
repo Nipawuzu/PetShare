@@ -22,7 +22,7 @@ void main() {
               postalCode: "12-345",
               country: "Test country"));
       var res = await service.sendShelter(newShelter);
-      assert(res.isNotEmpty);
+      assert(res.data.isNotEmpty);
     });
   });
 }

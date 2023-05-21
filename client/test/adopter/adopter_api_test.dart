@@ -14,7 +14,7 @@ void main() {
       var res = await service.sendApplication(
           "cb849fa2-1033-4d6b-7c88-08db36d6f10f",
           "cb849fa2-1033-4d6b-7c88-08db36d6f10f");
-      assert(res);
+      assert(res.data);
     });
 
     test('Post new adopter account', () async {
@@ -32,7 +32,7 @@ void main() {
             country: "Test country"),
       );
       var res = await service.sendAdopter(newAdopter);
-      assert(res.isNotEmpty);
+      assert(res.data.isNotEmpty);
     });
   });
 }
