@@ -21,12 +21,22 @@ class AuthService {
     return _auth0!;
   }
 
+  Future<Credentials?> relogin() async {
+    return await auth0.credentialsManager.hasValidCredentials()
+        ? await auth0.credentialsManager.credentials()
+        : null;
+  }
+
   Future<Credentials> login() async {
     loggedInUser = await auth0
         .webAuthentication(
           scheme: dotenv.env['AUTH0_CUSTOM_SCHEME'],
         )
         .login(audience: dotenv.env['AUTH0_AUDIENCE']);
+
+    if (loggedInUser != null) {
+      auth0.credentialsManager.storeCredentials(loggedInUser!);
+    }
     return loggedInUser!;
   }
 
@@ -86,5 +96,7 @@ class AuthService {
     await auth0
         .webAuthentication(scheme: dotenv.env['AUTH0_CUSTOM_SCHEME'])
         .logout();
+
+    await auth0.credentialsManager.clearCredentials();
   }
 }

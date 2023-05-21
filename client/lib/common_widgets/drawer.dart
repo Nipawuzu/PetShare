@@ -1,7 +1,43 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pet_share/login_register/cubit.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
+
+  Future<bool> showSignOutDialog(BuildContext context) async {
+    return await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          title: const Text("Czy na pewno chcesz się wylogować?"),
+          contentPadding: const EdgeInsets.all(16.0),
+          actions: [
+            TextButton(
+              style: ButtonStyle(
+                foregroundColor: MaterialStateProperty.all<Color>(
+                  Colors.grey,
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+              child: const Text("Nie"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+              child: const Text("Tak"),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,11 +57,27 @@ class AppDrawer extends StatelessWidget {
                       style: Theme.of(context).primaryTextTheme.headlineSmall,
                     ),
                   ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: const Icon(
-                      Icons.settings,
-                    ),
+                  Row(
+                    children: [
+                      IconButton(
+                        onPressed: () async {
+                          await showSignOutDialog(context).then((value) {
+                            if (value) {
+                              context.read<AuthCubit>().signOut();
+                            }
+                          });
+                        },
+                        icon: const Icon(
+                          Icons.logout,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {},
+                        icon: const Icon(
+                          Icons.settings,
+                        ),
+                      ),
+                    ],
                   )
                 ],
               ),
