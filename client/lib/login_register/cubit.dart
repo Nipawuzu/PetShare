@@ -14,13 +14,26 @@ class AuthCubit extends Cubit<AuthState> {
     required this.shelterService,
     required this.authService,
     required this.announcementsService,
-  }) : super(const SignedOutState());
+  }) : super(const SigningInState()) {
+    tryToSignIn();
+  }
 
   int pageNumber = 0;
   AdopterService adopterService;
   ShelterService shelterService;
   AuthService authService;
   AnnouncementService announcementsService;
+
+  tryToSignIn() async {
+    var credentials = await authService.relogin();
+
+    if (credentials != null) {
+      emit(SignedInState(credentials: credentials));
+      return;
+    }
+
+    emit(const SignedOutState());
+  }
 
   Future<void> signInOrSignUp() async {
     emit(const SigningInState());
