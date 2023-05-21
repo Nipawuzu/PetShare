@@ -13,19 +13,21 @@ class GifView extends StatelessWidget {
       height: double.infinity,
       width: double.infinity,
       color: color ?? Theme.of(context).scaffoldBackgroundColor,
-      child: DefaultTextStyle(
-        style: Theme.of(context).primaryTextTheme.bodyMedium!,
-        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Image.asset(
-            asset,
-            fit: BoxFit.cover,
-          ),
-          if (text != null)
-            const SizedBox(
-              height: 32.0,
+      child: FittedBox(
+        child: DefaultTextStyle(
+          style: Theme.of(context).primaryTextTheme.bodyMedium!,
+          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Image.asset(
+              asset,
+              fit: BoxFit.cover,
             ),
-          if (text != null) text!,
-        ]),
+            if (text != null)
+              const SizedBox(
+                height: 32.0,
+              ),
+            if (text != null) text!,
+          ]),
+        ),
       ),
     );
   }
