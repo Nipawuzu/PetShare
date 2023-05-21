@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:pet_share/announcements/details/cubit.dart';
 import 'package:pet_share/announcements/models/announcement.dart';
+import 'package:pet_share/services/service_response.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AnnouncementAndPetDetails extends StatefulWidget {
@@ -117,15 +118,53 @@ class _AnnouncementAndPetDetailsState extends State<AnnouncementAndPetDetails>
           )
         ],
       ),
-    ).then((value) => {
+    ).then((value) async => {
           if (value != null && value)
             {
-              context
-                  .read<AnnouncementDetailsCubit>()
-                  .deleteAnnouncement(announcement),
-              Navigator.pop(context),
+              checkAndActOnErrors(
+                await context
+                    .read<AnnouncementDetailsCubit>()
+                    .deleteAnnouncement(announcement),
+              )
             }
         });
+  }
+
+  void checkAndActOnErrors(ServiceResponse res) {
+    if (res.data != null) {
+      Navigator.pop(context);
+    } else {
+      if (res.error == ErrorType.unauthorized) {
+        showDialogWithError(
+            context, "Nie jesteś uprawniony do usunięcia tego ogloszenia");
+      } else if (res.error == ErrorType.badRequest) {
+        showDialogWithError(context, "Nie znaleziono wybranego ogłoszenia");
+      } else {
+        showDialogWithError(context, "Nie udało się usunąć ogłoszenia");
+      }
+    }
+  }
+
+  void showDialogWithError(BuildContext context, String error) {
+    showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        content: TextWithBasicStyle(
+          text: error,
+          textScaleFactor: 1.2,
+          align: TextAlign.center,
+        ),
+        actions: <Widget>[
+          Center(
+            child: TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const TextWithBasicStyle(
+                  text: 'OK',
+                )),
+          )
+        ],
+      ),
+    );
   }
 
   Widget _buildDeleteButton(
@@ -504,12 +543,14 @@ class TextWithBasicStyle extends StatelessWidget {
       required this.text,
       this.textScaleFactor = 1.0,
       this.align,
+      this.color,
       this.bold = false});
 
   final String text;
   final double textScaleFactor;
   final bool bold;
   final TextAlign? align;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
@@ -518,9 +559,9 @@ class TextWithBasicStyle extends StatelessWidget {
       textScaleFactor: textScaleFactor,
       textAlign: align,
       style: TextStyle(
-        fontFamily: "Quicksand",
-        fontWeight: bold ? FontWeight.bold : FontWeight.normal,
-      ),
+          fontFamily: "Quicksand",
+          fontWeight: bold ? FontWeight.bold : FontWeight.normal,
+          color: color),
     );
   }
 }
