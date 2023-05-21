@@ -5,6 +5,7 @@ import "package:collection/collection.dart";
 import 'package:pet_share/announcements/form/view.dart';
 import 'package:pet_share/announcements/models/pet.dart';
 import 'package:pet_share/applications/application.dart';
+import 'package:pet_share/common_widgets/drawer.dart';
 import 'package:pet_share/common_widgets/gif_views.dart';
 import 'package:pet_share/common_widgets/list_header_view.dart';
 import 'package:pet_share/services/adopter/service.dart';
@@ -330,6 +331,7 @@ class _ShelterMainScreenState extends State<ShelterMainScreen>
     return Scaffold(
       key: _scaffoldKey,
       appBar: _buildAppbar(context),
+      drawer: const AppDrawer(),
       body: _buildBody(context),
     );
   }
