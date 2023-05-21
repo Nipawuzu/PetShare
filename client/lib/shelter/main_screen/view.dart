@@ -9,6 +9,7 @@ import 'package:pet_share/common_widgets/gif_views.dart';
 import 'package:pet_share/common_widgets/drawer.dart';
 import 'package:pet_share/common_widgets/list_header_view.dart';
 import 'package:pet_share/services/adopter/service.dart';
+import 'package:pet_share/services/error_type.dart';
 import 'package:pet_share/shelter/pet_details/view.dart';
 
 class ShelterMainScreen extends StatefulWidget {
@@ -267,11 +268,23 @@ class _ShelterMainScreenState extends State<ShelterMainScreen>
                       maxHeight: MediaQuery.of(context).size.height * 2 / 9),
                   child: _buildWelcome(context, null),
                 ),
-                const Expanded(
-                  child: RabbitErrorScreen(
-                    text: Text("Wystapił błąd podczas pobierania danych"),
+                if (context.read<AdopterService>().lastError ==
+                    ErrorType.unauthorized)
+                  const Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: CatForbiddenView(
+                        text: Text("Brak dostępu"),
+                      ),
+                    ),
                   ),
-                ),
+                if (context.read<AdopterService>().lastError !=
+                    ErrorType.unauthorized)
+                  const Expanded(
+                    child: RabbitErrorScreen(
+                      text: Text("Wystapił błąd podczas pobierania danych"),
+                    ),
+                  ),
               ],
             );
           }

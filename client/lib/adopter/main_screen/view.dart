@@ -10,6 +10,7 @@ import 'package:pet_share/common_widgets/gif_views.dart';
 import 'package:pet_share/common_widgets/list_header_view.dart';
 import 'package:pet_share/services/adopter/service.dart';
 import 'package:pet_share/services/announcements/service.dart';
+import 'package:pet_share/services/error_type.dart';
 
 class AdopterMainScreen extends StatefulWidget {
   const AdopterMainScreen({super.key});
@@ -56,11 +57,12 @@ class _AdopterMainScreenState extends State<AdopterMainScreen>
 
   Widget _buildWelcome(BuildContext context) {
     return Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 16.0,
-          vertical: 10,
-        ),
-        child: Column(children: [
+      padding: const EdgeInsets.symmetric(
+        horizontal: 16.0,
+        vertical: 10,
+      ),
+      child: Column(
+        children: [
           Expanded(
             flex: 2,
             child: Row(
@@ -86,7 +88,9 @@ class _AdopterMainScreenState extends State<AdopterMainScreen>
               ],
             ),
           )
-        ]));
+        ],
+      ),
+    );
   }
 
   Widget _buildAnnouncementsGrid(
@@ -122,14 +126,41 @@ class _AdopterMainScreenState extends State<AdopterMainScreen>
             return const Center(child: CatProgressIndicator());
           }
 
-          if (snapshot.hasData && snapshot.data != null) {
-            return ListHeaderView(
-                expandedHeight: 300,
-                header: _buildWelcome(context),
-                slivers: [_buildAnnouncementsGrid(context, snapshot.data!)]);
+          if (snapshot.hasError || snapshot.data == null) {
+            return Column(
+              children: [
+                ConstrainedBox(
+                  constraints: const BoxConstraints(maxHeight: 300),
+                  child: _buildWelcome(context),
+                ),
+                if (context.read<AnnouncementService>().lastError ==
+                    ErrorType.unauthorized)
+                  const Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: CatForbiddenView(
+                        text: Text("Brak dostępu"),
+                      ),
+                    ),
+                  ),
+                if (context.read<AnnouncementService>().lastError !=
+                    ErrorType.unauthorized)
+                  const Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: RabbitErrorScreen(
+                        text: Text("Wystapił błąd podczas pobierania danych"),
+                      ),
+                    ),
+                  ),
+              ],
+            );
           }
 
-          return const Center(child: Text("Wystąpił błąd"));
+          return ListHeaderView(
+              expandedHeight: 300,
+              header: _buildWelcome(context),
+              slivers: [_buildAnnouncementsGrid(context, snapshot.data!)]);
         },
       ),
     );

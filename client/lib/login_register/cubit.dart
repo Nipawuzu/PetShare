@@ -4,6 +4,7 @@ import 'package:pet_share/login_register/models/new_adopter.dart';
 import 'package:pet_share/login_register/models/new_shelter.dart';
 import 'package:pet_share/services/adopter/service.dart';
 import 'package:pet_share/services/announcements/service.dart';
+import 'package:pet_share/services/error_type.dart';
 import 'package:pet_share/services/shelter/service.dart';
 import 'package:pet_share/utils/access_token_parser.dart';
 import 'package:pet_share/services/auth/service.dart';
@@ -149,6 +150,11 @@ class AuthCubit extends Cubit<AuthState> {
           ));
           return;
         }
+      } else if (adopterService.lastError == ErrorType.unauthorized) {
+        emit(const ErrorState(
+          error: "Nie masz uprawnień do rejestracji adoptującego",
+        ));
+        return;
       }
     } else if (user is NewShelter) {
       var id = await shelterService.sendShelter(user);
@@ -169,6 +175,11 @@ class AuthCubit extends Cubit<AuthState> {
           ));
           return;
         }
+      } else if (shelterService.lastError == ErrorType.unauthorized) {
+        emit(const ErrorState(
+          error: "Nie masz uprawnień do rejestracji schroniska",
+        ));
+        return;
       }
     }
 

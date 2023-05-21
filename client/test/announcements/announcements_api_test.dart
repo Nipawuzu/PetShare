@@ -47,7 +47,7 @@ void main() {
 
     test('Get announcements', () async {
       var res = await service.getAnnouncements();
-      assert(res.isNotEmpty);
+      assert(res != null && res.isNotEmpty);
     });
 
     test('Update status', () async {

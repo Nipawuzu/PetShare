@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pet_share/announcements/models/announcement.dart';
 import 'package:pet_share/services/adopter/service.dart';
 import 'package:pet_share/services/announcements/service.dart';
+import 'package:pet_share/services/error_type.dart';
 
 class AnnouncementDetailsState {}
 
@@ -17,6 +18,8 @@ class DetailsState extends AnnouncementDetailsState {
   Announcement announcement;
 }
 
+class ErrorState extends AnnouncementDetailsState {}
+
 class AnnouncementDetailsCubit extends Cubit<AnnouncementDetailsState> {
   AnnouncementDetailsCubit(
       this._announcementService, this._adopterService, this.announcement)
@@ -26,16 +29,20 @@ class AnnouncementDetailsCubit extends Cubit<AnnouncementDetailsState> {
   final AdopterService _adopterService;
   final Announcement announcement;
 
-  void deleteAnnouncement(Announcement announcement) {
-    announcement.status = AnnouncementStatus.Deleted;
-    _announcementService.updateStatus(announcement.id, announcement.status);
+  Future<bool> deleteAnnouncement(Announcement announcement) async {
+    if (await _announcementService.updateStatus(
+        announcement.id, announcement.status)) {
+      announcement.status = AnnouncementStatus.Deleted;
+      return true;
+    }
+
+    return false;
   }
 
   Future<void> adopt(String adopterId, Announcement announcement) async {
     if (announcement.id != null &&
         await _adopterService.sendApplication(adopterId, announcement.id!)) {
       announcement.status = AnnouncementStatus.InVerification;
-      _announcementService.updateStatus(announcement.id, announcement.status);
       emit(AfterAdoptionState(
           "Twój wniosek adopcyjny został przekazany do weryfikacji. Dziękujemy za zaufanie!",
           true));
@@ -44,6 +51,10 @@ class AnnouncementDetailsCubit extends Cubit<AnnouncementDetailsState> {
           "Niestety nie udało nam się wysłać twojego wniosku. Spróbuj ponownie później!",
           false));
     }
+  }
+
+  ErrorType getLastErrorFromAnnouncementService() {
+    return _announcementService.lastError;
   }
 
   void like(String adopterId, String announcementId, bool isLiked) {}

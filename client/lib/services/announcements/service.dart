@@ -9,6 +9,7 @@ import 'package:pet_share/announcements/models/new_pet.dart';
 import 'package:pet_share/announcements/models/pet.dart';
 import 'package:pet_share/services/announcements/requests/post_announcement_request.dart';
 import 'package:pet_share/services/announcements/requests/post_pet_request.dart';
+import 'package:pet_share/services/error_type.dart';
 import 'package:pet_share/shelter.dart';
 
 import 'requests/put_announcement.dart';
@@ -19,81 +20,125 @@ class AnnouncementService {
   final Dio _dio;
   final String _url;
   String _token = "Bearer ";
+  ErrorType lastError = ErrorType.none;
 
   void setToken(String token) {
     _token = "Bearer $token";
   }
 
   Future<String> sendPet(NewPet pet) async {
-    var response = await _dio.post(
-      "$_url/pet",
-      data: PostPetRequest(
-              name: pet.name,
-              birthday: pet.birthday,
-              breed: pet.breed,
-              description: pet.description,
-              species: pet.species,
-              sex: pet.sex)
-          .toJson(),
-      options: Options(headers: {
-        "Authorization": _token,
-        "HttpHeaders.contentTypeHeader": "application/json",
-      }),
-    );
+    try {
+      var response = await _dio.post(
+        "$_url/pet",
+        data: PostPetRequest(
+                name: pet.name,
+                birthday: pet.birthday,
+                breed: pet.breed,
+                description: pet.description,
+                species: pet.species,
+                sex: pet.sex)
+            .toJson(),
+        options: Options(headers: {
+          "Authorization": _token,
+          "HttpHeaders.contentTypeHeader": "application/json",
+        }),
+      );
 
-    var id = response.headers.value("location");
-    return response.statusCode == StatusCode.CREATED && id != null ? id : "";
+      var id = response.headers.value("location");
+      return response.statusCode == StatusCode.CREATED && id != null ? id : "";
+    } on DioError catch (e) {
+      if (e.response?.statusCode == StatusCode.UNAUTHORIZED) {
+        lastError = ErrorType.unauthorized;
+        return "";
+      }
+
+      lastError = ErrorType.unknown;
+      return "";
+    }
   }
 
   Future<bool> uploadPetPhoto(String petId, Uint8List photo) async {
-    FormData formData = FormData.fromMap({
-      "file": MultipartFile.fromBytes(photo, filename: petId),
-    });
+    try {
+      FormData formData = FormData.fromMap({
+        "file": MultipartFile.fromBytes(photo, filename: petId),
+      });
 
-    var response = await _dio.post(
-      "$_url/pet/$petId/photo",
-      data: formData,
-      options: Options(headers: {
-        "Authorization": _token,
-      }),
-    );
+      var response = await _dio.post(
+        "$_url/pet/$petId/photo",
+        data: formData,
+        options: Options(headers: {
+          "Authorization": _token,
+        }),
+      );
 
-    return response.statusCode == StatusCode.OK;
+      return response.statusCode == StatusCode.OK;
+    } on DioError catch (e) {
+      if (e.response?.statusCode == StatusCode.UNAUTHORIZED) {
+        lastError = ErrorType.unauthorized;
+        return false;
+      }
+
+      lastError = ErrorType.unknown;
+      return false;
+    }
   }
 
   Future<String> sendAnnouncement(NewAnnouncement announcement) async {
-    var response = await _dio.post(
-      "$_url/announcements",
-      data: PostAnnouncementRequest(
-        title: announcement.title,
-        description: announcement.description,
-        petId: announcement.petId,
-      ).toJson(),
-      options: Options(headers: {
-        "Authorization": _token,
-        "HttpHeaders.contentTypeHeader": "application/json",
-      }),
-    );
+    try {
+      var response = await _dio.post(
+        "$_url/announcements",
+        data: PostAnnouncementRequest(
+          title: announcement.title,
+          description: announcement.description,
+          petId: announcement.petId,
+        ).toJson(),
+        options: Options(headers: {
+          "Authorization": _token,
+          "HttpHeaders.contentTypeHeader": "application/json",
+        }),
+      );
 
-    var id = response.headers.value("location");
-    return response.statusCode == StatusCode.CREATED && id != null ? id : "";
+      var id = response.headers.value("location");
+      return response.statusCode == StatusCode.CREATED && id != null ? id : "";
+    } on DioError catch (e) {
+      if (e.response?.statusCode == StatusCode.UNAUTHORIZED) {
+        lastError = ErrorType.unauthorized;
+        return "";
+      } else if (e.response?.statusCode == StatusCode.BAD_REQUEST) {
+        lastError = ErrorType.badRequest;
+        return "";
+      }
+
+      lastError = ErrorType.unknown;
+      return "";
+    }
   }
 
-  Future<List<Announcement>> getAnnouncements() async {
-    var response = await _dio.get(
-      "$_url/announcements",
-      options: Options(headers: {
-        "HttpHeaders.contentTypeHeader": "application/json",
-        "Authorization": _token
-      }),
-    );
+  Future<List<Announcement>?> getAnnouncements() async {
+    try {
+      var response = await _dio.get(
+        "$_url/announcements",
+        options: Options(headers: {
+          "HttpHeaders.contentTypeHeader": "application/json",
+          "Authorization": _token
+        }),
+      );
 
-    if (response.statusCode == StatusCode.OK) {
-      return (response.data as List)
-          .map((e) => Announcement.fromJson(e))
-          .toList();
-    } else {
-      return [];
+      if (response.statusCode == StatusCode.OK) {
+        return (response.data as List)
+            .map((e) => Announcement.fromJson(e))
+            .toList();
+      } else {
+        return [];
+      }
+    } on DioError catch (e) {
+      if (e.response?.statusCode == StatusCode.UNAUTHORIZED) {
+        lastError = ErrorType.unauthorized;
+        return null;
+      }
+
+      lastError = ErrorType.unknown;
+      return null;
     }
   }
 
@@ -133,21 +178,37 @@ class AnnouncementService {
 
   Future<bool> updateStatus(
       String? announcementId, AnnouncementStatus newStatus) async {
-    var announcement = PutAnnouncement(
-      status: newStatus,
-      petId: null,
-      title: null,
-      description: null,
-    );
-    var response = await _dio.put(
-      "$_url/announcements/$announcementId",
-      data: announcement.toJson(),
-      options: Options(headers: {
-        "Authorization": _token,
-        "HttpHeaders.contentTypeHeader": "application/json",
-      }),
-    );
+    try {
+      var announcement = PutAnnouncement(
+        status: newStatus,
+        petId: null,
+        title: null,
+        description: null,
+      );
 
-    return response.statusCode == StatusCode.OK;
+      var response = await _dio.put(
+        "$_url/announcements/$announcementId",
+        data: announcement.toJson(),
+        options: Options(headers: {
+          "Authorization": _token,
+          "HttpHeaders.contentTypeHeader": "application/json",
+        }),
+      );
+
+      return response.statusCode == StatusCode.OK;
+    } on DioError catch (e) {
+      {
+        if (e.response?.statusCode == StatusCode.UNAUTHORIZED) {
+          lastError = ErrorType.unauthorized;
+          return false;
+        } else if (e.response?.statusCode == StatusCode.BAD_REQUEST) {
+          lastError = ErrorType.badRequest;
+          return false;
+        }
+
+        lastError = ErrorType.unknown;
+        return false;
+      }
+    }
   }
 }
