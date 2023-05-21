@@ -145,10 +145,10 @@ class _AdopterMainScreenState extends State<AdopterMainScreen>
                   ),
                 if (context.read<AnnouncementService>().lastError !=
                     ErrorType.unauthorized)
-                  const Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: RabbitErrorScreen(
+                  Expanded(
+                    child: Transform.scale(
+                      scale: 0.75,
+                      child: const RabbitErrorScreen(
                         text: Text("Wystapił błąd podczas pobierania danych"),
                       ),
                     ),

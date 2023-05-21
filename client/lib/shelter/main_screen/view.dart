@@ -6,7 +6,6 @@ import 'package:pet_share/announcements/form/view.dart';
 import 'package:pet_share/announcements/models/pet.dart';
 import 'package:pet_share/applications/application.dart';
 import 'package:pet_share/common_widgets/gif_views.dart';
-import 'package:pet_share/common_widgets/drawer.dart';
 import 'package:pet_share/common_widgets/list_header_view.dart';
 import 'package:pet_share/services/adopter/service.dart';
 import 'package:pet_share/services/error_type.dart';
@@ -280,9 +279,12 @@ class _ShelterMainScreenState extends State<ShelterMainScreen>
                   ),
                 if (context.read<AdopterService>().lastError !=
                     ErrorType.unauthorized)
-                  const Expanded(
-                    child: RabbitErrorScreen(
-                      text: Text("Wystapił błąd podczas pobierania danych"),
+                  Expanded(
+                    child: Transform.scale(
+                      scale: 0.75,
+                      child: const RabbitErrorScreen(
+                        text: Text("Wystapił błąd podczas pobierania danych"),
+                      ),
                     ),
                   ),
               ],
@@ -327,7 +329,6 @@ class _ShelterMainScreenState extends State<ShelterMainScreen>
     return Scaffold(
       key: _scaffoldKey,
       appBar: _buildAppbar(context),
-      drawer: const AppDrawer(),
       body: _buildBody(context),
     );
   }

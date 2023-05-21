@@ -9,14 +9,17 @@ class GifView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTextStyle(
-      style: Theme.of(context).primaryTextTheme.bodyMedium!,
-      child: Container(
-        height: double.infinity,
-        width: double.infinity,
-        color: color ?? Theme.of(context).scaffoldBackgroundColor,
+    return Container(
+      height: double.infinity,
+      width: double.infinity,
+      color: color ?? Theme.of(context).scaffoldBackgroundColor,
+      child: DefaultTextStyle(
+        style: Theme.of(context).primaryTextTheme.bodyMedium!,
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Image.asset(asset),
+          Image.asset(
+            asset,
+            fit: BoxFit.cover,
+          ),
           if (text != null)
             const SizedBox(
               height: 32.0,
