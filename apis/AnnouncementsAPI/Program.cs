@@ -68,7 +68,7 @@ app.MapPut("/announcements/{announcementId}", AnnouncementsEndpoints.Put)
 .Produces(StatusCodes.Status400BadRequest)
 .Produces(StatusCodes.Status401Unauthorized);
 
-app.MapPut("/announcements/[announcementId]/like", AnnouncementsEndpoints.PutLiked)
+app.MapPut("/announcements/{announcementId}/like", AnnouncementsEndpoints.PutLiked)
 .WithOpenApi()
 .RequireAuthorization("Adopter")
 .WithSummary("Adds or deletes announcement from liked announcements. Requires adopter role. Gets adopter id from auth claims.")
