@@ -4,7 +4,7 @@ import 'package:pet_share/applications/application.dart';
 import 'package:pet_share/login_register/models/new_adopter.dart';
 import 'package:pet_share/services/adopter/requests/post_adopter_request.dart';
 import 'package:pet_share/services/adopter/requests/post_application_request.dart';
-import 'package:pet_share/services/error_type.dart';
+import 'package:pet_share/services/service_response.dart';
 
 class AdopterService {
   AdopterService(this._dio, this._url);
@@ -12,13 +12,12 @@ class AdopterService {
   final Dio _dio;
   final String _url;
   String _token = "Bearer ";
-  ErrorType lastError = ErrorType.none;
 
   void setToken(String token) {
     _token = "Bearer $token";
   }
 
-  Future<String> sendAdopter(NewAdopter adopter) async {
+  Future<ServiceResponse<String>> sendAdopter(NewAdopter adopter) async {
     try {
       var response = await _dio.post(
         "$_url/adopter",
@@ -37,19 +36,20 @@ class AdopterService {
       );
 
       var id = response.headers.value("location");
-      return response.statusCode == StatusCode.CREATED && id != null ? id : "";
+      return response.statusCode == StatusCode.CREATED && id != null
+          ? ServiceResponse(data: id)
+          : ServiceResponse(data: "", error: ErrorType.unknown);
     } on DioError catch (e) {
       if (e.response?.statusCode == StatusCode.UNAUTHORIZED) {
-        lastError = ErrorType.unauthorized;
-        return "";
+        return ServiceResponse(data: "", error: ErrorType.unauthorized);
       }
 
-      lastError = ErrorType.unknown;
-      return "";
+      return ServiceResponse(data: "", error: ErrorType.unknown);
     }
   }
 
-  Future<bool> sendApplication(String adopterId, String announcementId) async {
+  Future<ServiceResponse<bool>> sendApplication(
+      String adopterId, String announcementId) async {
     try {
       var response = await _dio.post(
         "$_url/applications",
@@ -63,19 +63,18 @@ class AdopterService {
       );
 
       var id = response.headers.value("location");
-      return response.statusCode == StatusCode.CREATED && id != null;
+      return ServiceResponse(
+          data: response.statusCode == StatusCode.CREATED && id != null);
     } on DioError catch (e) {
       if (e.response?.statusCode == StatusCode.UNAUTHORIZED) {
-        lastError = ErrorType.unauthorized;
-        return false;
+        return ServiceResponse(data: false, error: ErrorType.unauthorized);
       }
 
-      lastError = ErrorType.unknown;
-      return false;
+      return ServiceResponse(data: false, error: ErrorType.unknown);
     }
   }
 
-  Future<List<Application>?> getApplications() async {
+  Future<ServiceResponse<List<Application>?>> getApplications() async {
     try {
       var response = await _dio.get(
         "$_url/applications",
@@ -86,23 +85,21 @@ class AdopterService {
       );
 
       if (response.statusCode == StatusCode.OK) {
-        return (response.data as List)
-            .map((e) => Application.fromJson(e))
-            .toList();
+        return ServiceResponse(
+            data: (response.data as List)
+                .map((e) => Application.fromJson(e))
+                .toList());
       } else {
-        return [];
+        return ServiceResponse(data: [], error: ErrorType.unknown);
       }
     } on DioError catch (e) {
       if (e.response?.statusCode == StatusCode.UNAUTHORIZED) {
-        lastError = ErrorType.unauthorized;
-        return null;
+        return ServiceResponse(data: null, error: ErrorType.unauthorized);
       } else if (e.response?.statusCode == StatusCode.BAD_REQUEST) {
-        lastError = ErrorType.badRequest;
-        return null;
+        return ServiceResponse(data: null, error: ErrorType.badRequest);
       }
     }
 
-    lastError = ErrorType.unknown;
-    return null;
+    return ServiceResponse(data: null, error: ErrorType.unknown);
   }
 }

@@ -8,7 +8,7 @@ import 'package:pet_share/applications/application.dart';
 import 'package:pet_share/common_widgets/gif_views.dart';
 import 'package:pet_share/common_widgets/list_header_view.dart';
 import 'package:pet_share/services/adopter/service.dart';
-import 'package:pet_share/services/error_type.dart';
+import 'package:pet_share/services/service_response.dart';
 import 'package:pet_share/shelter/pet_details/view.dart';
 
 class ShelterMainScreen extends StatefulWidget {
@@ -259,7 +259,9 @@ class _ShelterMainScreenState extends State<ShelterMainScreen>
             return const Center(child: CatProgressIndicator());
           }
 
-          if (snapshot.hasError || (snapshot.data == null)) {
+          if (snapshot.hasError ||
+              snapshot.data == null ||
+              snapshot.data!.data == null) {
             return Column(
               children: [
                 ConstrainedBox(
@@ -267,34 +269,32 @@ class _ShelterMainScreenState extends State<ShelterMainScreen>
                       maxHeight: MediaQuery.of(context).size.height * 2 / 9),
                   child: _buildWelcome(context, null),
                 ),
-                if (context.read<AdopterService>().lastError ==
-                    ErrorType.unauthorized)
-                  const Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: CatForbiddenView(
-                        text: Text("Brak dostępu"),
-                      ),
-                    ),
-                  ),
-                if (context.read<AdopterService>().lastError !=
-                    ErrorType.unauthorized)
-                  Expanded(
-                    child: Transform.scale(
+                snapshot.data != null &&
+                        snapshot.data!.error == ErrorType.unauthorized
+                    ? const Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: CatForbiddenView(
+                            text: Text("Brak dostępu"),
+                          ),
+                        ),
+                      )
+                    : Expanded(
+                        child: Transform.scale(
                       scale: 0.75,
                       child: const RabbitErrorScreen(
-                        text: Text("Wystapił błąd podczas pobierania danych"),
-                      ),
-                    ),
+                            text: Text("Wystapił błąd podczas pobierania danych"),
+                          ),
+                        ),
                   ),
               ],
             );
           }
 
-          var pets =
-              groupBy(snapshot.data!, (Application a) => a.announcement.pet)
-                  .entries
-                  .toList();
+          var pets = groupBy(
+                  snapshot.data!.data!, (Application a) => a.announcement.pet)
+              .entries
+              .toList();
 
           return ListHeaderView(
               header: _buildWelcome(context, pets),

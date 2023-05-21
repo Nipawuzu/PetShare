@@ -2,7 +2,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pet_share/announcements/models/announcement.dart';
 import 'package:pet_share/services/adopter/service.dart';
 import 'package:pet_share/services/announcements/service.dart';
-import 'package:pet_share/services/error_type.dart';
 
 class AnnouncementDetailsState {}
 
@@ -30,8 +29,9 @@ class AnnouncementDetailsCubit extends Cubit<AnnouncementDetailsState> {
   final Announcement announcement;
 
   Future<bool> deleteAnnouncement(Announcement announcement) async {
-    if (await _announcementService.updateStatus(
-        announcement.id, announcement.status)) {
+    var res = await _announcementService.updateStatus(
+        announcement.id, announcement.status);
+    if (res.data) {
       announcement.status = AnnouncementStatus.Deleted;
       return true;
     }
@@ -41,7 +41,8 @@ class AnnouncementDetailsCubit extends Cubit<AnnouncementDetailsState> {
 
   Future<void> adopt(String adopterId, Announcement announcement) async {
     if (announcement.id != null &&
-        await _adopterService.sendApplication(adopterId, announcement.id!)) {
+        (await _adopterService.sendApplication(adopterId, announcement.id!))
+            .data) {
       announcement.status = AnnouncementStatus.InVerification;
       emit(AfterAdoptionState(
           "Twój wniosek adopcyjny został przekazany do weryfikacji. Dziękujemy za zaufanie!",
@@ -51,10 +52,6 @@ class AnnouncementDetailsCubit extends Cubit<AnnouncementDetailsState> {
           "Niestety nie udało nam się wysłać twojego wniosku. Spróbuj ponownie później!",
           false));
     }
-  }
-
-  ErrorType getLastErrorFromAnnouncementService() {
-    return _announcementService.lastError;
   }
 
   void like(String adopterId, String announcementId, bool isLiked) {}

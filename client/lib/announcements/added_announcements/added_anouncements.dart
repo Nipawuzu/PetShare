@@ -18,14 +18,14 @@ class AddedAnnouncements extends StatelessWidget {
     return FutureBuilder(
       future: announcementService.getAnnouncements(),
       builder: (context, snapshot) {
-        if (snapshot.hasData) {
+        if (snapshot.hasData && snapshot.data!.data != null) {
           return AnnouncementTilesGrid(
             pageTitle: "Ogłoszenia",
-            announcements: snapshot.data!,
+            announcements: snapshot.data!.data!,
             announcementService: announcementService,
             adopterService: adopterService,
           );
-        } else if (snapshot.hasError || snapshot.data == null) {
+        } else if (snapshot.hasError || snapshot.data == null || snapshot.data!.data == null) {
           return const Scaffold(
             body: Center(
               child: RabbitErrorScreen(

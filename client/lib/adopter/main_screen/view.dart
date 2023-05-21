@@ -10,7 +10,7 @@ import 'package:pet_share/common_widgets/gif_views.dart';
 import 'package:pet_share/common_widgets/list_header_view.dart';
 import 'package:pet_share/services/adopter/service.dart';
 import 'package:pet_share/services/announcements/service.dart';
-import 'package:pet_share/services/error_type.dart';
+import 'package:pet_share/services/service_response.dart';
 
 class AdopterMainScreen extends StatefulWidget {
   const AdopterMainScreen({super.key});
@@ -126,33 +126,34 @@ class _AdopterMainScreenState extends State<AdopterMainScreen>
             return const Center(child: CatProgressIndicator());
           }
 
-          if (snapshot.hasError || snapshot.data == null) {
+          if (snapshot.hasError ||
+              snapshot.data == null ||
+              snapshot.data!.data == null) {
             return Column(
               children: [
                 ConstrainedBox(
                   constraints: const BoxConstraints(maxHeight: 300),
                   child: _buildWelcome(context),
                 ),
-                if (context.read<AnnouncementService>().lastError ==
-                    ErrorType.unauthorized)
-                  const Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: CatForbiddenView(
-                        text: Text("Brak dostępu"),
+                snapshot.data != null &&
+                        snapshot.data!.error == ErrorType.unauthorized
+                    ? const Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: CatForbiddenView(
+                            text: Text("Brak dostępu"),
+                          ),
+                        ),
+                      )
+                    : Expanded(
+                        child: Transform.scale(
+                          scale: 0.75,
+                          child: const RabbitErrorScreen(
+                            text:
+                                Text("Wystapił błąd podczas pobierania danych"),
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                if (context.read<AnnouncementService>().lastError !=
-                    ErrorType.unauthorized)
-                  Expanded(
-                    child: Transform.scale(
-                      scale: 0.75,
-                      child: const RabbitErrorScreen(
-                        text: Text("Wystapił błąd podczas pobierania danych"),
-                      ),
-                    ),
-                  ),
               ],
             );
           }
@@ -160,7 +161,9 @@ class _AdopterMainScreenState extends State<AdopterMainScreen>
           return ListHeaderView(
               expandedHeight: 300,
               header: _buildWelcome(context),
-              slivers: [_buildAnnouncementsGrid(context, snapshot.data!)]);
+              slivers: [
+                _buildAnnouncementsGrid(context, snapshot.data!.data!)
+              ]);
         },
       ),
     );

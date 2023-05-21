@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:pet_share/announcements/details/cubit.dart';
 import 'package:pet_share/announcements/models/announcement.dart';
-import 'package:pet_share/services/error_type.dart';
+import 'package:pet_share/services/service_response.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AnnouncementAndPetDetails extends StatefulWidget {
@@ -121,9 +121,10 @@ class _AnnouncementAndPetDetailsState extends State<AnnouncementAndPetDetails>
     ).then((value) async => {
           if (value != null && value)
             {
-              if (await context
+              var res = await context
                   .read<AnnouncementDetailsCubit>()
-                  .deleteAnnouncement(announcement))
+                  .deleteAnnouncement(announcement), 
+              if (res)
                 {
                   Navigator.pop(context),
                 }

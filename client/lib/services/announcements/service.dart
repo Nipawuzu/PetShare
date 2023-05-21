@@ -9,7 +9,7 @@ import 'package:pet_share/announcements/models/new_pet.dart';
 import 'package:pet_share/announcements/models/pet.dart';
 import 'package:pet_share/services/announcements/requests/post_announcement_request.dart';
 import 'package:pet_share/services/announcements/requests/post_pet_request.dart';
-import 'package:pet_share/services/error_type.dart';
+import 'package:pet_share/services/service_response.dart';
 import 'package:pet_share/shelter.dart';
 
 import 'requests/put_announcement.dart';
@@ -20,13 +20,12 @@ class AnnouncementService {
   final Dio _dio;
   final String _url;
   String _token = "Bearer ";
-  ErrorType lastError = ErrorType.none;
 
   void setToken(String token) {
     _token = "Bearer $token";
   }
 
-  Future<String> sendPet(NewPet pet) async {
+  Future<ServiceResponse<String>> sendPet(NewPet pet) async {
     try {
       var response = await _dio.post(
         "$_url/pet",
@@ -45,19 +44,20 @@ class AnnouncementService {
       );
 
       var id = response.headers.value("location");
-      return response.statusCode == StatusCode.CREATED && id != null ? id : "";
+      return response.statusCode == StatusCode.CREATED && id != null
+          ? ServiceResponse(data: id)
+          : ServiceResponse(data: "", error: ErrorType.unknown);
     } on DioError catch (e) {
       if (e.response?.statusCode == StatusCode.UNAUTHORIZED) {
-        lastError = ErrorType.unauthorized;
-        return "";
+        return ServiceResponse(data: "", error: ErrorType.unauthorized);
       }
 
-      lastError = ErrorType.unknown;
-      return "";
+      return ServiceResponse(data: "", error: ErrorType.unknown);
     }
   }
 
-  Future<bool> uploadPetPhoto(String petId, Uint8List photo) async {
+  Future<ServiceResponse<bool>> uploadPetPhoto(
+      String petId, Uint8List photo) async {
     try {
       FormData formData = FormData.fromMap({
         "file": MultipartFile.fromBytes(photo, filename: petId),
@@ -71,19 +71,18 @@ class AnnouncementService {
         }),
       );
 
-      return response.statusCode == StatusCode.OK;
+      return ServiceResponse(data: response.statusCode == StatusCode.OK);
     } on DioError catch (e) {
       if (e.response?.statusCode == StatusCode.UNAUTHORIZED) {
-        lastError = ErrorType.unauthorized;
-        return false;
+        return ServiceResponse(data: false, error: ErrorType.unauthorized);
       }
 
-      lastError = ErrorType.unknown;
-      return false;
+      return ServiceResponse(data: false, error: ErrorType.unknown);
     }
   }
 
-  Future<String> sendAnnouncement(NewAnnouncement announcement) async {
+  Future<ServiceResponse<String>> sendAnnouncement(
+      NewAnnouncement announcement) async {
     try {
       var response = await _dio.post(
         "$_url/announcements",
@@ -99,22 +98,21 @@ class AnnouncementService {
       );
 
       var id = response.headers.value("location");
-      return response.statusCode == StatusCode.CREATED && id != null ? id : "";
+      return response.statusCode == StatusCode.CREATED && id != null
+          ? ServiceResponse(data: id)
+          : ServiceResponse(data: "", error: ErrorType.unknown);
     } on DioError catch (e) {
       if (e.response?.statusCode == StatusCode.UNAUTHORIZED) {
-        lastError = ErrorType.unauthorized;
-        return "";
+        return ServiceResponse(data: "", error: ErrorType.unauthorized);
       } else if (e.response?.statusCode == StatusCode.BAD_REQUEST) {
-        lastError = ErrorType.badRequest;
-        return "";
+        return ServiceResponse(data: "", error: ErrorType.badRequest);
       }
 
-      lastError = ErrorType.unknown;
-      return "";
+      return ServiceResponse(data: "", error: ErrorType.unknown);
     }
   }
 
-  Future<List<Announcement>?> getAnnouncements() async {
+  Future<ServiceResponse<List<Announcement>?>> getAnnouncements() async {
     try {
       var response = await _dio.get(
         "$_url/announcements",
@@ -125,20 +123,19 @@ class AnnouncementService {
       );
 
       if (response.statusCode == StatusCode.OK) {
-        return (response.data as List)
-            .map((e) => Announcement.fromJson(e))
-            .toList();
+        return ServiceResponse(
+            data: (response.data as List)
+                .map((e) => Announcement.fromJson(e))
+                .toList());
       } else {
-        return [];
+        return ServiceResponse(data: [], error: ErrorType.unknown);
       }
     } on DioError catch (e) {
       if (e.response?.statusCode == StatusCode.UNAUTHORIZED) {
-        lastError = ErrorType.unauthorized;
-        return null;
+        return ServiceResponse(data: null, error: ErrorType.unauthorized);
       }
 
-      lastError = ErrorType.unknown;
-      return null;
+      return ServiceResponse(data: null, error: ErrorType.unknown);
     }
   }
 
@@ -176,7 +173,7 @@ class AnnouncementService {
     );
   }
 
-  Future<bool> updateStatus(
+  Future<ServiceResponse<bool>> updateStatus(
       String? announcementId, AnnouncementStatus newStatus) async {
     try {
       var announcement = PutAnnouncement(
@@ -195,19 +192,16 @@ class AnnouncementService {
         }),
       );
 
-      return response.statusCode == StatusCode.OK;
+      return ServiceResponse(data: response.statusCode == StatusCode.OK);
     } on DioError catch (e) {
       {
         if (e.response?.statusCode == StatusCode.UNAUTHORIZED) {
-          lastError = ErrorType.unauthorized;
-          return false;
+          return ServiceResponse(data: false, error: ErrorType.unauthorized);
         } else if (e.response?.statusCode == StatusCode.BAD_REQUEST) {
-          lastError = ErrorType.badRequest;
-          return false;
+          return ServiceResponse(data: false, error: ErrorType.badRequest);
         }
 
-        lastError = ErrorType.unknown;
-        return false;
+        return ServiceResponse(data: false, error: ErrorType.unknown);
       }
     }
   }

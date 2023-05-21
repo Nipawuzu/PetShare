@@ -4,7 +4,7 @@ import 'package:pet_share/login_register/models/new_adopter.dart';
 import 'package:pet_share/login_register/models/new_shelter.dart';
 import 'package:pet_share/services/adopter/service.dart';
 import 'package:pet_share/services/announcements/service.dart';
-import 'package:pet_share/services/error_type.dart';
+import 'package:pet_share/services/service_response.dart';
 import 'package:pet_share/services/shelter/service.dart';
 import 'package:pet_share/utils/access_token_parser.dart';
 import 'package:pet_share/services/auth/service.dart';
@@ -133,12 +133,12 @@ class AuthCubit extends Cubit<AuthState> {
     emit(const SigningInState());
     if (user is NewAdopter) {
       var id = await adopterService.sendAdopter(user);
-      if (id.isNotEmpty) {
+      if (id.data.isNotEmpty) {
         try {
           await authService.addMetadataToUser(
             authService.loggedInUser!.user.sub,
             "adopter",
-            id,
+            id.data,
           );
           var credentials = await authService.login();
           _setToken(credentials.accessToken);
@@ -150,7 +150,7 @@ class AuthCubit extends Cubit<AuthState> {
           ));
           return;
         }
-      } else if (adopterService.lastError == ErrorType.unauthorized) {
+      } else if (id.error == ErrorType.unauthorized) {
         emit(const ErrorState(
           error: "Nie masz uprawnień do rejestracji adoptującego",
         ));
@@ -158,12 +158,12 @@ class AuthCubit extends Cubit<AuthState> {
       }
     } else if (user is NewShelter) {
       var id = await shelterService.sendShelter(user);
-      if (id.isNotEmpty) {
+      if (id.data.isNotEmpty) {
         try {
           await authService.addMetadataToUser(
             authService.loggedInUser!.user.sub,
             "shelter",
-            id,
+            id.data,
           );
           var credentials = await authService.login();
           _setToken(credentials.accessToken);
@@ -175,7 +175,7 @@ class AuthCubit extends Cubit<AuthState> {
           ));
           return;
         }
-      } else if (shelterService.lastError == ErrorType.unauthorized) {
+      } else if (id.error == ErrorType.unauthorized) {
         emit(const ErrorState(
           error: "Nie masz uprawnień do rejestracji schroniska",
         ));
