@@ -82,26 +82,26 @@ class AnnouncementTile extends StatelessWidget {
 
 String statusToString(AnnouncementStatus status) {
   switch (status) {
-    case AnnouncementStatus.open:
+    case AnnouncementStatus.Open:
       return "Otwarte";
-    case AnnouncementStatus.closed:
+    case AnnouncementStatus.Closed:
       return "Zamknięte";
-    case AnnouncementStatus.removed:
+    case AnnouncementStatus.Deleted:
       return "Usunięte";
-    case AnnouncementStatus.inVerification:
+    case AnnouncementStatus.InVerification:
       return "Użytkownik w trakcie weryfikacji";
   }
 }
 
 Color statusToColor(AnnouncementStatus status) {
   switch (status) {
-    case AnnouncementStatus.open:
+    case AnnouncementStatus.Open:
       return Colors.green;
-    case AnnouncementStatus.closed:
+    case AnnouncementStatus.Closed:
       return Colors.red;
-    case AnnouncementStatus.removed:
+    case AnnouncementStatus.Deleted:
       return Colors.brown;
-    case AnnouncementStatus.inVerification:
+    case AnnouncementStatus.InVerification:
       return Colors.blue;
   }
 }

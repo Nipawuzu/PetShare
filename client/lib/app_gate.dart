@@ -2,11 +2,11 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:pet_share/services/adopter/service.dart';
 import 'package:pet_share/services/announcements/service.dart';
-import 'package:pet_share/applications/service.dart';
 import 'package:pet_share/environment.dart';
 import 'package:pet_share/login_register/gate.dart';
 import 'package:pet_share/services/auth/service.dart';
 import 'package:pet_share/services/shelter/service.dart';
+import 'package:pet_share/theme.dart';
 import 'package:provider/provider.dart';
 
 class AppMainGate extends StatelessWidget {
@@ -21,9 +21,6 @@ class AppMainGate extends StatelessWidget {
               AnnouncementService(Dio(), Environment.announcementsApiUrl),
         ),
         Provider(
-          create: (context) => ApplicationService(),
-        ),
-        Provider(
           create: (context) => AdopterService(Dio(), Environment.adopterApiUrl),
         ),
         Provider(
@@ -35,7 +32,16 @@ class AppMainGate extends StatelessWidget {
           },
         )
       ],
-      child: const AuthGate(),
+      child: MaterialApp(
+        themeMode: ThemeMode.light,
+        theme: AppTheme.light,
+        darkTheme: AppTheme.dark,
+        home: const Scaffold(
+          body: SafeArea(
+            child: AuthGate(),
+          ),
+        ),
+      ),
     );
   }
 }

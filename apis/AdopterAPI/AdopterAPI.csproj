@@ -5,6 +5,15 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>b53adc59-c167-4466-9b5d-87771101ddd7</UserSecretsId>
+    <Configurations>Debug;Release;Test</Configurations>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>$(DefineConstants)TRACE;TEST</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants>$(DefineConstants)TRACE;TEST</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,6 +26,7 @@
     <ProjectReference Include="..\APIAuthCommonLibrary\APIAuthCommonLibrary.csproj" />
     <ProjectReference Include="..\CommonDTO\CommonDTOLibrary.csproj" />
     <ProjectReference Include="..\DatabaseContextLibrary\DatabaseContextLibrary.csproj" />
+    <ProjectReference Include="..\EmailLibrary\EmailLibrary.csproj" />
   </ItemGroup>
 
 </Project>

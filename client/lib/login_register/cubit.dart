@@ -4,6 +4,7 @@ import 'package:pet_share/login_register/models/new_adopter.dart';
 import 'package:pet_share/login_register/models/new_shelter.dart';
 import 'package:pet_share/services/adopter/service.dart';
 import 'package:pet_share/services/announcements/service.dart';
+import 'package:pet_share/services/service_response.dart';
 import 'package:pet_share/services/shelter/service.dart';
 import 'package:pet_share/utils/access_token_parser.dart';
 import 'package:pet_share/services/auth/service.dart';
@@ -14,13 +15,26 @@ class AuthCubit extends Cubit<AuthState> {
     required this.shelterService,
     required this.authService,
     required this.announcementsService,
-  }) : super(const SignedOutState());
+  }) : super(const SigningInState()) {
+    tryToSignIn();
+  }
 
   int pageNumber = 0;
   AdopterService adopterService;
   ShelterService shelterService;
   AuthService authService;
   AnnouncementService announcementsService;
+
+  tryToSignIn() async {
+    var credentials = await authService.relogin();
+
+    if (credentials != null) {
+      emit(SignedInState(credentials: credentials));
+      return;
+    }
+
+    emit(const SignedOutState());
+  }
 
   Future<void> signInOrSignUp() async {
     emit(const SigningInState());
@@ -52,6 +66,7 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   Future<void> signOut() async {
+    await authService.logout();
     emit(const SignedOutState());
   }
 
@@ -131,12 +146,12 @@ class AuthCubit extends Cubit<AuthState> {
     emit(const SigningInState());
     if (user is NewAdopter) {
       var id = await adopterService.sendAdopter(user);
-      if (id.isNotEmpty) {
+      if (id.data.isNotEmpty) {
         try {
           await authService.addMetadataToUser(
             authService.loggedInUser!.user.sub,
             "adopter",
-            id,
+            id.data,
           );
           var credentials = await authService.login();
           _setToken(credentials.accessToken);
@@ -148,15 +163,20 @@ class AuthCubit extends Cubit<AuthState> {
           ));
           return;
         }
+      } else if (id.error == ErrorType.unauthorized) {
+        emit(const ErrorState(
+          error: "Nie masz uprawnień do rejestracji adoptującego",
+        ));
+        return;
       }
     } else if (user is NewShelter) {
       var id = await shelterService.sendShelter(user);
-      if (id.isNotEmpty) {
+      if (id.data.isNotEmpty) {
         try {
           await authService.addMetadataToUser(
             authService.loggedInUser!.user.sub,
             "shelter",
-            id,
+            id.data,
           );
           var credentials = await authService.login();
           _setToken(credentials.accessToken);
@@ -168,6 +188,11 @@ class AuthCubit extends Cubit<AuthState> {
           ));
           return;
         }
+      } else if (id.error == ErrorType.unauthorized) {
+        emit(const ErrorState(
+          error: "Nie masz uprawnień do rejestracji schroniska",
+        ));
+        return;
       }
     }
 
