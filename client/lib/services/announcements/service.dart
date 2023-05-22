@@ -219,17 +219,4 @@ class AnnouncementService {
       }),
     );
   }
-
-  Future<void> likeAnnouncement(String announcementId, bool isLiked) async {
-    var announcementLiked = PutAnnouncementLikeRequest(
-        announcementId: announcementId, isLiked: isLiked);
-    await _dio.put(
-      "$_url/announcements/like",
-      data: announcementLiked.toJson(),
-      options: Options(headers: {
-        "Authorization": _token,
-        "HttpHeaders.contentTypeHeader": "application/json",
-      }),
-    );
-  }
 }
