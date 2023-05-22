@@ -4,14 +4,19 @@ using DatabaseContextLibrary.models;
 using FileStorageLibrary;
 using Microsoft.EntityFrameworkCore;
 using CommonDTOLibrary.Mappers;
+using AnnouncementsAPI.Responses;
 
 namespace AnnouncementsAPI.Endpoints
 {
     public class AnnouncementsEndpoints : Endpoints
     {
+        private const int DEFAULT_PAGE_COUNT = 100;
+
         public static async Task<IResult> GetWithFilters(
             DataContext context,
             IStorage storage,
+            int? pageNumber,
+            int? pageCount,
             string[]? species,
             string[]? breeds,
             string[]? locations,
@@ -41,14 +46,26 @@ namespace AnnouncementsAPI.Endpoints
             if (shelterNames != null && shelterNames.Any())
                 announcements = announcements.Where(a => shelterNames.Contains(a.Pet.Shelter.FullShelterName));
 
-            var res = await announcements.Select(a => a.MapDTO()).ToListAsync();
+            int pageNumberVal = pageNumber ?? 0;
+            int pageCountVal = pageCount ?? DEFAULT_PAGE_COUNT;
+
+            int count = announcements.Count();
+
+            var res = await announcements
+                .Skip(pageNumberVal * pageCountVal).Take(pageCountVal)
+                .Select(a => a.MapDTO()).ToListAsync();
 
             foreach (var a in res)
             {
                 await a.Pet.AttachPhotoUrl(storage);
             }
 
-            return Results.Ok(res);
+            return Results.Ok(new GetAnnouncementsReponse()
+            {
+                Announcements = res.ToArray(),
+                PageNumber = pageNumberVal,
+                Count = count
+            });
         }
 
         public static async Task<IResult> GetById(
@@ -73,7 +90,9 @@ namespace AnnouncementsAPI.Endpoints
         public static async Task<IResult> GetForAuthorisedShelter(
             DataContext context,
             IStorage storage,
-            HttpContext httpContext)
+            HttpContext httpContext,
+            int? pageNumber,
+            int? pageCount)
         {
             if (!AuthorizeUser(httpContext, out var role, out var userId) || role != Role.Shelter)
                 return Results.Unauthorized();
@@ -84,10 +103,26 @@ namespace AnnouncementsAPI.Endpoints
                 .ThenInclude(x => x.Address)
                 .Where(x => x.Pet.ShelterId == userId);
 
-            var res = await announcements.Select(a => a.MapDTO()).ToListAsync();
-            foreach (var a in res) await a.Pet.AttachPhotoUrl(storage);
+            int pageNumberVal = pageNumber ?? 0;
+            int pageCountVal = pageCount ?? DEFAULT_PAGE_COUNT;
 
-            return Results.Ok(res);
+            int count = announcements.Count();
+
+            var res = await announcements
+                .Skip(pageNumberVal * pageCountVal).Take(pageCountVal)
+                .Select(a => a.MapDTO()).ToListAsync();
+
+            foreach (var a in res)
+            {
+                await a.Pet.AttachPhotoUrl(storage);
+            }
+
+            return Results.Ok(new GetAnnouncementsReponse()
+            {
+                Announcements = res.ToArray(),
+                PageNumber = pageNumberVal,
+                Count = count
+            });
         }
 
         public static async Task<IResult> Post(

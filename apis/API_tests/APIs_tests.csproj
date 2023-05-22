@@ -8,6 +8,8 @@
     <IsPackable>false</IsPackable>
 
     <Configurations>Debug;Release;Test</Configurations>
+
+    <UserSecretsId>1cdca2f6-17f4-4922-980b-3441fba99ff2</UserSecretsId>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Test|AnyCPU'">

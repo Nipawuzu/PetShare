@@ -3,24 +3,41 @@ using APIAuthCommonLibrary;
 using FileStorageLibrary;
 using Microsoft.EntityFrameworkCore;
 using CommonDTOLibrary.Mappers;
+using AnnouncementsAPI.Responses;
+using DatabaseContextLibrary.models;
+using Microsoft.Identity.Client.Extensions.Msal;
 
 namespace AnnouncementsAPI.Endpoints
 {
     public class PetEndpoints : Endpoints
     {
-        public static async Task<IResult> GetAllForAuthorisedShelter(DataContext context, HttpContext httpContext)
+        private const int DEFAULT_PAGE_COUNT = 100;
+
+        public static async Task<IResult> GetAllForAuthorisedShelter(DataContext context, HttpContext httpContext, int? pageNumber, int? pageCount)
         {
             if (!AuthorizeUser(httpContext, out _, out var userId))
                 return Results.Unauthorized();
 
-            var res = await context.Pets
+            var pets = context.Pets
                 .Include(x => x.Shelter)
                 .ThenInclude(x => x.Address)
-                .Where(p => p.ShelterId == userId)
-                .Select(p => p.MapDTO())
-                .ToListAsync();
+                .Where(p => p.ShelterId == userId);
 
-            return Results.Ok(res);
+            int pageNumberVal = pageNumber ?? 0;
+            int pageCountVal = pageCount ?? DEFAULT_PAGE_COUNT;
+
+            int count = pets.Count();
+
+            var res = await pets
+                .Skip(pageNumberVal * pageCountVal).Take(pageCountVal)
+                .Select(a => a.MapDTO()).ToListAsync();
+
+            return Results.Ok(new GetPetsResponse()
+            {
+                Pets = res.ToArray(),
+                PageNumber = pageNumberVal,
+                Count = count
+            });
         }
 
         public static async Task<IResult> GetById(DataContext context, IStorage storage, Guid petId)
