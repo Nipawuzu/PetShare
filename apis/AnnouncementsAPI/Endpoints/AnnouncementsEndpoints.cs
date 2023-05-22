@@ -3,6 +3,10 @@ using APIAuthCommonLibrary;
 using DatabaseContextLibrary.models;
 using Microsoft.EntityFrameworkCore;
 using CommonDTOLibrary.Mappers;
+using DatabaseContextLibrary.Models;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
+using AnnouncementsAPI.Responses;
 
 namespace AnnouncementsAPI.Endpoints
 {
@@ -15,13 +19,21 @@ namespace AnnouncementsAPI.Endpoints
             string[]? locations,
             int? minAge,
             int? maxAge,
-            string[]? shelterNames)
+            string[]? shelterNames,
+            bool? isLiked,
+            HttpContext httpContext)
         {
+            var isAdopter = false;
+            if (AuthorizeUser(httpContext, out var role, out var adopterId) && role == Role.Adopter)
+            {
+                isAdopter = true;
+            }
+
             var announcements = context.Announcements
-                .Include(x => x.Pet)
-                .ThenInclude(x => x.Shelter)
-                .ThenInclude(x => x.Address)
-                .AsQueryable();
+            .Include(x => x.Pet)
+            .ThenInclude(x => x.Shelter)
+            .ThenInclude(x => x.Address)
+            .AsQueryable();
 
             if (species != null && species.Any())
                 announcements = announcements.Where(a => species.Contains(a.Pet.Species));
@@ -39,7 +51,27 @@ namespace AnnouncementsAPI.Endpoints
             if (shelterNames != null && shelterNames.Any())
                 announcements = announcements.Where(a => shelterNames.Contains(a.Pet.Shelter.FullShelterName));
 
-            var res = await announcements.Select(a => a.MapDTO()).ToListAsync();
+            if (isAdopter && isLiked.HasValue)
+            {
+                if (isLiked.Value)
+                    announcements = announcements.Where(a => context.AdopterLikedAnnouncementsLinkingTables.Any(
+                            alalt => alalt.AnnouncementId == a.Id && alalt.AdopterId == adopterId));
+                else
+                    announcements = announcements.Where(a => !context.AdopterLikedAnnouncementsLinkingTables.Any(
+                        alalt => alalt.AnnouncementId == a.Id && alalt.AdopterId == adopterId));
+            }
+
+            var res = await announcements.Select(a => a.Map()).ToListAsync();
+
+            foreach (var a in res)
+            {
+                if (isAdopter)
+                {
+                    a.IsLiked = await context.AdopterLikedAnnouncementsLinkingTables.AnyAsync(
+                        alalt => alalt.AnnouncementId == a.Id && alalt.AdopterId == adopterId);
+                }
+            }
+
             return Results.Ok(res);
         }
 
@@ -110,7 +142,7 @@ namespace AnnouncementsAPI.Endpoints
             if (announcement is null)
                 return Results.NotFound("Announcement doesn't exist.");
 
-            if(!AuthorizeUser(httpContext, out var role, out var userId))
+            if (!AuthorizeUser(httpContext, out var role, out var userId))
                 return Results.Unauthorized();
 
             Pet? announcementPet;
@@ -138,6 +170,50 @@ namespace AnnouncementsAPI.Endpoints
             announcement.LastUpdateDate = DateTime.Now;
 
             await context.SaveChangesAsync();
+
+            return Results.Ok();
+        }
+
+        public static async Task<IResult> PutLiked(DataContext dbContext, Guid announcementId, bool isLiked, HttpContext httpContext)
+        {
+            var identity = httpContext.User.Identity as ClaimsIdentity;
+            var issuerClaim = identity?.GetIssuer();
+
+            if (identity is null || issuerClaim is null)
+                return Results.Forbid();
+
+            var adopterId = Guid.Parse(issuerClaim);
+            var announcement = await dbContext.Announcements.FirstOrDefaultAsync(a => a.Id == announcementId);
+
+            if (announcement is null)
+                return Results.NotFound("Announcement doesn't exist.");
+
+            if (isLiked)
+            {
+                var liked = await dbContext.AdopterLikedAnnouncementsLinkingTables.FirstOrDefaultAsync(alalt =>
+                    alalt.AdopterId == adopterId && alalt.AnnouncementId == announcementId);
+
+                if (liked != null)
+                    return Results.Ok();
+
+                dbContext.AdopterLikedAnnouncementsLinkingTables.Add(new AdopterLikedAnnouncementsLinkingTable()
+                {
+                    AdopterId = adopterId,
+                    AnnouncementId = announcementId
+                });
+                await dbContext.SaveChangesAsync();
+            }
+            else
+            {
+                var liked = await dbContext.AdopterLikedAnnouncementsLinkingTables.FirstOrDefaultAsync(alalt =>
+                   alalt.AdopterId == adopterId && alalt.AnnouncementId == announcementId);
+
+                if (liked == null)
+                    return Results.Ok();
+
+                dbContext.AdopterLikedAnnouncementsLinkingTables.Remove(liked!);
+                await dbContext.SaveChangesAsync();
+            }
 
             return Results.Ok();
         }

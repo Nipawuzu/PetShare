@@ -3,10 +3,15 @@ import 'package:like_button/like_button.dart';
 import 'package:pet_share/announcements/details/view.dart';
 import 'package:pet_share/announcements/models/announcement.dart';
 import 'package:pet_share/common_widgets/image.dart';
+import 'package:pet_share/services/announcements/service.dart';
 
 class AnnouncementTile extends StatelessWidget {
-  const AnnouncementTile({super.key, required this.announcement});
+  const AnnouncementTile(
+      {super.key,
+      required this.announcement,
+      required this.announcementService});
   final Announcement announcement;
+  final AnnouncementService announcementService;
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +50,7 @@ class AnnouncementTile extends StatelessWidget {
                           ]),
                     ),
                     LikeButton(
+                      isLiked: announcement.isLiked ?? false,
                       size: 36,
                       likeBuilder: (bool isLiked) {
                         return Icon(
@@ -54,7 +60,11 @@ class AnnouncementTile extends StatelessWidget {
                         );
                       },
                       onTap: (isLiked) {
-                        if (announcement.id != null) {}
+                        if (announcement.id != null) {
+                          announcement.isLiked = !isLiked;
+                          announcementService.likeAnnouncement(
+                              announcement.id!, !isLiked);
+                        }
 
                         return Future.value(!isLiked);
                       },

@@ -9,6 +9,7 @@ enum ErrorType {
   unauthorized,
   notFound,
   badRequest,
+  forbidden,
   unknown,
   none,
 }

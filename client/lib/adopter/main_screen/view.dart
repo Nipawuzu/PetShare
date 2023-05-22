@@ -111,6 +111,7 @@ class _AdopterMainScreenState extends State<AdopterMainScreen>
         ),
         child: AnnouncementTile(
           announcement: announcements[index],
+          announcementService: context.read<AnnouncementService>(),
         ),
       ),
     );
