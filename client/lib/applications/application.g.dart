@@ -26,7 +26,8 @@ Map<String, dynamic> _$ApplicationToJson(Application instance) =>
       'announcementId': instance.announcementId,
       'announcement': instance.announcement,
       'adopter': instance.adopter,
-      'status': _$ApplicationStatusDTOEnumMap[instance.applicationStatus]!,
+      'applicationStatus':
+          _$ApplicationStatusDTOEnumMap[instance.applicationStatus]!,
     };
 
 const _$ApplicationStatusDTOEnumMap = {

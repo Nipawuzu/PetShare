@@ -78,7 +78,9 @@ app.MapPut("/announcements/{announcementId}/like", AnnouncementsEndpoints.PutLik
 .RequireAuthorization("Adopter")
 .WithSummary("Adds or deletes announcement from liked announcements. Requires adopter role. Gets adopter id from auth claims.")
 .Produces(StatusCodes.Status200OK)
+.Produces(StatusCodes.Status400BadRequest)
 .Produces(StatusCodes.Status401Unauthorized)
+.Produces(StatusCodes.Status403Forbidden)
 .Produces(StatusCodes.Status404NotFound);
 
 app.MapGet("/shelter/pets", PetEndpoints.GetAllForAuthorisedShelter)

@@ -19,14 +19,11 @@ class ObservedAnnouncements extends StatelessWidget {
     return FutureBuilder(
       future: announcementService.getObservedAnnouncements(),
       builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          return AnnouncementTilesGrid(
-            pageTitle: "Obserwowane ogłoszenia",
-            announcements: snapshot.data!,
-            announcementService: announcementService,
-            adopterService: adopterService,
-          );
-        } else if (snapshot.hasError) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CatProgressIndicator();
+        } else if (snapshot.hasError ||
+            snapshot.data == null ||
+            snapshot.data!.data == null) {
           return Scaffold(
             body: Center(
               child: TextWithBasicStyle(
@@ -37,7 +34,12 @@ class ObservedAnnouncements extends StatelessWidget {
           );
         }
 
-        return const CatProgressIndicator();
+        return AnnouncementTilesGrid(
+          pageTitle: "Obserwowane ogłoszenia",
+          announcements: snapshot.data!.data!,
+          announcementService: announcementService,
+          adopterService: adopterService,
+        );
       },
     );
   }

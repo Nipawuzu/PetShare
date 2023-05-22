@@ -51,11 +51,20 @@ namespace AnnouncementsAPI.Endpoints
             if (shelterNames != null && shelterNames.Any())
                 announcements = announcements.Where(a => shelterNames.Contains(a.Pet.Shelter.FullShelterName));
 
+            if (isAdopter && isLiked.HasValue)
+            {
+                if (isLiked.Value)
+                    announcements = announcements.Where(a => context.AdopterLikedAnnouncementsLinkingTables.Any(
+                            alalt => alalt.AnnouncementId == a.Id && alalt.AdopterId == adopterId));
+                else
+                    announcements = announcements.Where(a => !context.AdopterLikedAnnouncementsLinkingTables.Any(
+                        alalt => alalt.AnnouncementId == a.Id && alalt.AdopterId == adopterId));
+            }
+
             var res = await announcements.Select(a => a.Map()).ToListAsync();
 
             foreach (var a in res)
             {
-                await a.Pet.AttachPhotoUrl(storage);
                 if (isAdopter)
                 {
                     a.IsLiked = await context.AdopterLikedAnnouncementsLinkingTables.AnyAsync(
@@ -171,9 +180,13 @@ namespace AnnouncementsAPI.Endpoints
             var issuerClaim = identity?.GetIssuer();
 
             if (identity is null || issuerClaim is null)
-                return Results.Unauthorized();
+                return Results.Forbid();
 
             var adopterId = Guid.Parse(issuerClaim);
+            var announcement = await dbContext.Announcements.FirstOrDefaultAsync(a => a.Id == announcementId);
+
+            if (announcement is null)
+                return Results.NotFound("Announcement doesn't exist.");
 
             if (isLiked)
             {

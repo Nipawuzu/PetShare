@@ -74,6 +74,11 @@ extension AnnouncementsAPIMock on Dio {
       request.reply(StatusCode.OK, null);
     }, data: Matchers.any);
 
+    dioAdapter
+        .onPut("$url/announcements/cb849fa2-1033-4d6b-7c88-08db36d6f10f/like",
+            (request) {
+      request.reply(StatusCode.OK, null);
+    }, data: Matchers.any);
     return dio;
   }
 }

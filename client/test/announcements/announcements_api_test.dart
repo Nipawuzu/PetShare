@@ -6,6 +6,7 @@ import 'package:pet_share/announcements/models/new_announcement.dart';
 import 'package:pet_share/announcements/models/new_pet.dart';
 import 'package:pet_share/announcements/models/pet.dart';
 import 'package:pet_share/services/announcements/service.dart';
+import 'package:pet_share/services/service_response.dart';
 
 import 'announcements_api_mock.dart';
 
@@ -54,6 +55,12 @@ void main() {
       var res = await service.updateStatus(
           "cb849fa2-1033-4d6b-7c88-08db36d6f10f", AnnouncementStatus.Deleted);
       assert(res.data);
+    });
+
+    test('Like announcement', () async {
+      var res = await service.likeAnnouncement(
+          "cb849fa2-1033-4d6b-7c88-08db36d6f10f", true);
+      assert(res == ErrorType.none);
     });
   });
 }

@@ -143,7 +143,42 @@ namespace APIs_tests.AnnouncementAPITests
                 Status = AnnouncementStatus.Closed,
             };
 
-            var req = CreateRequest(HttpMethod.Get, $"{Urls.Announcements}/{announcementId}", body: putAnnouncementRequest, authToken: SHELTER_TOKEN);
+            var req = CreateRequest(HttpMethod.Put, $"{Urls.Announcements}/{announcementId}", body: putAnnouncementRequest, authToken: SHELTER_TOKEN);
+            var res = await client.SendAsync(req);
+
+            Assert.Equal(HttpStatusCode.OK, res.StatusCode);
+        }
+
+
+        [Fact]
+        public async void LikeAnnouncement()
+        {
+            var announcementId = await PostNewAnnouncement();
+
+            var queryString = new List<KeyValuePair<string, string?>>
+            {
+                new KeyValuePair<string, string?>("isLiked", "true"),
+            };
+
+            var url = QueryHelpers.AddQueryString($"{Urls.Announcements}/{announcementId}/like", queryString);
+
+            var req = CreateRequest(HttpMethod.Put, url, authToken: ADOPTER_TOKEN);
+            var res = await client.SendAsync(req);
+
+            Assert.Equal(HttpStatusCode.OK, res.StatusCode);
+        }
+
+        [Fact]
+        public async void GetLikedAnnouncements()
+        {
+            var queryString = new List<KeyValuePair<string, string?>>
+            {
+                new KeyValuePair<string, string?>("isLiked", "true"),
+            };
+
+            var url = QueryHelpers.AddQueryString(Urls.Announcements, queryString);
+
+            var req = CreateRequest(HttpMethod.Get, url, authToken: ADOPTER_TOKEN);
             var res = await client.SendAsync(req);
 
             Assert.Equal(HttpStatusCode.OK, res.StatusCode);
