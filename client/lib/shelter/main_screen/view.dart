@@ -299,8 +299,14 @@ class _ShelterMainScreenState extends State<ShelterMainScreen>
               .toList();
 
           return ListHeaderView(
-              header: _buildWelcome(context, pets),
-              slivers: [_buildPetList(context, pets)]);
+            header: _buildWelcome(context, pets),
+            slivers: [_buildPetList(context, pets)],
+            onRefresh: () => context.read<AdopterService>().getApplications(),
+            itemBuilder: (BuildContext context, List<Application>? list) =>
+                Container(),
+            buildWelcome: (context) => _buildWelcome(context, pets),
+            data: snapshot.data,
+          );
         },
       ),
     );

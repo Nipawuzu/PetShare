@@ -4,6 +4,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:pet_share/adopter/main_screen/filtering_category.dart';
 import 'package:pet_share/announcements/announcement_grid/announcement_tile.dart';
 import 'package:pet_share/announcements/details/gate.dart';
+import 'package:pet_share/announcements/details/view.dart';
 import 'package:pet_share/announcements/models/announcement.dart';
 import 'package:pet_share/common_widgets/drawer.dart';
 import 'package:pet_share/common_widgets/gif_views.dart';
@@ -11,6 +12,10 @@ import 'package:pet_share/common_widgets/list_header_view.dart';
 import 'package:pet_share/services/adopter/service.dart';
 import 'package:pet_share/services/announcements/service.dart';
 import 'package:pet_share/services/service_response.dart';
+
+typedef AsyncValueSetter<T> = Future<T> Function();
+typedef WelcomeMaker<T> = Widget Function(T);
+typedef ItemBuilder<T, S> = Widget Function(T, S);
 
 class AdopterMainScreen extends StatefulWidget {
   const AdopterMainScreen({super.key});
@@ -124,47 +129,48 @@ class _AdopterMainScreenState extends State<AdopterMainScreen>
         future: context.read<AnnouncementService>().getAnnouncements(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CatProgressIndicator());
-          }
-
-          if (snapshot.hasError ||
-              snapshot.data == null ||
-              snapshot.data!.data == null) {
-            return Column(
-              children: [
-                ConstrainedBox(
-                  constraints: const BoxConstraints(maxHeight: 300),
-                  child: _buildWelcome(context),
-                ),
-                snapshot.data != null &&
-                        snapshot.data!.error == ErrorType.unauthorized
-                    ? const Expanded(
-                        child: Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: CatForbiddenView(
-                            text: Text("Brak dostępu"),
+            return RefreshIndicator(
+              onRefresh: () async {
+                setState(() {});
+              },
+              child: LayoutBuilder(builder: (context, constraint) {
+                return SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: ConstrainedBox(
+                    constraints:
+                        BoxConstraints(maxHeight: constraint.maxHeight),
+                    child: Expanded(
+                      child: Column(
+                        children: [
+                          ConstrainedBox(
+                            constraints: const BoxConstraints(maxHeight: 300),
+                            child: _buildWelcome(context),
                           ),
-                        ),
-                      )
-                    : Expanded(
-                        child: Transform.scale(
-                          scale: 0.75,
-                          child: const RabbitErrorScreen(
-                            text:
-                                Text("Wystapił błąd podczas pobierania danych"),
+                          const Expanded(
+                            child: Center(
+                                child: CatProgressIndicator(
+                                    text: TextWithBasicStyle(
+                              text: "Wczytywanie ogłoszeń...",
+                              textScaleFactor: 1.7,
+                            ))),
                           ),
-                        ),
+                        ],
                       ),
-              ],
+                    ),
+                  ),
+                );
+              }),
             );
           }
 
-          return ListHeaderView(
-              expandedHeight: 300,
-              header: _buildWelcome(context),
-              slivers: [
-                _buildAnnouncementsGrid(context, snapshot.data!.data!)
-              ]);
+          return AdopterMainView<Announcement>(
+            announcements: snapshot.data,
+            onRefresh: () =>
+                context.read<AnnouncementService>().getAnnouncements(),
+            buildWelcome: _buildWelcome,
+            itemBuilder: _buildAnnouncementsGrid,
+            expandedHeight: 300,
+          );
         },
       ),
     );
@@ -177,6 +183,99 @@ class _AdopterMainScreenState extends State<AdopterMainScreen>
       appBar: _buildAppbar(context),
       drawer: const AppDrawer(),
       body: _buildBody(context),
+    );
+  }
+}
+
+class AdopterMainView<T> extends StatefulWidget {
+  const AdopterMainView(
+      {super.key,
+      required this.announcements,
+      required this.onRefresh,
+      required this.buildWelcome,
+      required this.itemBuilder,
+      this.expandedHeight});
+
+  final ServiceResponse<List<T>?>? announcements;
+  final AsyncValueSetter<ServiceResponse<List<T>?>?> onRefresh;
+  final WelcomeMaker<BuildContext> buildWelcome;
+  final ItemBuilder<BuildContext, List<T>> itemBuilder;
+  final double? expandedHeight;
+  @override
+  State<AdopterMainView<T>> createState() => _AdopterMainViewState<T>();
+}
+
+class _AdopterMainViewState<T> extends State<AdopterMainView<T>> {
+  late ServiceResponse<List<T>?>? announcements;
+
+  @override
+  void initState() {
+    announcements = widget.announcements;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return RefreshIndicator(
+      onRefresh: () async {
+        announcements = await widget.onRefresh();
+        setState(() {});
+      },
+      child: LayoutBuilder(
+        builder: (context, constraint) {
+          return SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: constraint.maxHeight),
+              child: Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: announcements == null || announcements!.data == null
+                      ? Column(
+                          children: [
+                            ConstrainedBox(
+                              constraints: const BoxConstraints(maxHeight: 300),
+                              child: widget.buildWelcome(context),
+                            ),
+                            announcements != null &&
+                                    announcements!.error ==
+                                        ErrorType.unauthorized
+                                ? const Expanded(
+                                    child: Padding(
+                                      padding: EdgeInsets.all(8.0),
+                                      child: CatForbiddenView(
+                                        text: Text("Brak dostępu"),
+                                      ),
+                                    ),
+                                  )
+                                : Expanded(
+                                    child: Transform.scale(
+                                      scale: 0.75,
+                                      child: const RabbitErrorScreen(
+                                        text: Text(
+                                            "Wystapił błąd podczas pobierania danych"),
+                                      ),
+                                    ),
+                                  ),
+                          ],
+                        )
+                      : ListHeaderView(
+                          expandedHeight: widget.expandedHeight,
+                          header: widget.buildWelcome(context),
+                          slivers: [
+                            widget.itemBuilder(context, announcements!.data!)
+                          ],
+                          onRefresh: widget.onRefresh,
+                          itemBuilder: widget.itemBuilder,
+                          data: announcements,
+                          buildWelcome: widget.buildWelcome,
+                        ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 }

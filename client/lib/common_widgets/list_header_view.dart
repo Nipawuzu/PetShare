@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:pet_share/adopter/main_screen/view.dart';
+import 'package:pet_share/services/service_response.dart';
 
-class ListHeaderView extends StatefulWidget {
+class ListHeaderView<T> extends StatefulWidget {
   const ListHeaderView({
     super.key,
     required this.slivers,
@@ -8,6 +10,10 @@ class ListHeaderView extends StatefulWidget {
     this.expandedHeight,
     this.toolbarHeight,
     this.toolbarScreenRatio,
+    required this.onRefresh,
+    required this.buildWelcome,
+    required this.itemBuilder,
+    required this.data,
   });
 
   final List<Widget> slivers;
@@ -15,22 +21,28 @@ class ListHeaderView extends StatefulWidget {
   final double? expandedHeight;
   final double? toolbarHeight;
   final double? toolbarScreenRatio;
+  final AsyncValueSetter<ServiceResponse<List<T>?>?> onRefresh;
+  final WelcomeMaker<BuildContext> buildWelcome;
+  final ItemBuilder<BuildContext, List<T>> itemBuilder;
+  final ServiceResponse<List<T>?>? data;
 
   @override
-  State<ListHeaderView> createState() => _ListHeaderViewState();
+  State<ListHeaderView<T>> createState() => _ListHeaderViewState<T>();
 }
 
-class _ListHeaderViewState extends State<ListHeaderView> {
+class _ListHeaderViewState<T> extends State<ListHeaderView<T>> {
   Future<void>? _scrollAnimate;
   bool ignoreNotification = false;
   late double _expandedHeight;
   late double _toolbarHeight;
   late GlobalKey<NestedScrollViewState> _nestedScrollViewState;
+  late ServiceResponse<List<T>?>? data;
 
   @override
   void initState() {
     _toolbarHeight = widget.toolbarHeight ?? 0;
     _nestedScrollViewState = GlobalKey();
+    data = widget.data;
     super.initState();
   }
 
@@ -76,39 +88,52 @@ class _ListHeaderViewState extends State<ListHeaderView> {
 
     return NotificationListener<ScrollEndNotification>(
       onNotification: onNotification,
-      child: NestedScrollView(
-        key: _nestedScrollViewState,
-        physics: HeaderScrollPhysics(expandedHeight: _expandedHeight),
-        body: Builder(builder: (context) {
-          return CustomScrollView(
-            slivers: [
-              SliverOverlapInjector(
-                  handle:
-                      NestedScrollView.sliverOverlapAbsorberHandleFor(context)),
-              for (var w in widget.slivers) w
-            ],
-          );
-        }),
-        headerSliverBuilder: (context, innerBoxIsScrolled) => [
-          SliverOverlapAbsorber(
-              handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-              sliver: SliverAppBar(
-                toolbarHeight: _toolbarHeight,
-                expandedHeight: _expandedHeight,
-                flexibleSpace: LayoutBuilder(
-                  builder: (context, constraints) {
-                    final expandRation = _calculateExpandRatio(constraints);
-                    final animation = AlwaysStoppedAnimation(expandRation);
+      child: RefreshIndicator(
+        notificationPredicate: (notification) {
+          return notification.depth == 1;
+        },
+        onRefresh: () async {
+          var newData = await widget.onRefresh();
+          if (newData != null && newData.data != null) {
+            data = newData;
+            setState(() {});
+          }
+        },
+        child: NestedScrollView(
+          key: _nestedScrollViewState,
+          physics: HeaderScrollPhysics(expandedHeight: _expandedHeight),
+          body: Builder(builder: (context) {
+            return CustomScrollView(
+              slivers: [
+                SliverOverlapInjector(
+                    handle: NestedScrollView.sliverOverlapAbsorberHandleFor(
+                        context)),
+                widget.itemBuilder(context, data?.data ?? [])
+              ],
+            );
+          }),
+          headerSliverBuilder: (context, innerBoxIsScrolled) => [
+            SliverOverlapAbsorber(
+                handle:
+                    NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+                sliver: SliverAppBar(
+                  toolbarHeight: _toolbarHeight,
+                  expandedHeight: _expandedHeight,
+                  flexibleSpace: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final expandRation = _calculateExpandRatio(constraints);
+                      final animation = AlwaysStoppedAnimation(expandRation);
 
-                    return FadeAnimation(
-                      animation: animation,
-                      isExpandedWidget: true,
-                      child: widget.header,
-                    );
-                  },
-                ),
-              )),
-        ],
+                      return FadeAnimation(
+                        animation: animation,
+                        isExpandedWidget: true,
+                        child: widget.buildWelcome(context),
+                      );
+                    },
+                  ),
+                )),
+          ],
+        ),
       ),
     );
   }

@@ -129,6 +129,42 @@ class _PetDetailsState extends State<PetDetails> {
             }),
           )
         ],
+        onRefresh: () async {
+          return null;
+        },
+        buildWelcome: (BuildContext context) {
+          return const Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.pets, size: 64),
+              SizedBox(height: 16),
+              Text("Brak wniosków"),
+            ],
+          );
+        },
+        data: null,
+        itemBuilder: (BuildContext context, List<dynamic> list) => SliverList(
+          delegate: SliverChildBuilderDelegate(
+              childCount: widget.applications!.length, (context, index) {
+            return ListTile(
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        ApplicationDetails(widget.applications![index]),
+                  ),
+                );
+              },
+              leading: const Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [Icon(Icons.person)]),
+              title: Text(widget.applications![index].adopter.userName),
+              subtitle:
+                  Text("Data: ${widget.applications![index].creationDate}"),
+              trailing: const Icon(Icons.arrow_forward_ios),
+            );
+          }),
+        ),
       ),
     );
   }
