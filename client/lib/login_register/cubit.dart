@@ -29,6 +29,7 @@ class AuthCubit extends Cubit<AuthState> {
     var credentials = await authService.relogin();
 
     if (credentials != null) {
+      _setToken(credentials.accessToken);
       emit(SignedInState(credentials: credentials));
       return;
     }
