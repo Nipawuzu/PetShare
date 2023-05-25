@@ -5,26 +5,21 @@ import 'package:pet_share/services/service_response.dart';
 class ListHeaderView<T> extends StatefulWidget {
   const ListHeaderView({
     super.key,
-    required this.slivers,
-    required this.header,
     this.expandedHeight,
     this.toolbarHeight,
     this.toolbarScreenRatio,
     required this.onRefresh,
-    required this.buildWelcome,
+    required this.welcomeBuilder,
     required this.itemBuilder,
     required this.data,
   });
 
-  final List<Widget> slivers;
-  final Widget header;
   final double? expandedHeight;
   final double? toolbarHeight;
   final double? toolbarScreenRatio;
-  final AsyncValueSetter<ServiceResponse<List<T>?>?> onRefresh;
-  final WelcomeMaker<BuildContext> buildWelcome;
-  final ItemBuilder<BuildContext, List<T>> itemBuilder;
-  final ServiceResponse<List<T>?>? data;
+  final AsyncValueSetter<ServiceResponse<T>, T> onRefresh;
+  final FunctionBuilder<BuildContext, T> welcomeBuilder, itemBuilder;
+  final ServiceResponse<T> data;
 
   @override
   State<ListHeaderView<T>> createState() => _ListHeaderViewState<T>();
@@ -36,7 +31,7 @@ class _ListHeaderViewState<T> extends State<ListHeaderView<T>> {
   late double _expandedHeight;
   late double _toolbarHeight;
   late GlobalKey<NestedScrollViewState> _nestedScrollViewState;
-  late ServiceResponse<List<T>?>? data;
+  late ServiceResponse<T> data;
 
   @override
   void initState() {
@@ -93,8 +88,8 @@ class _ListHeaderViewState<T> extends State<ListHeaderView<T>> {
           return notification.depth == 1;
         },
         onRefresh: () async {
-          var newData = await widget.onRefresh();
-          if (newData != null && newData.data != null) {
+          var newData = await widget.onRefresh(data.data);
+          if (newData.error == ErrorType.none) {
             data = newData;
             setState(() {});
           }
@@ -108,7 +103,7 @@ class _ListHeaderViewState<T> extends State<ListHeaderView<T>> {
                 SliverOverlapInjector(
                     handle: NestedScrollView.sliverOverlapAbsorberHandleFor(
                         context)),
-                widget.itemBuilder(context, data?.data ?? [])
+                widget.itemBuilder(context, data.data)
               ],
             );
           }),
@@ -127,7 +122,7 @@ class _ListHeaderViewState<T> extends State<ListHeaderView<T>> {
                       return FadeAnimation(
                         animation: animation,
                         isExpandedWidget: true,
-                        child: widget.buildWelcome(context),
+                        child: widget.welcomeBuilder(context, data.data),
                       );
                     },
                   ),

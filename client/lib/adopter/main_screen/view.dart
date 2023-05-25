@@ -7,15 +7,14 @@ import 'package:pet_share/announcements/details/gate.dart';
 import 'package:pet_share/announcements/details/view.dart';
 import 'package:pet_share/announcements/models/announcement.dart';
 import 'package:pet_share/common_widgets/drawer.dart';
+import 'package:pet_share/common_widgets/generic_main_view.dart';
 import 'package:pet_share/common_widgets/gif_views.dart';
-import 'package:pet_share/common_widgets/list_header_view.dart';
 import 'package:pet_share/services/adopter/service.dart';
 import 'package:pet_share/services/announcements/service.dart';
 import 'package:pet_share/services/service_response.dart';
 
-typedef AsyncValueSetter<T> = Future<T> Function();
-typedef WelcomeMaker<T> = Widget Function(T);
-typedef ItemBuilder<T, S> = Widget Function(T, S);
+typedef AsyncValueSetter<T, S> = Future<T> Function(S);
+typedef FunctionBuilder<T, S> = Widget Function(T, S);
 
 class AdopterMainScreen extends StatefulWidget {
   const AdopterMainScreen({super.key});
@@ -60,7 +59,8 @@ class _AdopterMainScreenState extends State<AdopterMainScreen>
     );
   }
 
-  Widget _buildWelcome(BuildContext context) {
+  Widget _buildWelcome(
+      BuildContext context, List<Announcement>? announcements) {
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: 16.0,
@@ -99,7 +99,8 @@ class _AdopterMainScreenState extends State<AdopterMainScreen>
   }
 
   Widget _buildAnnouncementsGrid(
-      BuildContext context, List<Announcement> announcements) {
+      BuildContext context, List<Announcement>? announcements) {
+    announcements = announcements ?? [];
     return SliverMasonryGrid.count(
       key: const PageStorageKey<String>('announcements'),
       crossAxisCount: 2,
@@ -108,14 +109,14 @@ class _AdopterMainScreenState extends State<AdopterMainScreen>
         onTap: () => Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => AnnouncementDetailsGate(
-              announcement: announcements[index],
+              announcement: announcements![index],
               adopterService: context.read<AdopterService>(),
               announcementService: context.read<AnnouncementService>(),
             ),
           ),
         ),
         child: AnnouncementTile(
-          announcement: announcements[index],
+          announcement: announcements![index],
           announcementService: context.read<AnnouncementService>(),
         ),
       ),
@@ -144,7 +145,7 @@ class _AdopterMainScreenState extends State<AdopterMainScreen>
                         children: [
                           ConstrainedBox(
                             constraints: const BoxConstraints(maxHeight: 300),
-                            child: _buildWelcome(context),
+                            child: _buildWelcome(context, null),
                           ),
                           const Expanded(
                             child: Center(
@@ -163,17 +164,22 @@ class _AdopterMainScreenState extends State<AdopterMainScreen>
             );
           }
 
-          return AdopterMainView<Announcement>(
-            announcements: snapshot.data,
-            onRefresh: () =>
-                context.read<AnnouncementService>().getAnnouncements(),
-            buildWelcome: _buildWelcome,
+          return GenericMainView(
+            data: snapshot.data ??
+                ServiceResponse(data: null, error: ErrorType.unknown),
+            onRefresh: _refreshAnnouncements,
+            welcomeBuilder: _buildWelcome,
             itemBuilder: _buildAnnouncementsGrid,
             expandedHeight: 300,
           );
         },
       ),
     );
+  }
+
+  Future<ServiceResponse<List<Announcement>?>> _refreshAnnouncements(
+      List<Announcement>? oldAnnouncements) async {
+    return context.read<AnnouncementService>().getAnnouncements();
   }
 
   @override
@@ -183,99 +189,6 @@ class _AdopterMainScreenState extends State<AdopterMainScreen>
       appBar: _buildAppbar(context),
       drawer: const AppDrawer(),
       body: _buildBody(context),
-    );
-  }
-}
-
-class AdopterMainView<T> extends StatefulWidget {
-  const AdopterMainView(
-      {super.key,
-      required this.announcements,
-      required this.onRefresh,
-      required this.buildWelcome,
-      required this.itemBuilder,
-      this.expandedHeight});
-
-  final ServiceResponse<List<T>?>? announcements;
-  final AsyncValueSetter<ServiceResponse<List<T>?>?> onRefresh;
-  final WelcomeMaker<BuildContext> buildWelcome;
-  final ItemBuilder<BuildContext, List<T>> itemBuilder;
-  final double? expandedHeight;
-  @override
-  State<AdopterMainView<T>> createState() => _AdopterMainViewState<T>();
-}
-
-class _AdopterMainViewState<T> extends State<AdopterMainView<T>> {
-  late ServiceResponse<List<T>?>? announcements;
-
-  @override
-  void initState() {
-    announcements = widget.announcements;
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return RefreshIndicator(
-      onRefresh: () async {
-        announcements = await widget.onRefresh();
-        setState(() {});
-      },
-      child: LayoutBuilder(
-        builder: (context, constraint) {
-          return SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            child: ConstrainedBox(
-              constraints: BoxConstraints(maxHeight: constraint.maxHeight),
-              child: Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: announcements == null || announcements!.data == null
-                      ? Column(
-                          children: [
-                            ConstrainedBox(
-                              constraints: const BoxConstraints(maxHeight: 300),
-                              child: widget.buildWelcome(context),
-                            ),
-                            announcements != null &&
-                                    announcements!.error ==
-                                        ErrorType.unauthorized
-                                ? const Expanded(
-                                    child: Padding(
-                                      padding: EdgeInsets.all(8.0),
-                                      child: CatForbiddenView(
-                                        text: Text("Brak dostępu"),
-                                      ),
-                                    ),
-                                  )
-                                : Expanded(
-                                    child: Transform.scale(
-                                      scale: 0.75,
-                                      child: const RabbitErrorScreen(
-                                        text: Text(
-                                            "Wystapił błąd podczas pobierania danych"),
-                                      ),
-                                    ),
-                                  ),
-                          ],
-                        )
-                      : ListHeaderView(
-                          expandedHeight: widget.expandedHeight,
-                          header: widget.buildWelcome(context),
-                          slivers: [
-                            widget.itemBuilder(context, announcements!.data!)
-                          ],
-                          onRefresh: widget.onRefresh,
-                          itemBuilder: widget.itemBuilder,
-                          data: announcements,
-                          buildWelcome: widget.buildWelcome,
-                        ),
-                ),
-              ),
-            ),
-          );
-        },
-      ),
     );
   }
 }

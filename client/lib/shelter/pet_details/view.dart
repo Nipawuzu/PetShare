@@ -1,10 +1,16 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pet_share/announcements/details/view.dart';
 import 'package:pet_share/announcements/models/pet.dart';
 import 'package:pet_share/applications/application.dart';
 import 'package:pet_share/applications/details/view.dart';
+import 'package:pet_share/common_widgets/interest_to_color.dart';
 import 'package:pet_share/common_widgets/list_header_view.dart';
+import 'package:pet_share/services/adopter/service.dart';
+
+import '../../services/service_response.dart';
 
 class PetDetails extends StatefulWidget {
   const PetDetails({required this.pet, this.applications, super.key});
@@ -24,24 +30,103 @@ class _PetDetailsState extends State<PetDetails> {
     );
   }
 
-  Color _interestToColor(int applicationsCount) {
-    if (applicationsCount <= 5) {
-      return Colors.green.shade200;
-    }
+  Widget _buildWelcome(
+      BuildContext context, MapEntry<Pet, List<Application>> entry) {
+    return Column(
+      children: [
+        if (entry.key.photoUrl != null)
+          Expanded(
+            child: CachedNetworkImage(
+              width: double.infinity,
+              height: double.infinity,
+              fit: BoxFit.cover,
+              imageUrl: entry.key.photoUrl!,
+            ),
+          ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text("Liczba wniosków: "),
+                  Chip(
+                    labelPadding: const EdgeInsets.fromLTRB(4, 5, 4, 5),
+                    shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(20))),
+                    label: Text(entry.value.length.toString()),
+                    backgroundColor: interestToColor(entry.value.length),
+                  ),
+                ],
+              ),
+              ActionChip(
+                label: const Row(
+                  children: [
+                    Text("Ogłoszenie"),
+                    Icon(Icons.arrow_forward_ios, size: 16),
+                  ],
+                ),
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => AnnouncementAndPetDetails(
+                          announcement: entry.value.first.announcement),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
 
-    if (applicationsCount <= 10) {
-      return Colors.green.shade400;
+  Widget _buildData(
+      BuildContext context, MapEntry<Pet, List<Application>> entry) {
+    if (entry.value.isEmpty) {
+      return const SliverToBoxAdapter(
+        child: Center(child: Text("Brak wniosków")),
+      );
     }
+    return SliverList(
+      delegate: SliverChildBuilderDelegate(childCount: entry.value.length,
+          (context, index) {
+        return ListTile(
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => ApplicationDetails(entry.value[index]),
+              ),
+            );
+          },
+          leading: const Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [Icon(Icons.person)]),
+          title: Text(entry.value[index].adopter.userName),
+          subtitle: Text("Data: ${entry.value[index].creationDate}"),
+          trailing: const Icon(Icons.arrow_forward_ios),
+        );
+      }),
+    );
+  }
 
-    if (applicationsCount <= 20) {
-      return Colors.yellow.shade500;
+  Future<ServiceResponse<MapEntry<Pet, List<Application>>>>
+      _getPetAndApplications(
+          MapEntry<Pet, List<Application>> oldMapEntry) async {
+    var res = await context.read<AdopterService>().getApplications();
+    if (res.data != null) {
+      var newMapEntry =
+          groupBy(res.data!, (Application a) => a.announcement.pet)
+                  .entries
+                  .firstWhereOrNull((e) => e.key.id == widget.pet.id) ??
+              MapEntry(widget.pet, []);
+      setState(() {});
+      return ServiceResponse(data: newMapEntry);
     }
-
-    if (applicationsCount <= 30) {
-      return Colors.orange.shade500;
-    }
-
-    return Colors.red.shade400;
+    return ServiceResponse(data: MapEntry(widget.pet, []), error: res.error);
   }
 
   @override
@@ -51,120 +136,11 @@ class _PetDetailsState extends State<PetDetails> {
       appBar: _buildAppBar(context),
       body: ListHeaderView(
         toolbarScreenRatio: 1 / 3,
-        header: Column(
-          children: [
-            if (widget.pet.photoUrl != null)
-              Expanded(
-                child: CachedNetworkImage(
-                  width: double.infinity,
-                  height: double.infinity,
-                  fit: BoxFit.cover,
-                  imageUrl: widget.pet.photoUrl!,
-                ),
-              ),
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text("Liczba wniosków: "),
-                      Chip(
-                        labelPadding: const EdgeInsets.fromLTRB(4, -5, 4, -5),
-                        shape: const RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(20))),
-                        label: Text(widget.applications!.length.toString()),
-                        backgroundColor:
-                            _interestToColor(widget.applications!.length),
-                      ),
-                    ],
-                  ),
-                  ActionChip(
-                    label: const Row(
-                      children: [
-                        Text("Ogłoszenie"),
-                        Icon(Icons.arrow_forward_ios, size: 16),
-                      ],
-                    ),
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => AnnouncementAndPetDetails(
-                              announcement:
-                                  widget.applications!.first.announcement),
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        slivers: [
-          SliverList(
-            delegate: SliverChildBuilderDelegate(
-                childCount: widget.applications!.length, (context, index) {
-              return ListTile(
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          ApplicationDetails(widget.applications![index]),
-                    ),
-                  );
-                },
-                leading: const Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [Icon(Icons.person)]),
-                title: Text(widget.applications![index].adopter.userName),
-                subtitle:
-                    Text("Data: ${widget.applications![index].creationDate}"),
-                trailing: const Icon(Icons.arrow_forward_ios),
-              );
-            }),
-          )
-        ],
-        onRefresh: () async {
-          return null;
-        },
-        buildWelcome: (BuildContext context) {
-          return const Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.pets, size: 64),
-              SizedBox(height: 16),
-              Text("Brak wniosków"),
-            ],
-          );
-        },
-        data: null,
-        itemBuilder: (BuildContext context, List<dynamic> list) => SliverList(
-          delegate: SliverChildBuilderDelegate(
-              childCount: widget.applications!.length, (context, index) {
-            return ListTile(
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        ApplicationDetails(widget.applications![index]),
-                  ),
-                );
-              },
-              leading: const Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [Icon(Icons.person)]),
-              title: Text(widget.applications![index].adopter.userName),
-              subtitle:
-                  Text("Data: ${widget.applications![index].creationDate}"),
-              trailing: const Icon(Icons.arrow_forward_ios),
-            );
-          }),
-        ),
+        onRefresh: _getPetAndApplications,
+        welcomeBuilder: _buildWelcome,
+        data: ServiceResponse(
+            data: MapEntry(widget.pet, widget.applications ?? [])),
+        itemBuilder: _buildData,
       ),
     );
   }
