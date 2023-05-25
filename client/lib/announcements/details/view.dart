@@ -203,8 +203,7 @@ class _AnnouncementAndPetDetailsState extends State<AnnouncementAndPetDetails>
           // ignore: prefer_interpolation_to_compose_strings, prefer_adjacent_string_concatenation
           text: "ul. ${widget.announcement.pet.shelter.address.street}, ${widget.announcement.pet.shelter.address.postalCode} " +
               "${widget.announcement.pet.shelter.address.city}\n ${widget.announcement.pet.shelter.address.province}, " +
-              // ignore: unnecessary_string_interpolations
-              "${widget.announcement.pet.shelter.address.country}",
+              widget.announcement.pet.shelter.address.country,
           textScaleFactor: 1.2,
           align: TextAlign.center,
         ),

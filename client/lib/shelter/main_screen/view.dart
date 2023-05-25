@@ -2,12 +2,14 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import "package:collection/collection.dart";
+import 'package:pet_share/announcements/details/view.dart';
 import 'package:pet_share/announcements/form/view.dart';
 import 'package:pet_share/announcements/models/pet.dart';
 import 'package:pet_share/applications/application.dart';
 import 'package:pet_share/common_widgets/drawer.dart';
+import 'package:pet_share/common_widgets/generic_main_view.dart';
 import 'package:pet_share/common_widgets/gif_views.dart';
-import 'package:pet_share/common_widgets/list_header_view.dart';
+import 'package:pet_share/common_widgets/interest_to_color.dart';
 import 'package:pet_share/services/adopter/service.dart';
 import 'package:pet_share/services/service_response.dart';
 import 'package:pet_share/shelter/pet_details/view.dart';
@@ -68,9 +70,9 @@ class _ShelterMainScreenState extends State<ShelterMainScreen>
       case 2:
       case 3:
       case 4:
-        return "$numberOfApplications wnioski";
+        return "wnioski";
       default:
-        return "$numberOfApplications wniosków";
+        return "wniosków";
     }
   }
 
@@ -96,7 +98,7 @@ class _ShelterMainScreenState extends State<ShelterMainScreen>
               TextSpan(
                 text: "$numberOfApplications\n",
                 style: Theme.of(context).primaryTextTheme.bodyMedium?.copyWith(
-                      color: _interestToColor(numberOfApplications),
+                      color: interestToColor(numberOfApplications),
                       fontWeight: FontWeight.bold,
                     ),
               ),
@@ -117,85 +119,97 @@ class _ShelterMainScreenState extends State<ShelterMainScreen>
 
   Widget _buildWelcome(
       BuildContext context, List<MapEntry<Pet, List<Application>>>? pets) {
-    return Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 16.0,
-        ),
-        child: Column(
-          children: [
-            Expanded(
-              flex: 5,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Image.asset(
-                    "images/dog_reading.jpg",
-                    fit: BoxFit.cover,
-                  ),
-                ],
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 2 / 9,
+      child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 16.0,
+          ),
+          child: Column(
+            children: [
+              Expanded(
+                flex: 5,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Image.asset(
+                      "images/dog_reading.jpg",
+                      fit: BoxFit.cover,
+                    ),
+                  ],
+                ),
               ),
-            ),
-            Expanded(
-              flex: 3,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Expanded(
-                    child: FittedBox(
-                      fit: BoxFit.fitWidth,
-                      alignment: Alignment.bottomLeft,
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(
-                          minHeight: 1,
-                          minWidth: 1,
+              Expanded(
+                flex: 3,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Expanded(
+                      child: FittedBox(
+                        fit: BoxFit.fitWidth,
+                        alignment: Alignment.bottomLeft,
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(
+                            minHeight: 1,
+                            minWidth: 1,
+                          ),
+                          child: pets == null
+                              ? _buildWelcomeWhenError(context)
+                              : pets.isEmpty
+                                  ? _buildWelcomeWithNoPets(context)
+                                  : _buildWelcomeWithNumberOfApplications(
+                                      context, pets),
                         ),
-                        child: pets == null
-                            ? _buildWelcomeWhenError(context)
-                            : pets.isEmpty
-                                ? _buildWelcomeWithNoPets(context)
-                                : _buildWelcomeWithNumberOfApplications(
-                                    context, pets),
                       ),
                     ),
-                  ),
-                  Flexible(
-                    child: InputChip(
-                      onPressed: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                NewAnnouncementForm(context.read())),
-                      ),
-                      label:
-                          const Row(mainAxisSize: MainAxisSize.min, children: [
-                        Text("Dodaj ogłoszenie"),
-                        SizedBox(
-                          width: 4,
+                    Padding(
+                      padding: const EdgeInsets.only(left: 12),
+                      child: Flexible(
+                        child: InputChip(
+                          onPressed: () => Navigator.of(context).push(
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    NewAnnouncementForm(context.read())),
+                          ),
+                          label: const Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                TextWithBasicStyle(
+                                  text: "Dodaj ogłoszenie",
+                                  textScaleFactor: 1,
+                                  bold: true,
+                                ),
+                                SizedBox(
+                                  width: 4,
+                                ),
+                                Icon(
+                                  Icons.create,
+                                  size: 12,
+                                )
+                              ]),
+                          backgroundColor: Colors.grey.shade200,
                         ),
-                        Icon(
-                          Icons.create,
-                          size: 12,
-                        )
-                      ]),
-                      backgroundColor: Colors.grey.shade200,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(
-              height: 16,
-            )
-          ],
-        ));
+              const SizedBox(
+                height: 16,
+              )
+            ],
+          )),
+    );
   }
 
   Widget _buildPetList(
-      BuildContext context, List<MapEntry<Pet, List<Application>>> pets) {
+      BuildContext context, List<MapEntry<Pet, List<Application>>>? pets) {
+    pets = pets ?? [];
     return SliverList(
       delegate:
           SliverChildBuilderDelegate(childCount: pets.length, (context, index) {
-        var applicationsCount = pets[index]
+        var applicationsCount = pets![index]
             .value
             .where((application) =>
                 application.applicationStatus == ApplicationStatusDTO.Created)
@@ -203,15 +217,10 @@ class _ShelterMainScreenState extends State<ShelterMainScreen>
 
         return Card(
           child: ListTile(
-            // onTap: () => Navigator.of(context).push(
-            //   MaterialPageRoute(
-            //     builder: (context) => ReceivedApplications(
-            //       context.read(),
-            //     ),
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute(
                   builder: (context) => PetDetails(
-                        pet: pets[index].key,
+                        pet: pets![index].key,
                         applications: pets[index].value,
                       )),
             ),
@@ -238,7 +247,7 @@ class _ShelterMainScreenState extends State<ShelterMainScreen>
                   shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(20))),
                   label: Text(applicationsCount.toString()),
-                  backgroundColor: _interestToColor(applicationsCount),
+                  backgroundColor: interestToColor(applicationsCount),
                 ),
                 const SizedBox(width: 8),
                 const Icon(Icons.arrow_forward_ios),
@@ -250,6 +259,19 @@ class _ShelterMainScreenState extends State<ShelterMainScreen>
     );
   }
 
+  Future<ServiceResponse<List<MapEntry<Pet, List<Application>>>?>>
+      getApplicationsWithPets(
+          List<MapEntry<Pet, List<Application>>>? oldValue) async {
+    var newValue = await context.read<AdopterService>().getApplications();
+    if (newValue.data != null) {
+      return ServiceResponse(
+          data: groupBy(newValue.data!, (Application a) => a.announcement.pet)
+              .entries
+              .toList());
+    }
+    return ServiceResponse(data: null, error: newValue.error);
+  }
+
   Widget _buildBody(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -257,73 +279,52 @@ class _ShelterMainScreenState extends State<ShelterMainScreen>
         future: context.read<AdopterService>().getApplications(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CatProgressIndicator());
-          }
-
-          if (snapshot.hasError ||
-              snapshot.data == null ||
-              snapshot.data!.data == null) {
-            return Column(
-              children: [
-                ConstrainedBox(
-                  constraints: BoxConstraints(
-                      maxHeight: MediaQuery.of(context).size.height * 2 / 9),
-                  child: _buildWelcome(context, null),
-                ),
-                snapshot.data != null &&
-                        snapshot.data!.error == ErrorType.unauthorized
-                    ? const Expanded(
-                        child: Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: CatForbiddenView(
-                            text: Text("Brak dostępu"),
+            return RefreshIndicator(
+              onRefresh: () async {
+                setState(() {});
+              },
+              child: LayoutBuilder(builder: (context, constraint) {
+                return SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: ConstrainedBox(
+                    constraints:
+                        BoxConstraints(maxHeight: constraint.maxHeight),
+                    child: Expanded(
+                      child: Column(
+                        children: [
+                          ConstrainedBox(
+                            constraints: const BoxConstraints(maxHeight: 300),
+                            child: _buildWelcome(context, null),
                           ),
-                        ),
-                      )
-                    : Expanded(
-                        child: Transform.scale(
-                          scale: 0.75,
-                          child: const RabbitErrorScreen(
-                            text:
-                                Text("Wystapił błąd podczas pobierania danych"),
+                          const Expanded(
+                            child: Center(
+                                child: CatProgressIndicator(
+                                    text: TextWithBasicStyle(
+                              text: "Wczytywanie wniosków...",
+                              textScaleFactor: 1.7,
+                            ))),
                           ),
-                        ),
+                        ],
                       ),
-              ],
+                    ),
+                  ),
+                );
+              }),
             );
           }
+          var pets = snapshot.data != null && snapshot.data!.data != null
+              ? groupBy(snapshot.data!.data!,
+                  (Application a) => a.announcement.pet).entries.toList()
+              : null;
 
-          var pets = groupBy(
-                  snapshot.data!.data!, (Application a) => a.announcement.pet)
-              .entries
-              .toList();
-
-          return ListHeaderView(
-              header: _buildWelcome(context, pets),
-              slivers: [_buildPetList(context, pets)]);
+          return GenericMainView(
+              data: ServiceResponse(data: pets),
+              onRefresh: getApplicationsWithPets,
+              welcomeBuilder: _buildWelcome,
+              itemBuilder: _buildPetList);
         },
       ),
     );
-  }
-
-  Color _interestToColor(int applicationsCount) {
-    if (applicationsCount <= 5) {
-      return Colors.green.shade200;
-    }
-
-    if (applicationsCount <= 10) {
-      return Colors.green.shade400;
-    }
-
-    if (applicationsCount <= 20) {
-      return Colors.yellow.shade500;
-    }
-
-    if (applicationsCount <= 30) {
-      return Colors.orange.shade500;
-    }
-
-    return Colors.red.shade400;
   }
 
   @override
