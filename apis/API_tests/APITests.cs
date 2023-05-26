@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Net;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace APIs_tests
 {
@@ -71,6 +72,7 @@ namespace APIs_tests
             Assert.Equal(HttpStatusCode.OK, res.StatusCode);
             var content = await res.Content.ReadAsStringAsync();
             var serializationOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            serializationOptions.Converters.Add(new JsonStringEnumConverter());
             var resObj = JsonSerializer.Deserialize(content, typeof(T), serializationOptions);
             Assert.NotNull(resObj);
 

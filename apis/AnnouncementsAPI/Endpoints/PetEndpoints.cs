@@ -51,7 +51,6 @@ namespace AnnouncementsAPI.Endpoints
                 return Results.NotFound("Pet doesn't exist.");
 
             var res = pet.MapDTO();
-            await res.AttachPhotoUrl(storage);
             return Results.Ok(res);
         }
 

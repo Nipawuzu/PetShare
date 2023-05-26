@@ -22,6 +22,21 @@ namespace DatabaseContextLibrary.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("DatabaseContextLibrary.Models.AdopterLikedAnnouncementsLinkingTable", b =>
+                {
+                    b.Property<Guid>("AdopterId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AnnouncementId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("AdopterId", "AnnouncementId");
+
+                    b.HasIndex("AnnouncementId");
+
+                    b.ToTable("AdopterLikedAnnouncementsLinkingTables");
+                });
+
             modelBuilder.Entity("DatabaseContextLibrary.models.Address", b =>
                 {
                     b.Property<Guid>("Id")
@@ -234,6 +249,25 @@ namespace DatabaseContextLibrary.Migrations
                     b.HasIndex("AddressId");
 
                     b.ToTable("Shelters");
+                });
+
+            modelBuilder.Entity("DatabaseContextLibrary.Models.AdopterLikedAnnouncementsLinkingTable", b =>
+                {
+                    b.HasOne("DatabaseContextLibrary.models.Adopter", "Adopter")
+                        .WithMany()
+                        .HasForeignKey("AdopterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DatabaseContextLibrary.models.Announcement", "Announcement")
+                        .WithMany()
+                        .HasForeignKey("AnnouncementId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Adopter");
+
+                    b.Navigation("Announcement");
                 });
 
             modelBuilder.Entity("DatabaseContextLibrary.models.Adopter", b =>

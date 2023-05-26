@@ -10,23 +10,23 @@ namespace FileStorageLibrary
         private const string _secretKeyName = "GoogleCloud:Secret";
         private const string _bucketKeyName = "GoogleCloud:BucketName";
         private const string _hostUrl = "https://storage.googleapis.com";
-        private const int _urlDurationInHours = 12;
+        private static readonly string _bucketName;
+        private static IConfiguration _config;
 
-        private readonly IConfiguration _config;
-        private readonly string _bucketName;
         private readonly StorageClient _client;
-        private readonly UrlSigner _urlSigner;
 
-        public GoogleFileStorage()
+        static GoogleFileStorage()
         {
             var builder = new ConfigurationBuilder();
             _config = builder.AddUserSecrets(Assembly.GetExecutingAssembly(), true).Build();
+            _bucketName = _config[_bucketKeyName]!;
+        }
 
+        public GoogleFileStorage()
+        {
             var secretJson = _config[_secretKeyName];
             var credentials = GoogleCredential.FromJson(secretJson);
-            _bucketName = _config[_bucketKeyName]!;
             _client = StorageClient.Create(credentials);
-            _urlSigner = UrlSigner.FromCredential(credentials);
         }
 
         public async Task UploadFileAsync(Stream stream, string fileName)
@@ -68,7 +68,12 @@ namespace FileStorageLibrary
             return false;
         }
 
-        public string GetDownloadUrl(string filename)
+        string IStorage.GetDownloadUrl(string filename)
+        {
+            return GetDownloadUrl(filename);
+        }
+
+        public static string GetDownloadUrl(string filename)
         {
             return $"{_hostUrl}/{_bucketName}/{filename}";
         }

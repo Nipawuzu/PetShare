@@ -10,9 +10,9 @@ Announcement _$AnnouncementFromJson(Map<String, dynamic> json) => Announcement(
       pet: Pet.fromJson(json['pet'] as Map<String, dynamic>),
       title: json['title'] as String,
       description: json['description'] as String,
-      status: json['status'] == null
-          ? AnnouncementStatus.open
-          : const AnnouncementStatusConverter().fromJson(json['status'] as int),
+      status:
+          $enumDecodeNullable(_$AnnouncementStatusEnumMap, json['status']) ??
+              AnnouncementStatus.Open,
     )..id = json['id'] as String?;
 
 Map<String, dynamic> _$AnnouncementToJson(Announcement instance) =>
@@ -20,6 +20,13 @@ Map<String, dynamic> _$AnnouncementToJson(Announcement instance) =>
       'pet': instance.pet,
       'title': instance.title,
       'description': instance.description,
-      'status': const AnnouncementStatusConverter().toJson(instance.status),
+      'status': _$AnnouncementStatusEnumMap[instance.status]!,
       'id': instance.id,
     };
+
+const _$AnnouncementStatusEnumMap = {
+  AnnouncementStatus.Open: 'Open',
+  AnnouncementStatus.Closed: 'Closed',
+  AnnouncementStatus.Removed: 'Removed',
+  AnnouncementStatus.InVerification: 'InVerification',
+};

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:pet_share/app_gate.dart';
 import 'package:pet_share/environment.dart';
-import 'package:pet_share/theme.dart';
 
 Future main() async {
   await dotenv.load(fileName: Environment.filename);
@@ -16,14 +15,7 @@ class PetShare extends StatelessWidget {
   const PetShare({super.key});
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      themeMode: ThemeMode.light,
-      theme: AppTheme.light,
-      darkTheme: AppTheme.dark,
-      home: const Scaffold(
-        body: SafeArea(child: AppMainGate()),
-      ),
-    );
+    return const AppMainGate();
   }
 }
 

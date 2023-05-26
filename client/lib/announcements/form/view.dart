@@ -3,13 +3,13 @@ import 'dart:typed_data';
 import 'package:bottom_picker/bottom_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
 import 'package:intl/intl.dart';
 import 'package:pet_share/announcements/form/cubit.dart';
 import 'package:pet_share/announcements/models/new_announcement.dart';
 import 'package:pet_share/announcements/models/new_pet.dart';
-import 'package:pet_share/common_widgets/cat_progess_indicator.dart';
 import 'package:pet_share/announcements/models/pet.dart';
+import 'package:pet_share/common_widgets/gif_views.dart';
 import 'package:pet_share/services/announcements/service.dart';
 
 class NewAnnouncementForm extends StatefulWidget {
@@ -58,33 +58,20 @@ class _NewAnnouncementFormState extends State<NewAnnouncementForm> {
             );
           } else if (state is FormErrorState) {
             Future.delayed(
-              const Duration(seconds: 2),
+              const Duration(seconds: 5),
               () => Navigator.of(context).pop(),
             );
 
             return const Scaffold(
-              body: Center(
-                  child: Padding(
-                padding: EdgeInsets.all(50.0),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Flexible(
-                      child: Text(
-                        "Wystąpił błąd poczas próby wysłania ogłoszenia. Spróbuj ponownie później.",
-                        textScaleFactor: 1.5,
-                      ),
-                    ),
-                    SizedBox(
-                      width: 16,
-                    ),
-                    Icon(
-                      Icons.error,
-                      color: Colors.red,
-                    )
-                  ],
+              body: RabbitErrorScreen(
+                text: Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text(
+                    "Wystąpił błąd poczas próby wysłania ogłoszenia. Spróbuj ponownie później.",
+                    textAlign: TextAlign.center,
+                  ),
                 ),
-              )),
+              ),
             );
           }
 
@@ -114,7 +101,6 @@ class _PetFormPageState extends State<PetFormPage> {
     _pet = widget.state.announcement.pet ?? _pet;
     _datePickerController.text =
         _formatDate(widget.state.announcement.pet?.birthday);
-    _pickedPhoto = widget.state.announcement.pet?.photo;
   }
 
   String _formatDate(DateTime? date) {
@@ -138,37 +124,64 @@ class _PetFormPageState extends State<PetFormPage> {
     );
   }
 
-  Uint8List? _pickedPhoto;
-
   Widget _buildImage(BuildContext context) {
-    return Center(
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: DecoratedBox(
-          decoration: BoxDecoration(
+    return FormField<Uint8List>(
+      key: const Key('image'),
+      validator: (value) => value == null ? "Dodaj zdjęcie zwierzątka" : null,
+      onSaved: (newValue) => _pet.photo = newValue,
+      builder: (field) => Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Card(
+            margin: EdgeInsets.zero,
+            borderOnForeground: true,
+            elevation: 0,
             color: Colors.grey.shade200,
-          ),
-          child: InkWell(
-            onTap: () async {
-              var img = await ImagePicker().pickImage(
-                source: ImageSource.gallery,
-              );
-              _pickedPhoto = await img?.readAsBytes();
-              setState(() {});
-            },
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                  minHeight: _pickedPhoto == null ? 250 : 0,
-                  minWidth: double.maxFinite),
-              child: _pickedPhoto == null
-                  ? const Icon(
-                      Icons.camera_alt_outlined,
-                      size: 64,
-                    )
-                  : Image.memory(_pickedPhoto!),
+            clipBehavior: Clip.antiAlias,
+            shape: RoundedRectangleBorder(
+                borderRadius: const BorderRadius.all(Radius.circular(8)),
+                side: BorderSide(
+                    width: 2,
+                    color: field.hasError ? Colors.red : Colors.grey.shade200)),
+            child: InkWell(
+              onTap: () async {
+                var img = await ImagePickerPlatform.instance.pickImage(
+                  source: ImageSource.gallery,
+                );
+                var imgBytes = await img?.readAsBytes();
+
+                setState(() {
+                  // ignore: invalid_use_of_protected_member
+                  field.setValue(imgBytes);
+                });
+              },
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                    minHeight: field.value == null ? 250 : 0,
+                    minWidth: double.infinity),
+                child: field.value == null
+                    ? const Icon(
+                        Icons.camera_alt_outlined,
+                        size: 64,
+                      )
+                    : Image.memory(field.value!),
+              ),
             ),
           ),
-        ),
+          if (field.hasError)
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 3.0, horizontal: 12),
+              child: Text(
+                field.errorText!,
+                style: Theme.of(context)
+                    .primaryTextTheme
+                    .labelMedium!
+                    .copyWith(color: Theme.of(context).colorScheme.error),
+              ),
+            )
+        ],
       ),
     );
   }
@@ -178,13 +191,14 @@ class _PetFormPageState extends State<PetFormPage> {
       key: const Key('name'),
       initialValue: _pet.name,
       onSaved: (newValue) => _pet.name = newValue.toString(),
-      decoration: const InputDecoration(
+      decoration: InputDecoration(
         label: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text("Imię zwierzątka"),
-            SizedBox(width: 1),
-            Text('*', style: TextStyle(color: Colors.red)),
+            const Text("Imię zwierzątka"),
+            const SizedBox(width: 1),
+            Text('*',
+                style: TextStyle(color: Theme.of(context).colorScheme.error)),
           ],
         ),
       ),
@@ -263,7 +277,7 @@ class _PetFormPageState extends State<PetFormPage> {
   Widget _buildSexField(BuildContext context) {
     return DropdownButtonFormField(
       key: const Key('sex'),
-      onSaved: (newValue) => _pet.sex = newValue ?? Sex.unknown,
+      onSaved: (newValue) => _pet.sex = newValue ?? Sex.Unknown,
       decoration: const InputDecoration(
         labelText: "Płeć",
       ),
@@ -326,7 +340,6 @@ class _PetFormPageState extends State<PetFormPage> {
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       _formKey.currentState!.save();
-                      _pet.photo = _pickedPhoto;
                       widget.state.announcement.pet = _pet;
                       context
                           .read<AnnouncementFormCubit>()
@@ -345,36 +358,39 @@ class _PetFormPageState extends State<PetFormPage> {
 
   Widget _buildInputs(BuildContext context) {
     return SingleChildScrollView(
-      child: Form(
-        key: _formKey,
-        child: Column(
-          children: [
-            _buildImage(context),
-            const SizedBox(
-              height: 32,
-            ),
-            _buildNameField(context),
-            const SizedBox(
-              height: 16,
-            ),
-            _buildBirthdayField(context),
-            const SizedBox(
-              height: 16,
-            ),
-            _buildSpeciesField(context),
-            const SizedBox(
-              height: 16,
-            ),
-            _buildBreedField(context),
-            const SizedBox(
-              height: 16,
-            ),
-            _buildSexField(context),
-            const SizedBox(
-              height: 16,
-            ),
-            _buildDescriptionField(context),
-          ],
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 24),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              _buildImage(context),
+              const SizedBox(
+                height: 16,
+              ),
+              _buildNameField(context),
+              const SizedBox(
+                height: 16,
+              ),
+              _buildBirthdayField(context),
+              const SizedBox(
+                height: 16,
+              ),
+              _buildSpeciesField(context),
+              const SizedBox(
+                height: 16,
+              ),
+              _buildBreedField(context),
+              const SizedBox(
+                height: 16,
+              ),
+              _buildSexField(context),
+              const SizedBox(
+                height: 16,
+              ),
+              _buildDescriptionField(context),
+            ],
+          ),
         ),
       ),
     );
@@ -388,11 +404,7 @@ class _PetFormPageState extends State<PetFormPage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(
-            child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 24),
-              child: _buildInputs(context),
-            ),
+            child: _buildInputs(context),
           ),
           _buildActionButtons(context),
         ],

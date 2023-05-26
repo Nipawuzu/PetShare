@@ -62,13 +62,25 @@ class AnnouncementFormCubit extends Cubit<AnnouncementFormState> {
 
     try {
       var petId = await _service.sendPet(announcement.pet!);
-      announcement.petId = petId;
-      if (announcement.pet!.photo != null) {
-        await _service.uploadPetPhoto(petId, announcement.pet!.photo!);
+      if (petId.data.isEmpty) {
+        emit(FormErrorState());
+        return;
       }
-      await _service
-          .sendAnnouncement(announcement)
-          .whenComplete(() => emit(FormSentState()));
+      announcement.petId = petId.data;
+      if (announcement.pet!.photo != null) {
+        var response =
+            await _service.uploadPetPhoto(petId.data, announcement.pet!.photo!);
+        if (!response.data) {
+          emit(FormErrorState());
+          return;
+        }
+      }
+      var id = await _service.sendAnnouncement(announcement);
+      if (id.data.isNotEmpty) {
+        emit(FormSentState());
+      } else {
+        emit(FormErrorState());
+      }
     } catch (e) {
       emit(FormErrorState());
     }

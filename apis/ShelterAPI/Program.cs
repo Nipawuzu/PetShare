@@ -1,7 +1,9 @@
 using APIAuthCommonLibrary;
 using CommonDTOLibrary.Models;
+using Microsoft.AspNetCore.Http.Json;
 using Microsoft.EntityFrameworkCore;
 using ShelterAPI;
+using System.Text.Json.Serialization;
 using ShelterAPI.Responses;
 
 const string ConnectionString = "Server=tcp:petshareserver2.database.windows.net,1433;Initial Catalog=PetShareDatabase;Persist Security Info=False;User ID=azureuser;Password=kotysathebest123!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
@@ -11,7 +13,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGenWithSecurity("ShelterAPI", "v1");
-
+builder.Services.Configure<JsonOptions>(options =>
+{
+    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
 builder.Services.AddDbContext<DataContext>(opt => opt.UseSqlServer(ConnectionString));
 
 builder.Services.AddCustomAuthentication(builder.Configuration["Auth0:Audience"]!, builder.Configuration["Auth0:Authority"]!, builder.Configuration["Auth0:Secret"]!);
@@ -44,7 +49,7 @@ app.MapPost("/shelter", Endpoints.PostShelter)
 .WithOpenApi()
 .RequireAuthorization("Auth")
 .WithSummary("Posts new shelter.")
-.Produces(StatusCodes.Status200OK);
+.Produces(StatusCodes.Status201Created);
 
 app.MapPut("/shelter/{shelterId}", Endpoints.PutShelter)
 .WithOpenApi()

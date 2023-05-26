@@ -1,6 +1,7 @@
+// ignore_for_file: constant_identifier_names
+
 import 'package:json_annotation/json_annotation.dart';
 import 'package:pet_share/announcements/models/pet.dart';
-import 'package:pet_share/utils/announcementstatus_converter.dart';
 
 part 'announcement.g.dart';
 
@@ -10,13 +11,13 @@ class Announcement {
     required this.pet,
     required this.title,
     required this.description,
-    this.status = AnnouncementStatus.open,
+    this.status = AnnouncementStatus.Open,
   });
 
   Pet pet;
   String title;
   String description;
-  @AnnouncementStatusConverter()
+  bool? isLiked;
   AnnouncementStatus status;
   String? id;
 
@@ -26,8 +27,8 @@ class Announcement {
 }
 
 enum AnnouncementStatus {
-  open,
-  closed,
-  removed,
-  inVerification,
+  Open,
+  Closed,
+  Deleted,
+  InVerification,
 }

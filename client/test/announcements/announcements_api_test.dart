@@ -6,6 +6,7 @@ import 'package:pet_share/announcements/models/new_announcement.dart';
 import 'package:pet_share/announcements/models/new_pet.dart';
 import 'package:pet_share/announcements/models/pet.dart';
 import 'package:pet_share/services/announcements/service.dart';
+import 'package:pet_share/services/service_response.dart';
 
 import 'announcements_api_mock.dart';
 
@@ -20,12 +21,12 @@ void main() {
           birthday: DateTime.now(),
           name: "Test name",
           breed: "Test breed",
-          sex: Sex.female,
+          sex: Sex.Female,
           description: "Test description",
           species: "Test species");
 
       var res = await service.sendPet(newPet);
-      assert(res.isNotEmpty);
+      assert(res.data.isNotEmpty);
     });
 
     test('Post new announcement', () async {
@@ -36,24 +37,30 @@ void main() {
       );
 
       var res = await service.sendAnnouncement(newAnnouncement);
-      assert(res.isNotEmpty);
+      assert(res.data.isNotEmpty);
     });
 
     test('Upload new photo for pet', () async {
       var res = await service.uploadPetPhoto(
           "cb849fa2-1033-4d6b-7c88-08db36d6f10f", Uint8List(0));
-      assert(res);
+      assert(res.data);
     });
 
     test('Get announcements', () async {
       var res = await service.getAnnouncements();
-      assert(res.isNotEmpty);
+      assert(res.data != null && res.data!.isNotEmpty);
     });
 
     test('Update status', () async {
       var res = await service.updateStatus(
-          "cb849fa2-1033-4d6b-7c88-08db36d6f10f", AnnouncementStatus.removed);
-      assert(res);
+          "cb849fa2-1033-4d6b-7c88-08db36d6f10f", AnnouncementStatus.Deleted);
+      assert(res.data);
+    });
+
+    test('Like announcement', () async {
+      var res = await service.likeAnnouncement(
+          "cb849fa2-1033-4d6b-7c88-08db36d6f10f", true);
+      assert(res == ErrorType.none);
     });
   });
 }

@@ -34,10 +34,12 @@ namespace AdopterAPI.Endpoints
                     var shelterId = Guid.Parse(issuerClaim);
                     applications = dbContext.Applications
                         .Include("Announcement")
+                        .Include("Adopter")
+                        .Include("Adopter.Address")
                         .Include("Announcement.Pet")
                         .Include("Announcement.Pet.Shelter")
                         .Include("Announcement.Pet.Shelter.Address")
-                        .Where(a => a.Announcement!.Pet.ShelterId == shelterId);
+                        .Where(a => a.Announcement!.Pet.ShelterId == shelterId)
                     break;
                 case "adopter":
                     var adopterId = Guid.Parse(issuerClaim);

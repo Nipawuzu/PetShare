@@ -2,18 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pet_share/announcements/details/view.dart';
 import 'package:pet_share/applications/application.dart';
-import 'package:pet_share/applications/details/view.dart';
 import 'package:pet_share/applications/received_applications/cubit.dart';
-import 'package:pet_share/applications/service.dart';
-import 'package:pet_share/common_widgets/cat_progess_indicator.dart';
 import 'package:pet_share/common_widgets/custom_text_field.dart';
+import 'package:pet_share/common_widgets/gif_views.dart';
 import 'package:pet_share/common_widgets/image.dart';
+import 'package:pet_share/services/adopter/service.dart';
 import 'package:pet_share/utils/datetime_format.dart';
 
 class ReceivedApplications extends StatelessWidget {
   const ReceivedApplications(this.applicationService, {super.key});
 
-  final ApplicationService applicationService;
+  final AdopterService applicationService;
 
   @override
   Widget build(BuildContext context) {
@@ -111,19 +110,21 @@ class _ReceivedApplicationListState extends State<ReceivedApplicationList> {
       itemCount: widget.applications.length,
       itemBuilder: (context, index) => Card(
         child: ListTile(
-          onTap: () => Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => ApplicationDetails(
-                widget.applications[index],
-              ),
-            ),
-          ),
+          onTap: () {
+            // Navigator.of(context).push(
+            //   MaterialPageRoute(
+            //     builder: (context) => ApplicationDetails(
+            //       widget.applications[index],
+            //     ),
+            //   ),
+            // );
+          },
           leading: const Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [Icon(Icons.pets)]),
-          title: Text(widget.applications[index].user.userName),
+          title: Text(widget.applications[index].adopter.userName),
           subtitle: Text(
-              "Data: ${widget.applications[index].dateOfApplication.formatDay()}"),
+              "Data: ${widget.applications[index].creationDate.formatDay()}"),
           trailing: const Icon(Icons.arrow_forward_ios),
         ),
       ),
@@ -166,11 +167,11 @@ class ApplicationTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => ApplicationDetails(application),
-        ),
-      ),
+      onTap: () {
+        // Navigator.of(context).push(MaterialPageRoute(
+        //   builder: (context) => ApplicationDetails(application),
+        // ));
+      },
       child: Container(
         margin: const EdgeInsets.fromLTRB(10, 10, 10, 0),
         decoration: BoxDecoration(
@@ -194,7 +195,7 @@ class ApplicationTile extends StatelessWidget {
                   ),
                   CustomTextField(
                     firstText: "Data zgłoszenia: ",
-                    secondText: application.dateOfApplication.formatDay(),
+                    secondText: application.creationDate.formatDay(),
                     isFirstTextInBold: true,
                   ),
                   CustomTextField(
@@ -232,11 +233,11 @@ class TileTitle extends StatelessWidget {
                   fontFamily: "Quicksand", color: Colors.black, fontSize: 15),
               children: [
                 TextSpan(
-                    text: application.user.userName,
+                    text: application.adopter.userName,
                     style: const TextStyle(
                         fontSize: 20, fontWeight: FontWeight.bold)),
                 const TextSpan(text: " "),
-                TextSpan(text: application.user.address.city)
+                TextSpan(text: application.adopter.address.city)
               ])),
     );
   }

@@ -9,7 +9,7 @@ class PostPetRequest {
     this.name = "",
     this.species = "",
     this.birthday,
-    this.sex = Sex.unknown,
+    this.sex = Sex.Unknown,
     this.breed = "",
     this.description = "",
   });

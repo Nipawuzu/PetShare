@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:pet_share/announcements/details/cubit.dart';
 import 'package:pet_share/announcements/models/announcement.dart';
+import 'package:pet_share/services/service_response.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AnnouncementAndPetDetails extends StatefulWidget {
@@ -117,15 +118,53 @@ class _AnnouncementAndPetDetailsState extends State<AnnouncementAndPetDetails>
           )
         ],
       ),
-    ).then((value) => {
+    ).then((value) async => {
           if (value != null && value)
             {
-              context
-                  .read<AnnouncementDetailsCubit>()
-                  .deleteAnnouncement(announcement),
-              Navigator.pop(context),
+              checkAndActOnErrors(
+                await context
+                    .read<AnnouncementDetailsCubit>()
+                    .deleteAnnouncement(announcement),
+              )
             }
         });
+  }
+
+  void checkAndActOnErrors(ServiceResponse res) {
+    if (res.data != null) {
+      Navigator.pop(context);
+    } else {
+      if (res.error == ErrorType.unauthorized) {
+        showDialogWithError(
+            context, "Nie jesteś uprawniony do usunięcia tego ogloszenia");
+      } else if (res.error == ErrorType.badRequest) {
+        showDialogWithError(context, "Nie znaleziono wybranego ogłoszenia");
+      } else {
+        showDialogWithError(context, "Nie udało się usunąć ogłoszenia");
+      }
+    }
+  }
+
+  void showDialogWithError(BuildContext context, String error) {
+    showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        content: TextWithBasicStyle(
+          text: error,
+          textScaleFactor: 1.2,
+          align: TextAlign.center,
+        ),
+        actions: <Widget>[
+          Center(
+            child: TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const TextWithBasicStyle(
+                  text: 'OK',
+                )),
+          )
+        ],
+      ),
+    );
   }
 
   Widget _buildDeleteButton(
@@ -164,8 +203,7 @@ class _AnnouncementAndPetDetailsState extends State<AnnouncementAndPetDetails>
           // ignore: prefer_interpolation_to_compose_strings, prefer_adjacent_string_concatenation
           text: "ul. ${widget.announcement.pet.shelter.address.street}, ${widget.announcement.pet.shelter.address.postalCode} " +
               "${widget.announcement.pet.shelter.address.city}\n ${widget.announcement.pet.shelter.address.province}, " +
-              // ignore: unnecessary_string_interpolations
-              "${widget.announcement.pet.shelter.address.country}",
+              widget.announcement.pet.shelter.address.country,
           textScaleFactor: 1.2,
           align: TextAlign.center,
         ),
@@ -343,12 +381,6 @@ class Body extends StatelessWidget {
   const Body({super.key, required this.announcement});
   final Announcement announcement;
 
-  final description =
-      "Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Fusce malesuada varius imperdiet. Etiam eget augue risus. Vivamus ut eros sit amet ligula consectetur placerat et et metus. Nulla mauris sem, porttitor nec bibendum ut, mollis eget neque. Nullam eget diam at sapien gravida volutpat vitae sed nibh. Aliquam cursus sollicitudin nunc ac facilisis. Donec at fringilla metus, at volutpat eros. Sed massa lectus, blandit sit amet mi non, fringilla placerat justo.";
-
-  final longDescription =
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam placerat lorem non vestibulum condimentum. Mauris efficitur nisi et erat efficitur, a varius tortor semper. Suspendisse mattis, nibh at consequat fringilla, nisl tortor fermentum urna, vestibulum facilisis enim diam eget enim. Integer scelerisque lacus a fermentum suscipit. Quisque at auctor ante, ac tristique diam. Cras varius, tellus id pulvinar malesuada, eros leo pulvinar quam, sed malesuada ex lorem in purus. Donec consequat massa at congue tempor. Nunc bibendum metus sit amet diam tristique, eget ultricies risus finibus. Nullam tempor auctor aliquam. Nunc et tristique turpis. Vestibulum eu elit tristique, gravida ante non, condimentum tellus. Aenean eget nibh egestas, lacinia lacus at, ullamcorper sem. Nulla facilisi. Nam libero turpis, cursus at posuere eu, pharetra vitae lorem. Pellentesque risus velit, vestibulum non tristique eget, laoreet vitae ipsum. Vestibulum a metus lacinia, suscipit eros id, facilisis lacus.";
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -357,19 +389,21 @@ class Body extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Tytuł ogłoszenia",
+            announcement.title,
             style: Theme.of(context).textTheme.headlineMedium,
           ),
-          const SizedBox(height: 16),
+          if (announcement.pet.description.isNotEmpty)
+            const SizedBox(height: 16),
           Text(
-            description,
+            announcement.pet.description,
             style: Theme.of(context).textTheme.bodyMedium,
             textScaleFactor: 1.2,
             textAlign: TextAlign.justify,
           ),
-          const SizedBox(height: 16),
+          if (announcement.pet.description.isNotEmpty)
+            const SizedBox(height: 16),
           Text(
-            longDescription,
+            announcement.description,
             style: Theme.of(context).textTheme.bodyMedium,
             textScaleFactor: 1.2,
             textAlign: TextAlign.justify,
@@ -390,26 +424,26 @@ class Header extends StatelessWidget {
 
   String _statusToString(AnnouncementStatus status) {
     switch (status) {
-      case AnnouncementStatus.open:
+      case AnnouncementStatus.Open:
         return "Szuka domu";
-      case AnnouncementStatus.closed:
+      case AnnouncementStatus.Closed:
         return "Już ma swoj dom";
-      case AnnouncementStatus.removed:
+      case AnnouncementStatus.Deleted:
         return "Usunięto";
-      case AnnouncementStatus.inVerification:
+      case AnnouncementStatus.InVerification:
         return "Jest odwiedzane";
     }
   }
 
   Color _statusToColor(AnnouncementStatus status) {
     switch (status) {
-      case AnnouncementStatus.open:
+      case AnnouncementStatus.Open:
         return Colors.green.shade300;
-      case AnnouncementStatus.closed:
+      case AnnouncementStatus.Closed:
         return Colors.red.shade300;
-      case AnnouncementStatus.removed:
+      case AnnouncementStatus.Deleted:
         return Colors.red.shade700;
-      case AnnouncementStatus.inVerification:
+      case AnnouncementStatus.InVerification:
         return Colors.blue;
     }
   }
@@ -508,12 +542,14 @@ class TextWithBasicStyle extends StatelessWidget {
       required this.text,
       this.textScaleFactor = 1.0,
       this.align,
+      this.color,
       this.bold = false});
 
   final String text;
   final double textScaleFactor;
   final bool bold;
   final TextAlign? align;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
@@ -522,9 +558,9 @@ class TextWithBasicStyle extends StatelessWidget {
       textScaleFactor: textScaleFactor,
       textAlign: align,
       style: TextStyle(
-        fontFamily: "Quicksand",
-        fontWeight: bold ? FontWeight.bold : FontWeight.normal,
-      ),
+          fontFamily: "Quicksand",
+          fontWeight: bold ? FontWeight.bold : FontWeight.normal,
+          color: color),
     );
   }
 }

@@ -15,6 +15,7 @@ extension AnnouncementsAPIMock on Dio {
       var res = Announcement(
               pet: Pet(
                 shelter: Shelter(
+                  id: "ca89146a-a3b1-4b9f-8abe-1834f764ea90",
                   email: "email",
                   fullShelterName: "fullShelterName",
                   phoneNumber: "phoneNumber",
@@ -28,12 +29,12 @@ extension AnnouncementsAPIMock on Dio {
                 ),
                 birthday: DateTime.now(),
                 breed: "breed",
-                sex: Sex.male,
+                sex: Sex.Male,
                 description: "description",
                 name: "name",
                 species: "species",
               ),
-              status: AnnouncementStatus.open,
+              status: AnnouncementStatus.Open,
               title: "title",
               description: "description")
           .toJson();
@@ -73,6 +74,11 @@ extension AnnouncementsAPIMock on Dio {
       request.reply(StatusCode.OK, null);
     }, data: Matchers.any);
 
+    dioAdapter
+        .onPut("$url/announcements/cb849fa2-1033-4d6b-7c88-08db36d6f10f/like",
+            (request) {
+      request.reply(StatusCode.OK, null);
+    }, data: Matchers.any);
     return dio;
   }
 }
