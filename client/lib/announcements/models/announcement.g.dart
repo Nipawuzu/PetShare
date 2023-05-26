@@ -27,6 +27,6 @@ Map<String, dynamic> _$AnnouncementToJson(Announcement instance) =>
 const _$AnnouncementStatusEnumMap = {
   AnnouncementStatus.Open: 'Open',
   AnnouncementStatus.Closed: 'Closed',
-  AnnouncementStatus.Removed: 'Removed',
+  AnnouncementStatus.Deleted: 'Removed',
   AnnouncementStatus.InVerification: 'InVerification',
 };

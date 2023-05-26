@@ -113,7 +113,6 @@ namespace AnnouncementsAPI.Endpoints
             HttpContext httpContext,
             int? pageNumber,
             int? pageCount)
-            HttpContext httpContext)
         {
             if (!AuthorizeUser(httpContext, out var role, out var userId) || role != Role.Shelter)
                 return Results.Unauthorized();
@@ -132,11 +131,6 @@ namespace AnnouncementsAPI.Endpoints
             var res = await announcements
                 .Skip(pageNumberVal * pageCountVal).Take(pageCountVal)
                 .Select(a => a.MapDTO()).ToListAsync();
-
-            foreach (var a in res)
-            {
-                await a.Pet.AttachPhotoUrl(storage);
-            }
 
             return Results.Ok(new GetAnnouncementsReponse()
             {

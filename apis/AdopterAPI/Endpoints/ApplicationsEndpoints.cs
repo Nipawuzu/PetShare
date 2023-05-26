@@ -39,7 +39,7 @@ namespace AdopterAPI.Endpoints
                         .Include("Announcement.Pet")
                         .Include("Announcement.Pet.Shelter")
                         .Include("Announcement.Pet.Shelter.Address")
-                        .Where(a => a.Announcement!.Pet.ShelterId == shelterId)
+                        .Where(a => a.Announcement!.Pet.ShelterId == shelterId);
                     break;
                 case "adopter":
                     var adopterId = Guid.Parse(issuerClaim);
