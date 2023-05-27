@@ -7,6 +7,7 @@ import 'package:pet_share/announcements/models/new_announcement.dart';
 import 'package:pet_share/announcements/models/new_pet.dart';
 import 'package:pet_share/services/announcements/requests/post_announcement_request.dart';
 import 'package:pet_share/services/announcements/requests/post_pet_request.dart';
+import 'package:pet_share/services/announcements/responses/get_announcements_response.dart';
 import 'package:pet_share/services/service_response.dart';
 
 import 'requests/put_announcement_request.dart';
@@ -109,21 +110,25 @@ class AnnouncementService {
     }
   }
 
-  Future<ServiceResponse<List<Announcement>?>> getAnnouncements() async {
+  Future<ServiceResponse<List<Announcement>?>> getAnnouncements(
+      {int pageNumber = 0, int pageCount = 10}) async {
     try {
-      var response = await _dio.get(
-        "$_url/announcements",
-        options: Options(headers: {
-          "HttpHeaders.contentTypeHeader": "application/json",
-          "Authorization": _token
-        }),
-      );
+      var response = await _dio.get("$_url/announcements",
+          options: Options(
+            headers: {
+              "HttpHeaders.contentTypeHeader": "application/json",
+              "Authorization": _token
+            },
+          ),
+          queryParameters: {
+            "pageNumber": pageNumber,
+            "pageCount": pageCount,
+          });
 
       if (response.statusCode == StatusCode.OK) {
         return ServiceResponse(
-            data: (response.data as List)
-                .map((e) => Announcement.fromJson(e))
-                .toList());
+            data:
+                GetAnnouncementsResponse.fromJson(response.data).announcements);
       } else {
         return ServiceResponse(data: [], error: ErrorType.unknown);
       }
