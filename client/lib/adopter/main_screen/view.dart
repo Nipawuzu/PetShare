@@ -124,29 +124,65 @@ class _AdopterMainScreenState extends State<AdopterMainScreen>
 
   Widget _buildLoadingScreen(BuildContext context, LoadingState state) {
     return RefreshIndicator(
-      onRefresh: () async {},
+      onRefresh:
+          context.read<HeaderListViewCubit<dynamic, Announcement>>().reloadData,
       child: LayoutBuilder(builder: (context, constraint) {
         return SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           child: ConstrainedBox(
             constraints: BoxConstraints(maxHeight: constraint.maxHeight),
-            child: Expanded(
-              child: Column(
-                children: [
-                  ConstrainedBox(
-                    constraints: const BoxConstraints(maxHeight: 300),
-                    child: _buildWelcome(context, null),
-                  ),
-                  const Expanded(
-                    child: Center(
-                        child: CatProgressIndicator(
-                            text: TextWithBasicStyle(
+            child: Column(
+              children: [
+                ConstrainedBox(
+                  constraints: const BoxConstraints(maxHeight: 300),
+                  child: _buildWelcome(context, null),
+                ),
+                Expanded(
+                  child: Center(
+                      child: Transform.scale(
+                    scale: 0.75,
+                    child: const CatProgressIndicator(
+                        text: TextWithBasicStyle(
                       text: "Wczytywanie ogłoszeń...",
                       textScaleFactor: 1.7,
-                    ))),
-                  ),
-                ],
-              ),
+                    )),
+                  )),
+                ),
+              ],
+            ),
+          ),
+        );
+      }),
+    );
+  }
+
+  Widget _buildErrorScreen(BuildContext context, ErrorState state) {
+    return RefreshIndicator(
+      onRefresh:
+          context.read<HeaderListViewCubit<dynamic, Announcement>>().reloadData,
+      child: LayoutBuilder(builder: (context, constraint) {
+        return SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: constraint.maxHeight),
+            child: Column(
+              children: [
+                ConstrainedBox(
+                  constraints: const BoxConstraints(maxHeight: 300),
+                  child: _buildWelcome(context, null),
+                ),
+                Expanded(
+                  child: Center(
+                      child: Transform.scale(
+                    scale: 0.75,
+                    child: RabbitErrorScreen(
+                        text: TextWithBasicStyle(
+                      text: state.message,
+                      textScaleFactor: 1,
+                    )),
+                  )),
+                ),
+              ],
             ),
           ),
         );
@@ -157,6 +193,7 @@ class _AdopterMainScreenState extends State<AdopterMainScreen>
   Widget _buildBody(BuildContext context) {
     return GenericMainView(
       headerToListRatio: 0.3,
+      errorScreenBuilder: _buildErrorScreen,
       headerBuilder: _buildWelcome,
       listBuilder: _buildAnnouncementsGrid,
       loadingScreenBuilder: _buildLoadingScreen,
