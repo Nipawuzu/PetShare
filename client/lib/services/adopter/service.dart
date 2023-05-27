@@ -75,15 +75,20 @@ class AdopterService {
     }
   }
 
-  Future<ServiceResponse<List<Application>?>> getApplications() async {
+  Future<ServiceResponse<List<Application>?>> getApplications(
+      {int pageNumber = 0, int pageCount = 10}) async {
     try {
-      var response = await _dio.get(
-        "$_url/applications",
-        options: Options(headers: {
-          "Authorization": _token,
-          "HttpHeaders.contentTypeHeader": "application/json",
-        }),
-      );
+      var response = await _dio.get("$_url/applications",
+          options: Options(
+            headers: {
+              "Authorization": _token,
+              "HttpHeaders.contentTypeHeader": "application/json",
+            },
+          ),
+          queryParameters: {
+            "pageNumber": pageNumber,
+            "pageCount": pageCount,
+          });
 
       if (response.statusCode == StatusCode.OK) {
         return ServiceResponse(
