@@ -21,6 +21,7 @@ namespace DatabaseContextLibrary
         public DbSet<AdopterShelterLinkingTable> AdopterShelterLinkingTable => Set<AdopterShelterLinkingTable>();
         public DbSet<Application> Applications => Set<Application>();
         public DbSet<AdopterLikedAnnouncementsLinkingTable> AdopterLikedAnnouncementsLinkingTables => Set<AdopterLikedAnnouncementsLinkingTable>();
+        public DbSet<Report> Reports => Set<Report>();
     }
 
 
