@@ -12,7 +12,7 @@ namespace ShelterAPI
 
         public static async Task<IResult> GetShelters(DataContext context, int? pageNumber, int? pageCount)
         {
-            var shelters = context.Shelters.Include("Address");
+            var shelters = context.Shelters.Include(s => s.Address);
 
             int pageNumberVal = pageNumber ?? 0;
             int pageCountVal = pageCount ?? DEFAULT_PAGE_COUNT;
@@ -33,7 +33,7 @@ namespace ShelterAPI
 
         public static async Task<IResult> GetShelter(DataContext context, Guid shelterId)
         {
-            return await context.Shelters.Include("Address").FirstOrDefaultAsync(s => s.Id == shelterId) is Shelter shelter ?
+            return await context.Shelters.Include(s => s.Address).FirstOrDefaultAsync(s => s.Id == shelterId) is Shelter shelter ?
                 Results.Ok(shelter.MapDTO()) :
                 Results.NotFound("Sorry, shelter not found");
         }
@@ -64,7 +64,7 @@ namespace ShelterAPI
             shelter.IsAuthorized = updatedShelter.IsAuthorized;
             await context.SaveChangesAsync();
 
-            return Results.Ok(await context.Shelters.Include("Address").FirstOrDefaultAsync(s => s.Id == shelterId));
+            return Results.Ok(await context.Shelters.Include(s => s.Address).FirstOrDefaultAsync(s => s.Id == shelterId));
         }
     }
 }

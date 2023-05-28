@@ -26,30 +26,27 @@ namespace AdopterAPI.Endpoints
             int pageNumberVal = pageNumber ?? 0;
             int pageCountVal = pageCount ?? DEFAULT_PAGE_COUNT;
 
-            IQueryable<Application> applications;
+            IQueryable<Application> applications = dbContext.Applications
+                        .Include(a => a.Announcement)
+                        .ThenInclude(a => a!.Pet)
+                        .ThenInclude(p => p!.Shelter)
+                        .ThenInclude(s => s!.Address)
+                        .Include(a => a.Adopter)
+                        .ThenInclude(a => a!.Address);
 
             switch (roleClaim)
             {
                 case "shelter":
                     var shelterId = Guid.Parse(issuerClaim);
-                    applications = dbContext.Applications
-                        .Include("Announcement")
-                        .Include("Adopter")
-                        .Include("Adopter.Address")
-                        .Include("Announcement.Pet")
-                        .Include("Announcement.Pet.Shelter")
-                        .Include("Announcement.Pet.Shelter.Address")
+                    applications = applications
                         .Where(a => a.Announcement!.Pet.ShelterId == shelterId);
                     break;
                 case "adopter":
                     var adopterId = Guid.Parse(issuerClaim);
-                    applications = dbContext.Applications
-                        .Include("Announcement")
+                    applications = applications
                         .Where(a => a.AdopterId == adopterId);
                     break;
                 case "admin":
-                    applications = dbContext.Applications
-                        .Include("Announcement");
                     break;
                 default:
                     return Results.Unauthorized();
@@ -76,12 +73,12 @@ namespace AdopterAPI.Endpoints
             var shelterId = Guid.Parse(issuerClaim);
 
             var applications = dbContext.Applications
-                .Include("Announcement")
-                .Include("Adopter")
-                .Include("Adopter.Address")
-                .Include("Announcement.Pet")
-                .Include("Announcement.Pet.Shelter")
-                .Include("Announcement.Pet.Shelter.Address")
+                .Include(a => a.Announcement)
+                .ThenInclude(a => a!.Pet)
+                .ThenInclude(p => p!.Shelter)
+                .ThenInclude(s => s!.Address)
+                .Include(a => a.Adopter)
+                .ThenInclude(a => a!.Address)
                 .Where(a => a.AnnouncementId == announcementId);
 
             int pageNumberVal = pageNumber ?? 0;
@@ -124,7 +121,14 @@ namespace AdopterAPI.Endpoints
 
         public static async Task<IResult> PutApplicationAccept(DataContext dbContext, Guid applicationId, HttpContext httpContext, IConfiguration configuration)
         {
-            var application = await dbContext.Applications.Include(app => app.Announcement).Include(app => app.Adopter).Include(app => app.Announcement.Pet).FirstOrDefaultAsync(a => a.Id == applicationId);
+            var application = await dbContext.Applications
+                .Include(a => a.Announcement)
+                .ThenInclude(a => a!.Pet)
+                .ThenInclude(p => p!.Shelter)
+                .ThenInclude(s => s!.Address)
+                .Include(a => a.Adopter)
+                .ThenInclude(a => a!.Address)
+                .FirstOrDefaultAsync(a => a.Id == applicationId);
 
             if (application is null)
                 return Results.BadRequest("Application doesn't exist.");
@@ -151,7 +155,14 @@ namespace AdopterAPI.Endpoints
 
         public static async Task<IResult> PutApplicationReject(DataContext dbContext, Guid applicationId, HttpContext httpContext, IConfiguration configuration)
         {
-            var application = await dbContext.Applications.Include(app => app.Announcement).Include(app => app.Adopter).Include(app => app.Announcement.Pet).FirstOrDefaultAsync(a => a.Id == applicationId);
+            var application = await dbContext.Applications
+                .Include(a => a.Announcement)
+                .ThenInclude(a => a!.Pet)
+                .ThenInclude(p => p!.Shelter)
+                .ThenInclude(s => s!.Address)
+                .Include(a => a.Adopter)
+                .ThenInclude(a => a!.Address)
+                .FirstOrDefaultAsync(a => a.Id == applicationId);
 
             if (application is null)
                 return Results.BadRequest("Application doesn't exist.");
