@@ -4,15 +4,30 @@ using DatabaseContextLibrary.models;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using CommonDTOLibrary.Mappers;
+using AdopterAPI.Responses;
 
 namespace AdopterAPI.Endpoints
 {
     public static class AdopterEndpoints
     {
-        public static async Task<IResult> GetAdopters(DataContext dbContext)
+        private const int DEFAULT_PAGE_COUNT = 100;
+
+        public static async Task<IResult> GetAdopters(DataContext dbContext, int? pageNumber, int? pageCount)
         {
-            var adopters = await dbContext.Adopters.Include(nameof(Adopter.Address)).ToListAsync();
-            return Results.Ok(adopters.MapDTO().ToList());
+            int pageCountVal = pageCount ?? DEFAULT_PAGE_COUNT;
+            int pageNumberVal = pageNumber ?? 0;
+
+            var adopters = await dbContext.Adopters.Include(nameof(Adopter.Address))
+                .Skip(pageNumberVal * pageCountVal)
+                .Take(pageCountVal)
+                .ToListAsync();
+
+            return Results.Ok(new GetAdoptersResponse()
+            { 
+                Adopters = adopters.MapDTO().ToArray(),
+                PageNumber = pageNumberVal,
+                Count = dbContext.Adopters.Count()
+            });
         }
 
         public static async Task<IResult> GetAdopter(DataContext dbContext, Guid adopterId, HttpContext httpContext)

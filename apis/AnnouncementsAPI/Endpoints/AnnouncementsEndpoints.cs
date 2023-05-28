@@ -7,13 +7,18 @@ using DatabaseContextLibrary.Models;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using AnnouncementsAPI.Responses;
+using AnnouncementsAPI.Responses;
 
 namespace AnnouncementsAPI.Endpoints
 {
     public class AnnouncementsEndpoints : Endpoints
     {
+        private const int DEFAULT_PAGE_COUNT = 100;
+
         public static async Task<IResult> GetWithFilters(
             DataContext context,
+            int? pageNumber,
+            int? pageCount,
             string[]? species,
             string[]? breeds,
             string[]? locations,
@@ -60,8 +65,14 @@ namespace AnnouncementsAPI.Endpoints
                     announcements = announcements.Where(a => !context.AdopterLikedAnnouncementsLinkingTables.Any(
                         alalt => alalt.AnnouncementId == a.Id && alalt.AdopterId == adopterId));
             }
+            int pageNumberVal = pageNumber ?? 0;
+            int pageCountVal = pageCount ?? DEFAULT_PAGE_COUNT;
 
-            var res = await announcements.Select(a => a.Map()).ToListAsync();
+            int count = announcements.Count();
+
+            var res = await announcements
+                .Skip(pageNumberVal * pageCountVal).Take(pageCountVal)
+                .Select(a => a.MapDTO()).ToListAsync();
 
             foreach (var a in res)
             {
@@ -72,7 +83,12 @@ namespace AnnouncementsAPI.Endpoints
                 }
             }
 
-            return Results.Ok(res);
+            return Results.Ok(new GetAnnouncementsReponse()
+            {
+                Announcements = res.ToArray(),
+                PageNumber = pageNumberVal,
+                Count = count
+            });
         }
 
         public static async Task<IResult> GetById(
@@ -94,7 +110,9 @@ namespace AnnouncementsAPI.Endpoints
 
         public static async Task<IResult> GetForAuthorisedShelter(
             DataContext context,
-            HttpContext httpContext)
+            HttpContext httpContext,
+            int? pageNumber,
+            int? pageCount)
         {
             if (!AuthorizeUser(httpContext, out var role, out var userId) || role != Role.Shelter)
                 return Results.Unauthorized();
@@ -105,8 +123,21 @@ namespace AnnouncementsAPI.Endpoints
                 .ThenInclude(x => x.Address)
                 .Where(x => x.Pet.ShelterId == userId);
 
-            var res = await announcements.Select(a => a.MapDTO()).ToListAsync();
-            return Results.Ok(res);
+            int pageNumberVal = pageNumber ?? 0;
+            int pageCountVal = pageCount ?? DEFAULT_PAGE_COUNT;
+
+            int count = announcements.Count();
+
+            var res = await announcements
+                .Skip(pageNumberVal * pageCountVal).Take(pageCountVal)
+                .Select(a => a.MapDTO()).ToListAsync();
+
+            return Results.Ok(new GetAnnouncementsReponse()
+            {
+                Announcements = res.ToArray(),
+                PageNumber = pageNumberVal,
+                Count = count
+            });
         }
 
         public static async Task<IResult> Post(

@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using CommonDTOLibrary.Models;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Http.Json;
+using AdopterAPI.Responses;
 
 const string ConnectionString = "Server=tcp:petshareserver2.database.windows.net,1433;Initial Catalog=PetShareDatabase;Persist Security Info=False;User ID=azureuser;Password=kotysathebest123!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
 
@@ -41,7 +42,7 @@ app.MapGet("/adopter", AdopterEndpoints.GetAdopters)
 .WithOpenApi()
 .RequireAuthorization("Admin")
 .WithSummary("Get all adopters. Requires admin role.")
-.Produces(StatusCodes.Status200OK, typeof(AdopterDTO[]))
+.Produces(StatusCodes.Status200OK, typeof(GetAdoptersResponse))
 .Produces(StatusCodes.Status401Unauthorized);
 
 app.MapGet("/adopter/{adopterId}", AdopterEndpoints.GetAdopter)
@@ -86,7 +87,7 @@ app.MapGet("/applications", ApplicationsEndpoints.GetApplications)
 .WithOpenApi()
 .RequireAuthorization("Auth")
 .WithSummary("Gets all applications. Requires any role. For shelter, applications are filtered only for that shelter. For adopter, applications are filtered only for that adopter. Admin gets them all.")
-.Produces(StatusCodes.Status200OK, typeof(ApplicationDTO[]))
+.Produces(StatusCodes.Status200OK, typeof(GetApplicationsResponse))
 .Produces(StatusCodes.Status400BadRequest)
 .Produces(StatusCodes.Status401Unauthorized);
 
@@ -94,7 +95,7 @@ app.MapGet("/applications/{announcementId}", ApplicationsEndpoints.GetApplicatio
 .WithOpenApi()
 .RequireAuthorization("Shelter")
 .WithSummary("Gets application for specified announcement. Requires shelter role matching with announcement's shelter.")
-.Produces(StatusCodes.Status200OK, typeof(ApplicationDTO[]))
+.Produces(StatusCodes.Status200OK, typeof(GetApplicationsResponse))
 .Produces(StatusCodes.Status401Unauthorized);
 
 app.MapPost("/applications", ApplicationsEndpoints.PostApplication)

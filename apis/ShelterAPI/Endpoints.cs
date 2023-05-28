@@ -2,15 +2,33 @@
 using Microsoft.EntityFrameworkCore;
 using ShelterAPI.Requests;
 using CommonDTOLibrary.Mappers;
+using ShelterAPI.Responses;
 
 namespace ShelterAPI
 {
     public static class Endpoints
     {
-        public static async Task<IResult> GetShelters(DataContext context)
+        private const int DEFAULT_PAGE_COUNT = 100;
+
+        public static async Task<IResult> GetShelters(DataContext context, int? pageNumber, int? pageCount)
         {
-            var shelters = await context.Shelters.Include("Address").Select(s => s.MapDTO()).ToArrayAsync();
-            return Results.Ok(shelters);
+            var shelters = context.Shelters.Include("Address");
+
+            int pageNumberVal = pageNumber ?? 0;
+            int pageCountVal = pageCount ?? DEFAULT_PAGE_COUNT;
+
+            int count = shelters.Count();
+
+            var res = await shelters
+                .Skip(pageNumberVal * pageCountVal).Take(pageCountVal)
+                .Select(s => s.MapDTO()).ToArrayAsync();
+
+            return Results.Ok(new GetSheltersResponse()
+            {
+                Shelters = res,
+                PageNumber = pageNumberVal,
+                Count = count
+            });
         }
 
         public static async Task<IResult> GetShelter(DataContext context, Guid shelterId)
