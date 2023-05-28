@@ -106,4 +106,38 @@ class AdopterService {
 
     return ServiceResponse(data: null, error: ErrorType.unknown);
   }
+
+  Future<ServiceResponse<List<Application>?>> getApplicationsForAnnouncement(
+      String announcementId,
+      {int pageNumber = 0,
+      int pageCount = 10}) async {
+    try {
+      var response = await _dio.get("$_url/applications/$announcementId",
+          options: Options(
+            headers: {
+              "Authorization": _token,
+              "HttpHeaders.contentTypeHeader": "application/json",
+            },
+          ),
+          queryParameters: {
+            "pageNumber": pageNumber,
+            "pageCount": pageCount,
+          });
+
+      if (response.statusCode == StatusCode.OK) {
+        return ServiceResponse(
+            data: GetApplicationsResponse.fromJson(response.data).applications);
+      } else {
+        return ServiceResponse(data: null, error: ErrorType.unknown);
+      }
+    } on DioError catch (e) {
+      if (e.response?.statusCode == StatusCode.UNAUTHORIZED) {
+        return ServiceResponse(data: null, error: ErrorType.unauthorized);
+      } else if (e.response?.statusCode == StatusCode.BAD_REQUEST) {
+        return ServiceResponse(data: null, error: ErrorType.badRequest);
+      }
+    }
+
+    return ServiceResponse(data: null, error: ErrorType.unknown);
+  }
 }

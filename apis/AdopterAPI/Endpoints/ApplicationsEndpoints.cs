@@ -75,7 +75,14 @@ namespace AdopterAPI.Endpoints
 
             var shelterId = Guid.Parse(issuerClaim);
 
-            var applications = dbContext.Applications.Include("Announcement").Where(a => a.AnnouncementId == announcementId);
+            var applications = dbContext.Applications
+                .Include("Announcement")
+                .Include("Adopter")
+                .Include("Adopter.Address")
+                .Include("Announcement.Pet")
+                .Include("Announcement.Pet.Shelter")
+                .Include("Announcement.Pet.Shelter.Address")
+                .Where(a => a.AnnouncementId == announcementId);
 
             int pageNumberVal = pageNumber ?? 0;
             int pageCountVal = pageCount ?? DEFAULT_PAGE_COUNT;
