@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http.Json;
 using Microsoft.EntityFrameworkCore;
 using ShelterAPI;
 using System.Text.Json.Serialization;
+using ShelterAPI.Responses;
 
 const string ConnectionString = "Server=tcp:petshareserver2.database.windows.net,1433;Initial Catalog=PetShareDatabase;Persist Security Info=False;User ID=azureuser;Password=kotysathebest123!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
 
@@ -35,7 +36,7 @@ app.MapGet("/shelter", Endpoints.GetShelters)
 .WithOpenApi()
 .RequireAuthorization("Auth")
 .WithSummary("Gets all shelters.")
-.Produces(StatusCodes.Status200OK, typeof(ShelterDTO[]));
+.Produces(StatusCodes.Status200OK, typeof(GetSheltersResponse));
 
 app.MapGet("/shelter/{shelterId}", Endpoints.GetShelter)
 .WithOpenApi()

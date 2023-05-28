@@ -4,6 +4,7 @@ import 'package:http_status_code/http_status_code.dart';
 import 'package:pet_share/address.dart';
 import 'package:pet_share/announcements/models/announcement.dart';
 import 'package:pet_share/announcements/models/pet.dart';
+import 'package:pet_share/services/announcements/responses/get_announcements_response.dart';
 import 'package:pet_share/shelter.dart';
 
 extension AnnouncementsAPIMock on Dio {
@@ -13,33 +14,33 @@ extension AnnouncementsAPIMock on Dio {
 
     dioAdapter.onGet("$url/announcements", (request) {
       var res = Announcement(
-              pet: Pet(
-                shelter: Shelter(
-                  id: "ca89146a-a3b1-4b9f-8abe-1834f764ea90",
-                  email: "email",
-                  fullShelterName: "fullShelterName",
-                  phoneNumber: "phoneNumber",
-                  userName: "userName",
-                  address: Address(
-                      street: "street",
-                      city: "city",
-                      postalCode: "postalCode",
-                      province: "province",
-                      country: "country"),
-                ),
-                birthday: DateTime.now(),
-                breed: "breed",
-                sex: Sex.Male,
-                description: "description",
-                name: "name",
-                species: "species",
-              ),
-              status: AnnouncementStatus.Open,
-              title: "title",
-              description: "description")
-          .toJson();
+          pet: Pet(
+            shelter: Shelter(
+              id: "ca89146a-a3b1-4b9f-8abe-1834f764ea90",
+              email: "email",
+              fullShelterName: "fullShelterName",
+              phoneNumber: "phoneNumber",
+              userName: "userName",
+              address: Address(
+                  street: "street",
+                  city: "city",
+                  postalCode: "postalCode",
+                  province: "province",
+                  country: "country"),
+            ),
+            birthday: DateTime.now(),
+            breed: "breed",
+            sex: Sex.Male,
+            description: "description",
+            name: "name",
+            species: "species",
+          ),
+          status: AnnouncementStatus.Open,
+          title: "title",
+          description: "description");
 
-      request.reply(StatusCode.OK, [res, res, res]);
+      request.reply(StatusCode.OK,
+          GetAnnouncementsResponse(0, 10, [res, res, res]).toJson());
     }, data: Matchers.any);
 
     dioAdapter.onPost("$url/pet", (request) {

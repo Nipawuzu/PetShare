@@ -1,43 +1,40 @@
 import 'package:flutter/material.dart';
-import 'package:pet_share/adopter/main_screen/view.dart';
-import 'package:pet_share/services/service_response.dart';
 
-class ListHeaderView<T> extends StatefulWidget {
-  const ListHeaderView({
+class HeaderListView extends StatefulWidget {
+  const HeaderListView({
     super.key,
     this.expandedHeight,
     this.toolbarHeight,
     this.toolbarScreenRatio,
-    required this.onRefresh,
-    required this.welcomeBuilder,
-    required this.itemBuilder,
-    required this.data,
+    this.onScrollNotification,
+    this.onRefresh,
+    required this.slivers,
+    required this.header,
   });
 
   final double? expandedHeight;
   final double? toolbarHeight;
   final double? toolbarScreenRatio;
-  final AsyncValueSetter<ServiceResponse<T>, T> onRefresh;
-  final FunctionBuilder<BuildContext, T> welcomeBuilder, itemBuilder;
-  final ServiceResponse<T> data;
+  final bool Function(ScrollNotification notification)? onScrollNotification;
+  final Future<void> Function()? onRefresh;
+  final List<Widget> slivers;
+  final Widget header;
 
   @override
-  State<ListHeaderView<T>> createState() => _ListHeaderViewState<T>();
+  State<HeaderListView> createState() => _HeaderListViewState();
 }
 
-class _ListHeaderViewState<T> extends State<ListHeaderView<T>> {
+class _HeaderListViewState extends State<HeaderListView> {
   Future<void>? _scrollAnimate;
-  bool ignoreNotification = false;
+  bool _ignoreNotification = false;
   late double _expandedHeight;
   late double _toolbarHeight;
   late GlobalKey<NestedScrollViewState> _nestedScrollViewState;
-  late ServiceResponse<T> data;
 
   @override
   void initState() {
     _toolbarHeight = widget.toolbarHeight ?? 0;
     _nestedScrollViewState = GlobalKey();
-    data = widget.data;
     super.initState();
   }
 
@@ -50,16 +47,21 @@ class _ListHeaderViewState<T> extends State<ListHeaderView<T>> {
     return expandRatio;
   }
 
+  bool onScrollNotification(ScrollNotification notification) {
+    return widget.onScrollNotification != null
+        ? widget.onScrollNotification!(notification)
+        : false;
+  }
+
   bool onNotification(ScrollEndNotification notification) {
-    if (ignoreNotification) return false;
+    if (_ignoreNotification) return false;
     final scrollViewState = _nestedScrollViewState.currentState;
     final outerController = scrollViewState!.outerController;
 
-    if (scrollViewState.innerController.position.pixels == 0 ||
-        !outerController.position.atEdge) {
+    if (scrollViewState.innerController.position.pixels == 0) {
       final range = _expandedHeight - _toolbarHeight;
       final snapOffset = (outerController.offset / range) > 0.55 ? range : 0.0;
-      ignoreNotification = true;
+      _ignoreNotification = true;
       Future.microtask(() async {
         if (_scrollAnimate != null) await _scrollAnimate;
         _scrollAnimate = outerController
@@ -67,7 +69,7 @@ class _ListHeaderViewState<T> extends State<ListHeaderView<T>> {
                 duration: const Duration(milliseconds: 150),
                 curve: Curves.easeOutCubic)
             .then((value) {
-          ignoreNotification = false;
+          _ignoreNotification = false;
         });
       });
     }
@@ -88,23 +90,24 @@ class _ListHeaderViewState<T> extends State<ListHeaderView<T>> {
           return notification.depth == 1;
         },
         onRefresh: () async {
-          var newData = await widget.onRefresh(data.data);
-          if (newData.error == ErrorType.none) {
-            data = newData;
-            setState(() {});
+          if (widget.onRefresh != null) {
+            await widget.onRefresh!();
           }
         },
         child: NestedScrollView(
           key: _nestedScrollViewState,
           physics: HeaderScrollPhysics(expandedHeight: _expandedHeight),
           body: Builder(builder: (context) {
-            return CustomScrollView(
-              slivers: [
-                SliverOverlapInjector(
-                    handle: NestedScrollView.sliverOverlapAbsorberHandleFor(
-                        context)),
-                widget.itemBuilder(context, data.data)
-              ],
+            return NotificationListener<ScrollNotification>(
+              onNotification: onScrollNotification,
+              child: CustomScrollView(
+                slivers: [
+                  SliverOverlapInjector(
+                      handle: NestedScrollView.sliverOverlapAbsorberHandleFor(
+                          context)),
+                  for (var sliver in widget.slivers) sliver
+                ],
+              ),
             );
           }),
           headerSliverBuilder: (context, innerBoxIsScrolled) => [
@@ -122,7 +125,7 @@ class _ListHeaderViewState<T> extends State<ListHeaderView<T>> {
                       return FadeAnimation(
                         animation: animation,
                         isExpandedWidget: true,
-                        child: widget.welcomeBuilder(context, data.data),
+                        child: widget.header,
                       );
                     },
                   ),
@@ -213,10 +216,4 @@ class HeaderScrollSimulation extends ClampingScrollSimulation {
 
   @override
   bool isDone(double time) => super.isDone(time) || position >= expandedHeight;
-}
-
-class ListHeaderExpandedChanged extends Notification {
-  final bool isExpanded;
-
-  ListHeaderExpandedChanged({required this.isExpanded});
 }

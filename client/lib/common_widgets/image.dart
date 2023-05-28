@@ -8,10 +8,10 @@ class ImageWidget extends StatelessWidget {
 
   Widget _buildPlaceHolder(BuildContext context) {
     return const SizedBox(
-      width: 150,
-      height: 150,
+      width: double.infinity,
+      height: 300,
       child: Icon(
-        Icons.camera_alt_outlined,
+        Icons.pets,
         size: 64,
       ),
     );
@@ -28,6 +28,7 @@ class ImageWidget extends StatelessWidget {
             ? CachedNetworkImage(
                 imageUrl: image!,
                 fit: BoxFit.fitWidth,
+                placeholder: (context, url) => _buildPlaceHolder(context),
                 errorWidget: (context, url, error) =>
                     _buildPlaceHolder(context))
             : _buildPlaceHolder(context));

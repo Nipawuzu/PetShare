@@ -17,7 +17,7 @@ class AnnouncementTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return GridTile(
       child: Padding(
-        padding: const EdgeInsets.all(4.0),
+        padding: const EdgeInsets.all(8.0),
         child: Container(
           decoration: BoxDecoration(
             border: Border.all(color: Colors.grey),

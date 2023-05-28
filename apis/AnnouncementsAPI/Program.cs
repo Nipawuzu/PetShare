@@ -38,8 +38,8 @@ app.UseHttpsRedirection();
 app.MapGet("/announcements", AnnouncementsEndpoints.GetWithFilters)
 .WithOpenApi()
 .RequireAuthorization("Auth")
-.WithSummary("Gets all announcements filtered with query parameters and with information if announcement is liked by adopter. Gets adopter id from auth claims.")
-.Produces(200, typeof(GetAnnouncementsWithFiltersResponse[]))
+.WithSummary("Gets all announcements filtered with query parameters")
+.Produces(200, typeof(GetAnnouncementsReponse))
 .Produces(401);
 
 app.MapGet("/announcements/{announcementId}", AnnouncementsEndpoints.GetById)
@@ -54,7 +54,7 @@ app.MapGet("/shelter/announcements", AnnouncementsEndpoints.GetForAuthorisedShel
 .WithOpenApi()
 .RequireAuthorization("Auth")
 .WithSummary("Gets all announcements for shelter. Requires shelter role. Gets shelter id from auth claims.")
-.Produces(200, typeof(AnnouncementDTO[]))
+.Produces(200, typeof(GetAnnouncementsReponse))
 .Produces(401);
 
 app.MapPost("/announcements", AnnouncementsEndpoints.Post)
@@ -87,7 +87,7 @@ app.MapGet("/shelter/pets", PetEndpoints.GetAllForAuthorisedShelter)
 .WithOpenApi()
 .RequireAuthorization("Shelter")
 .WithSummary("Gets all pets for shelter. Requires shelter role. Gets shelter id from auth claims.")
-.Produces(200, typeof(PetDTO[]))
+.Produces(200, typeof(GetPetsResponse))
 .Produces(401);
 
 app.MapGet("/pet/{petId}", PetEndpoints.GetById)
