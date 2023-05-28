@@ -17,7 +17,7 @@ namespace AdopterAPI.Endpoints
             int pageCountVal = pageCount ?? DEFAULT_PAGE_COUNT;
             int pageNumberVal = pageNumber ?? 0;
 
-            var adopters = await dbContext.Adopters.Include(nameof(Adopter.Address))
+            var adopters = await dbContext.Adopters.Include(a => a.Address)
                 .Skip(pageNumberVal * pageCountVal)
                 .Take(pageCountVal)
                 .ToListAsync();
@@ -47,7 +47,7 @@ namespace AdopterAPI.Endpoints
             }
 
 
-            var adopter = await dbContext.Adopters.Include(nameof(Adopter.Address)).FirstOrDefaultAsync(a => a.Id == adopterId);
+            var adopter = await dbContext.Adopters.Include(a => a.Address).FirstOrDefaultAsync(a => a.Id == adopterId);
             if (adopter is null) return Results.NotFound("Adopter doesn't exist.");
             return Results.Ok(adopter.MapDTO());
         }
@@ -71,7 +71,7 @@ namespace AdopterAPI.Endpoints
 
         public static async Task<IResult> PutAdopter(DataContext dbContext, Guid adopterId, PutAdopterRequest updatedAdopter)
         {
-            var adopter = await dbContext.Adopters.Include("Address").FirstOrDefaultAsync(a => a.Id == adopterId);
+            var adopter = await dbContext.Adopters.Include(a => a.Address).FirstOrDefaultAsync(a => a.Id == adopterId);
             if (adopter is null)
                 return Results.BadRequest("Adopter doesn't exist.");
 

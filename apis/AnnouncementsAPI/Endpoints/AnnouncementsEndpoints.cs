@@ -1,12 +1,4 @@
 ﻿using AnnouncementsAPI.Requests;
-using APIAuthCommonLibrary;
-using DatabaseContextLibrary.models;
-using Microsoft.EntityFrameworkCore;
-using CommonDTOLibrary.Mappers;
-using DatabaseContextLibrary.Models;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Http;
-using AnnouncementsAPI.Responses;
 using AnnouncementsAPI.Responses;
 
 namespace AnnouncementsAPI.Endpoints
@@ -35,10 +27,10 @@ namespace AnnouncementsAPI.Endpoints
             }
 
             var announcements = context.Announcements
-            .Include(x => x.Pet)
-            .ThenInclude(x => x.Shelter)
-            .ThenInclude(x => x.Address)
-            .AsQueryable();
+                .Include(a => a.Pet)
+                .ThenInclude(p => p!.Shelter)
+                .ThenInclude(s => s!.Address)
+                .AsQueryable();
 
             if (species != null && species.Any())
                 announcements = announcements.Where(a => species.Contains(a.Pet.Species));
@@ -96,9 +88,9 @@ namespace AnnouncementsAPI.Endpoints
             Guid announcementId)
         {
             var announcement = await context.Announcements
-                .Include(x => x.Pet)
-                .ThenInclude(x => x.Shelter)
-                .ThenInclude(x => x.Address)
+                .Include(a => a.Pet)
+                .ThenInclude(p => p!.Shelter)
+                .ThenInclude(s => s!.Address)
                 .FirstOrDefaultAsync(a => a.Id == announcementId);
 
             if (announcement is null)
@@ -118,9 +110,9 @@ namespace AnnouncementsAPI.Endpoints
                 return Results.Unauthorized();
 
             var announcements = context.Announcements
-                .Include(x => x.Pet)
-                .ThenInclude(x => x.Shelter)
-                .ThenInclude(x => x.Address)
+                .Include(a => a.Pet)
+                .ThenInclude(p => p!.Shelter)
+                .ThenInclude(s => s!.Address)
                 .Where(x => x.Pet.ShelterId == userId);
 
             int pageNumberVal = pageNumber ?? 0;
@@ -168,7 +160,11 @@ namespace AnnouncementsAPI.Endpoints
             Guid announcementId,
             HttpContext httpContext)
         {
-            var announcement = await context.Announcements.Include("Pet").FirstOrDefaultAsync(a => a.Id == announcementId);
+            var announcement = await context.Announcements
+                .Include(a => a.Pet)
+                .ThenInclude(p => p!.Shelter)
+                .ThenInclude(s => s!.Address)
+                .FirstOrDefaultAsync(a => a.Id == announcementId);
 
             if (announcement is null)
                 return Results.NotFound("Announcement doesn't exist.");
