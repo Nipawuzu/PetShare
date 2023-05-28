@@ -1,33 +1,30 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pet_share/common_widgets/generic_main_view/cubit.dart';
-import 'package:pet_share/common_widgets/generic_main_view/view.dart';
 
-class ListDataView<H, L> extends StatefulWidget {
-  const ListDataView({
+class HeaderListView extends StatefulWidget {
+  const HeaderListView({
     super.key,
     this.expandedHeight,
     this.toolbarHeight,
     this.toolbarScreenRatio,
-    required this.listBuilder,
-    required this.headerBuilder,
-    required this.listData,
-    required this.headerData,
+    this.onScrollNotification,
+    this.onRefresh,
+    required this.slivers,
+    required this.header,
   });
 
   final double? expandedHeight;
   final double? toolbarHeight;
   final double? toolbarScreenRatio;
-  final HeaderBuilder<H> headerBuilder;
-  final ListBuilder<L> listBuilder;
-  final List<L> listData;
-  final H headerData;
+  final bool Function(ScrollNotification notification)? onScrollNotification;
+  final Future<void> Function()? onRefresh;
+  final List<Widget> slivers;
+  final Widget header;
 
   @override
-  State<ListDataView<H, L>> createState() => _ListDataViewState<H, L>();
+  State<HeaderListView> createState() => _HeaderListViewState();
 }
 
-class _ListDataViewState<H, L> extends State<ListDataView<H, L>> {
+class _HeaderListViewState extends State<HeaderListView> {
   Future<void>? _scrollAnimate;
   bool ignoreNotification = false;
   bool ignoreScrollNotification = false;
@@ -54,23 +51,9 @@ class _ListDataViewState<H, L> extends State<ListDataView<H, L>> {
   }
 
   bool onScrollNotification(ScrollNotification notification) {
-    if (ignoreScrollNotification) return false;
-
-    var maxScrollOffset = notification.metrics.maxScrollExtent;
-    var currentScrollOffset = notification.metrics.pixels;
-
-    if (currentScrollOffset >
-        lastDataLoadOffset + (maxScrollOffset - lastDataLoadOffset) * 0.5) {
-      ignoreScrollNotification = true;
-      loadedPages++;
-      lastDataLoadOffset = currentScrollOffset;
-      context
-          .read<HeaderListViewCubit<H, L>>()
-          .nextPage()
-          .then((_) => ignoreScrollNotification = false);
-    }
-
-    return false;
+    return widget.onScrollNotification != null
+        ? widget.onScrollNotification!(notification)
+        : false;
   }
 
   bool onNotification(ScrollEndNotification notification) {
@@ -110,12 +93,9 @@ class _ListDataViewState<H, L> extends State<ListDataView<H, L>> {
           return notification.depth == 1;
         },
         onRefresh: () async {
-          await context
-              .read<HeaderListViewCubit<H, L>>()
-              .reloadData()
-              .then((value) => setState(() {
-                    lastDataLoadOffset = 0;
-                  }));
+          if (widget.onRefresh != null) {
+            await widget.onRefresh!();
+          }
         },
         child: NestedScrollView(
           key: _nestedScrollViewState,
@@ -128,7 +108,7 @@ class _ListDataViewState<H, L> extends State<ListDataView<H, L>> {
                   SliverOverlapInjector(
                       handle: NestedScrollView.sliverOverlapAbsorberHandleFor(
                           context)),
-                  widget.listBuilder(context, widget.listData),
+                  for (var sliver in widget.slivers) sliver
                 ],
               ),
             );
@@ -148,7 +128,7 @@ class _ListDataViewState<H, L> extends State<ListDataView<H, L>> {
                       return FadeAnimation(
                         animation: animation,
                         isExpandedWidget: true,
-                        child: widget.headerBuilder(context, widget.headerData),
+                        child: widget.header,
                       );
                     },
                   ),
@@ -239,10 +219,4 @@ class HeaderScrollSimulation extends ClampingScrollSimulation {
 
   @override
   bool isDone(double time) => super.isDone(time) || position >= expandedHeight;
-}
-
-class ListHeaderExpandedChanged extends Notification {
-  final bool isExpanded;
-
-  ListHeaderExpandedChanged({required this.isExpanded});
 }

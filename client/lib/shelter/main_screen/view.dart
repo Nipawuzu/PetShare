@@ -9,8 +9,8 @@ import 'package:pet_share/common_widgets/interest_to_color.dart';
 import 'package:pet_share/shelter/main_screen/cubit.dart';
 import 'package:pet_share/shelter/main_screen/view_model.dart';
 import 'package:pet_share/shelter/pet_details/view.dart';
-import 'package:pet_share/common_widgets/generic_main_view/cubit.dart';
-import 'package:pet_share/common_widgets/generic_main_view/view.dart';
+import 'package:pet_share/common_widgets/header_data_list/cubit.dart';
+import 'package:pet_share/common_widgets/header_data_list/view.dart';
 
 class ShelterMainScreen extends StatefulWidget {
   const ShelterMainScreen({super.key});
@@ -250,7 +250,7 @@ class _ShelterMainScreenState extends State<ShelterMainScreen>
       {required Widget header, required Widget body}) {
     return RefreshIndicator(
       onRefresh: context
-          .read<HeaderListViewCubit<int, PetListItemViewModel>>()
+          .read<HeaderDataListCubit<int, PetListItemViewModel>>()
           .reloadData,
       child: LayoutBuilder(builder: (context, constraint) {
         return SingleChildScrollView(
@@ -306,7 +306,7 @@ class _ShelterMainScreenState extends State<ShelterMainScreen>
   }
 
   Widget _buildBody(BuildContext context) {
-    return GenericMainView(
+    return HeaderDataList(
       headerToListRatio: 0.2,
       errorScreenBuilder: _buildError,
       loadingScreenBuilder: _buildLoadingScreen,

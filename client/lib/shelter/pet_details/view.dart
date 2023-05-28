@@ -5,7 +5,7 @@ import 'package:pet_share/announcements/details/view.dart';
 import 'package:pet_share/announcements/models/pet.dart';
 import 'package:pet_share/applications/application.dart';
 import 'package:pet_share/applications/details/view.dart';
-import 'package:pet_share/common_widgets/generic_main_view/view.dart';
+import 'package:pet_share/common_widgets/header_data_list/view.dart';
 import 'package:pet_share/common_widgets/interest_to_color.dart';
 import 'package:pet_share/shelter/pet_details/cubit.dart';
 import 'package:pet_share/shelter/pet_details/view_model.dart';
@@ -116,7 +116,7 @@ class _PetDetailsState extends State<PetDetails> {
   }
 
   Widget _buildBody(BuildContext context) {
-    return GenericMainView(
+    return HeaderDataList(
       headerToListRatio: 0.2,
       headerBuilder: _buildWelcome,
       listBuilder: _buildData,

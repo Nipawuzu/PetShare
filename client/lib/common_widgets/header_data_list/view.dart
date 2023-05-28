@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pet_share/common_widgets/generic_main_view/cubit.dart';
-import 'package:pet_share/common_widgets/generic_main_view/list_view.dart';
+import 'package:pet_share/common_widgets/header_data_list/cubit.dart';
+import 'package:pet_share/common_widgets/header_data_list/list_data_view.dart';
 import 'package:pet_share/common_widgets/gif_views.dart';
 
 typedef ErrorScreenBuilder = Widget Function(
@@ -14,8 +14,8 @@ typedef HeaderBuilder<H> = Widget Function(BuildContext context, H data);
 
 typedef ListBuilder<L> = Widget Function(BuildContext context, List<L> data);
 
-class GenericMainView<H, L> extends StatefulWidget {
-  const GenericMainView({
+class HeaderDataList<H, L> extends StatefulWidget {
+  const HeaderDataList({
     super.key,
     required this.cubit,
     this.errorScreenBuilder,
@@ -29,18 +29,18 @@ class GenericMainView<H, L> extends StatefulWidget {
   final ListBuilder<L> listBuilder;
   final LoadingScreenBuilder? loadingScreenBuilder;
   final ErrorScreenBuilder? errorScreenBuilder;
-  final HeaderListViewCubit<H, L> cubit;
+  final HeaderDataListCubit<H, L> cubit;
   final double? headerToListRatio;
   @override
-  State<GenericMainView<H, L>> createState() => _GenericMainViewState<H, L>();
+  State<HeaderDataList<H, L>> createState() => _HeaderDataListState<H, L>();
 }
 
-class _GenericMainViewState<H, L> extends State<GenericMainView<H, L>> {
+class _HeaderDataListState<H, L> extends State<HeaderDataList<H, L>> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => widget.cubit,
-      child: BlocBuilder<HeaderListViewCubit<H, L>, ListViewState<H, L>>(
+      child: BlocBuilder<HeaderDataListCubit<H, L>, ListViewState<H, L>>(
         builder: _buildViewByState,
       ),
     );
@@ -68,7 +68,7 @@ class _GenericMainViewState<H, L> extends State<GenericMainView<H, L>> {
   }
 
   Future<dynamic> _loadData(BuildContext context) async {
-    await context.read<HeaderListViewCubit<H, L>>().loadData();
+    await context.read<HeaderDataListCubit<H, L>>().loadData();
     return null;
   }
 
@@ -86,7 +86,7 @@ class _GenericMainViewState<H, L> extends State<GenericMainView<H, L>> {
   }
 
   Widget _buildListView(BuildContext context, DataState<H, L> state) {
-    return ListDataView<H, L>(
+    return DataListView<H, L>(
       toolbarScreenRatio: widget.headerToListRatio,
       listBuilder: widget.listBuilder,
       headerBuilder: widget.headerBuilder,

@@ -8,14 +8,11 @@ import 'package:pet_share/announcements/details/gate.dart';
 import 'package:pet_share/announcements/details/view.dart';
 import 'package:pet_share/announcements/models/announcement.dart';
 import 'package:pet_share/common_widgets/drawer.dart';
-import 'package:pet_share/common_widgets/generic_main_view/cubit.dart';
-import 'package:pet_share/common_widgets/generic_main_view/view.dart';
+import 'package:pet_share/common_widgets/header_data_list/cubit.dart';
+import 'package:pet_share/common_widgets/header_data_list/view.dart';
 import 'package:pet_share/common_widgets/gif_views.dart';
 import 'package:pet_share/services/adopter/service.dart';
 import 'package:pet_share/services/announcements/service.dart';
-
-typedef AsyncValueSetter<T, S> = Future<T> Function(S);
-typedef FunctionBuilder<T, S> = Widget Function(T, S);
 
 class AdopterMainScreen extends StatefulWidget {
   const AdopterMainScreen({super.key});
@@ -125,7 +122,7 @@ class _AdopterMainScreenState extends State<AdopterMainScreen>
   Widget _buildLoadingScreen(BuildContext context, LoadingState state) {
     return RefreshIndicator(
       onRefresh:
-          context.read<HeaderListViewCubit<dynamic, Announcement>>().reloadData,
+          context.read<HeaderDataListCubit<dynamic, Announcement>>().reloadData,
       child: LayoutBuilder(builder: (context, constraint) {
         return SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
@@ -159,7 +156,7 @@ class _AdopterMainScreenState extends State<AdopterMainScreen>
   Widget _buildErrorScreen(BuildContext context, ErrorState state) {
     return RefreshIndicator(
       onRefresh:
-          context.read<HeaderListViewCubit<dynamic, Announcement>>().reloadData,
+          context.read<HeaderDataListCubit<dynamic, Announcement>>().reloadData,
       child: LayoutBuilder(builder: (context, constraint) {
         return SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
@@ -191,7 +188,7 @@ class _AdopterMainScreenState extends State<AdopterMainScreen>
   }
 
   Widget _buildBody(BuildContext context) {
-    return GenericMainView(
+    return HeaderDataList(
       headerToListRatio: 0.3,
       errorScreenBuilder: _buildErrorScreen,
       headerBuilder: _buildWelcome,

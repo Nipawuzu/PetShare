@@ -1,12 +1,12 @@
 import 'package:collection/collection.dart';
 import 'package:pet_share/applications/application.dart';
-import 'package:pet_share/common_widgets/generic_main_view/cubit.dart';
+import 'package:pet_share/common_widgets/header_data_list/cubit.dart';
 import 'package:pet_share/services/adopter/service.dart';
 import 'package:pet_share/services/service_response.dart';
 import 'package:pet_share/shelter/main_screen/view_model.dart';
 
 class MainShelterViewCubit
-    extends HeaderListViewCubit<int, PetListItemViewModel> {
+    extends HeaderDataListCubit<int, PetListItemViewModel> {
   Map<String, PetListItemViewModel> _petIdToViewModel = {};
   int _newApplicationsCount = 0;
   final AdopterService _service;

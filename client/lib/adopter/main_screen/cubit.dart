@@ -1,9 +1,9 @@
 import 'package:pet_share/announcements/models/announcement.dart';
-import 'package:pet_share/common_widgets/generic_main_view/cubit.dart';
+import 'package:pet_share/common_widgets/header_data_list/cubit.dart';
 import 'package:pet_share/services/announcements/service.dart';
 import 'package:pet_share/services/service_response.dart';
 
-class MainAdopterViewCubit extends HeaderListViewCubit<dynamic, Announcement> {
+class MainAdopterViewCubit extends HeaderDataListCubit<dynamic, Announcement> {
   List<Announcement> _announcements = [];
   final AnnouncementService _service;
   static const int _pageSize = 20;

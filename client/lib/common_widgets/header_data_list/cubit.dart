@@ -1,7 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-abstract class HeaderListViewCubit<H, L> extends Cubit<ListViewState<H, L>> {
-  HeaderListViewCubit({ListViewState<H, L>? initialState}) : super(initialState ?? LoadingState());
+abstract class HeaderDataListCubit<H, L> extends Cubit<ListViewState<H, L>> {
+  HeaderDataListCubit({ListViewState<H, L>? initialState})
+      : super(initialState ?? LoadingState());
 
   Future loadData();
   Future reloadData();

@@ -1,12 +1,12 @@
 import 'package:pet_share/announcements/models/pet.dart';
 import 'package:pet_share/applications/application.dart';
-import 'package:pet_share/common_widgets/generic_main_view/cubit.dart';
+import 'package:pet_share/common_widgets/header_data_list/cubit.dart';
 import 'package:pet_share/services/adopter/service.dart';
 import 'package:pet_share/services/announcements/service.dart';
 import 'package:pet_share/shelter/pet_details/view_model.dart';
 
 class PetDetailsCubit
-    extends HeaderListViewCubit<PetDetailsViewModel, Application> {
+    extends HeaderDataListCubit<PetDetailsViewModel, Application> {
   Pet pet;
   List<Application> applications;
   final AdopterService _adopterService;
