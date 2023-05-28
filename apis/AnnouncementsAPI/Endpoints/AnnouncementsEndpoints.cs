@@ -1,5 +1,11 @@
 ﻿using AnnouncementsAPI.Requests;
 using AnnouncementsAPI.Responses;
+using APIAuthCommonLibrary;
+using CommonDTOLibrary.Mappers;
+using DatabaseContextLibrary.models;
+using DatabaseContextLibrary.Models;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace AnnouncementsAPI.Endpoints
 {
