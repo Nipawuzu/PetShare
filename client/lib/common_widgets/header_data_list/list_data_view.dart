@@ -29,31 +29,23 @@ class DataListView<H, L> extends StatefulWidget {
 }
 
 class _DataListViewState<H, L> extends State<DataListView<H, L>> {
-  bool ignoreNotification = false;
-  bool ignoreScrollNotification = false;
-  double lastDataLoadOffset = 0;
-  int loadedPages = 0;
-
-  @override
-  void initState() {
-    super.initState();
-  }
+  bool _ignoreScrollNotification = false;
+  double _lastDataLoadOffset = 0;
 
   bool onScrollNotification(ScrollNotification notification) {
-    if (ignoreScrollNotification) return false;
+    if (_ignoreScrollNotification) return false;
 
     var maxScrollOffset = notification.metrics.maxScrollExtent;
     var currentScrollOffset = notification.metrics.pixels;
 
     if (currentScrollOffset >
-        lastDataLoadOffset + (maxScrollOffset - lastDataLoadOffset) * 0.5) {
-      ignoreScrollNotification = true;
-      loadedPages++;
-      lastDataLoadOffset = currentScrollOffset;
+        _lastDataLoadOffset + (maxScrollOffset - _lastDataLoadOffset) * 0.5) {
+      _ignoreScrollNotification = true;
+      _lastDataLoadOffset = currentScrollOffset;
       context
           .read<HeaderDataListCubit<H, L>>()
           .nextPage()
-          .then((_) => ignoreScrollNotification = false);
+          .then((_) => _ignoreScrollNotification = false);
     }
 
     return false;

@@ -26,13 +26,10 @@ class HeaderListView extends StatefulWidget {
 
 class _HeaderListViewState extends State<HeaderListView> {
   Future<void>? _scrollAnimate;
-  bool ignoreNotification = false;
-  bool ignoreScrollNotification = false;
+  bool _ignoreNotification = false;
   late double _expandedHeight;
   late double _toolbarHeight;
   late GlobalKey<NestedScrollViewState> _nestedScrollViewState;
-  double lastDataLoadOffset = 0;
-  int loadedPages = 0;
 
   @override
   void initState() {
@@ -57,14 +54,14 @@ class _HeaderListViewState extends State<HeaderListView> {
   }
 
   bool onNotification(ScrollEndNotification notification) {
-    if (ignoreNotification) return false;
+    if (_ignoreNotification) return false;
     final scrollViewState = _nestedScrollViewState.currentState;
     final outerController = scrollViewState!.outerController;
 
     if (scrollViewState.innerController.position.pixels == 0) {
       final range = _expandedHeight - _toolbarHeight;
       final snapOffset = (outerController.offset / range) > 0.55 ? range : 0.0;
-      ignoreNotification = true;
+      _ignoreNotification = true;
       Future.microtask(() async {
         if (_scrollAnimate != null) await _scrollAnimate;
         _scrollAnimate = outerController
@@ -72,7 +69,7 @@ class _HeaderListViewState extends State<HeaderListView> {
                 duration: const Duration(milliseconds: 150),
                 curve: Curves.easeOutCubic)
             .then((value) {
-          ignoreNotification = false;
+          _ignoreNotification = false;
         });
       });
     }
