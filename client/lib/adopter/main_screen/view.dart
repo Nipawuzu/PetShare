@@ -189,7 +189,7 @@ class _AdopterMainScreenState extends State<AdopterMainScreen>
 
   Widget _buildBody(BuildContext context) {
     return HeaderDataList(
-      headerToListRatio: 0.3,
+      headerToListRatio: 0.4,
       errorScreenBuilder: _buildErrorScreen,
       headerBuilder: _buildWelcome,
       listBuilder: _buildAnnouncementsGrid,
