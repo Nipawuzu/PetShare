@@ -31,5 +31,4 @@ const _$AnnouncementStatusEnumMap = {
   AnnouncementStatus.Open: 'Open',
   AnnouncementStatus.Closed: 'Closed',
   AnnouncementStatus.Deleted: 'Deleted',
-  AnnouncementStatus.InVerification: 'InVerification',
 };
