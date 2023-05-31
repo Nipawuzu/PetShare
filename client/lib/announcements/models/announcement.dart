@@ -30,5 +30,4 @@ enum AnnouncementStatus {
   Open,
   Closed,
   Deleted,
-  InVerification,
 }

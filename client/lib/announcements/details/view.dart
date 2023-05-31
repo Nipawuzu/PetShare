@@ -430,8 +430,6 @@ class Header extends StatelessWidget {
         return "Już ma swoj dom";
       case AnnouncementStatus.Deleted:
         return "Usunięto";
-      case AnnouncementStatus.InVerification:
-        return "Jest odwiedzane";
     }
   }
 
@@ -443,8 +441,6 @@ class Header extends StatelessWidget {
         return Colors.red.shade300;
       case AnnouncementStatus.Deleted:
         return Colors.red.shade700;
-      case AnnouncementStatus.InVerification:
-        return Colors.blue;
     }
   }
 

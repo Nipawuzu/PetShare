@@ -88,8 +88,6 @@ String statusToString(AnnouncementStatus status) {
       return "Zamknięte";
     case AnnouncementStatus.Deleted:
       return "Usunięte";
-    case AnnouncementStatus.InVerification:
-      return "Użytkownik w trakcie weryfikacji";
   }
 }
 
@@ -101,8 +99,6 @@ Color statusToColor(AnnouncementStatus status) {
       return Colors.red;
     case AnnouncementStatus.Deleted:
       return Colors.brown;
-    case AnnouncementStatus.InVerification:
-      return Colors.blue;
   }
 }
 

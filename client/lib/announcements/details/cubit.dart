@@ -45,7 +45,6 @@ class AnnouncementDetailsCubit extends Cubit<AnnouncementDetailsState> {
     if (announcement.id != null &&
         (await _adopterService.sendApplication(adopterId, announcement.id!))
             .data) {
-      announcement.status = AnnouncementStatus.InVerification;
       emit(AfterAdoptionState(
           "Twój wniosek adopcyjny został przekazany do weryfikacji. Dziękujemy za zaufanie!",
           true));

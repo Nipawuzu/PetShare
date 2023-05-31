@@ -17,7 +17,6 @@
     {
         Open,
         Closed,
-        DuringVerification,
         Deleted
     }
 }

@@ -22,7 +22,6 @@ namespace DatabaseContextLibrary.models
     {
         Open,
         Closed,
-        DuringVerification,
         Deleted
     }
 }
