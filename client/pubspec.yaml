@@ -71,6 +71,14 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
+  patrol: ^1.1.4
+
+patrol:
+  app_name: PetShare
+  android:
+    package_name: com.petshare.petshare
+  ios:
+    bundle_id: com.petshare.petshare
   
 flutter_launcher_icons:
   android: "launcher_icon"

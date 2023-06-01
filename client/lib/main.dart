@@ -6,9 +6,13 @@ import 'package:pet_share/app_gate.dart';
 import 'package:pet_share/environment.dart';
 
 Future main() async {
+  await AppSetup();
+  runApp(const PetShare());
+}
+
+Future AppSetup() async {
   await dotenv.load(fileName: Environment.filename);
   HttpOverrides.global = PetShareHttpOverrides();
-  runApp(const PetShare());
 }
 
 class PetShare extends StatelessWidget {
