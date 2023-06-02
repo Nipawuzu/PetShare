@@ -180,12 +180,14 @@ class ApplicationDetails extends StatelessWidget {
   }
 
   Widget _buildBody(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildPetInfo(context),
-        _buildApplicationData(context),
-      ],
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildPetInfo(context),
+          _buildApplicationData(context),
+        ],
+      ),
     );
   }
 
