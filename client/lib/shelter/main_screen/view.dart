@@ -248,27 +248,22 @@ class _ShelterMainScreenState extends State<ShelterMainScreen>
 
   Widget _buildStaticViewWithHeader(BuildContext context,
       {required Widget header, required Widget body}) {
-    return RefreshIndicator(
-      onRefresh: context
-          .read<HeaderDataListCubit<int, PetListItemViewModel>>()
-          .reloadData,
-      child: LayoutBuilder(builder: (context, constraint) {
-        return SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: ConstrainedBox(
-            constraints: BoxConstraints(maxHeight: constraint.maxHeight),
-            child: Column(
-              children: [
-                header,
-                Expanded(
-                  child: body,
-                ),
-              ],
-            ),
+    return LayoutBuilder(builder: (context, constraint) {
+      return SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxHeight: constraint.maxHeight),
+          child: Column(
+            children: [
+              header,
+              Expanded(
+                child: body,
+              ),
+            ],
           ),
-        );
-      }),
-    );
+        ),
+      );
+    });
   }
 
   Widget _buildLoadingScreen(BuildContext context, LoadingState state) {

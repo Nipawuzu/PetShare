@@ -51,6 +51,11 @@ class _DataListViewState<H, L> extends State<DataListView<H, L>> {
     return false;
   }
 
+  Future onRefresh() {
+    _lastDataLoadOffset = 0;
+    return context.read<HeaderDataListCubit<H, L>>().reloadData();
+  }
+
   @override
   Widget build(BuildContext context) {
     return HeaderListView(
@@ -61,6 +66,7 @@ class _DataListViewState<H, L> extends State<DataListView<H, L>> {
       ],
       header: widget.headerBuilder(context, widget.headerData),
       onScrollNotification: onScrollNotification,
+      onRefresh: onRefresh,
     );
   }
 }

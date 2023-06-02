@@ -41,8 +41,15 @@ class _HeaderDataListState<H, L> extends State<HeaderDataList<H, L>> {
     return BlocProvider(
       create: (_) => widget.cubit,
       child: BlocBuilder<HeaderDataListCubit<H, L>, ListViewState<H, L>>(
-        builder: _buildViewByState,
+        builder: _refreshWrapper,
       ),
+    );
+  }
+
+  Widget _refreshWrapper(BuildContext context, ListViewState<H, L> state) {
+    return RefreshIndicator(
+      onRefresh: context.read<HeaderDataListCubit<H, L>>().reloadData,
+      child: _buildViewByState(context, state),
     );
   }
 
