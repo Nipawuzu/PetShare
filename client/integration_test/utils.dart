@@ -55,7 +55,7 @@ class IntegrationTestsHelper {
     }
   }
 
-  Future AddNewAnnouncement(String newPetName) async {
+  Future addNewAnnouncement(String newPetName) async {
     expect($(ShelterMainScreen), findsOneWidget);
 
     await $("Dodaj ogłoszenie").tap();
@@ -95,7 +95,7 @@ class IntegrationTestsHelper {
     await $.pumpAndSettle();
   }
 
-  Future ApplyForPet(String petName) async {
+  Future applyForPet(String petName) async {
     expect($(AdopterMainScreen), findsOneWidget);
 
     await $(petName).scrollTo().tap();
@@ -104,7 +104,22 @@ class IntegrationTestsHelper {
     await $.pumpAndSettle();
   }
 
-  Future AcceptApplication(String petName) async {
+  Future likeAnnouncement(String petName) async {
+    expect($(AdopterMainScreen), findsOneWidget);
+
+    await $.pumpAndSettle();
+    await $(petName).scrollTo();
+    await $(Icons.favorite).tap();
+  }
+
+  Future goToAnnouncement(String petName) async {
+    expect($(AdopterMainScreen), findsOneWidget);
+
+    await $.pumpAndSettle();
+    await $(petName).scrollTo(maxScrolls: 150).tap();
+  }
+
+  Future acceptApplication(String petName) async {
     await $(petName).scrollTo().tap();
     await $.pumpAndSettle();
 

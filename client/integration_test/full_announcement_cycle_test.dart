@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
 import 'package:patrol/patrol.dart';
 import 'package:pet_share/main.dart';
 
@@ -18,16 +16,16 @@ void main() {
       var tester = IntegrationTestsHelper($);
 
       await tester.goToShelterMainScreen();
-      await tester.AddNewAnnouncement("Bobik");
+      await tester.addNewAnnouncement("Bobik");
 
       await tester.goToAdopterMainScreen();
       await $.pumpAndSettle();
-      await tester.ApplyForPet("Bobik");
+      await tester.applyForPet("Bobik");
 
       await tester.goToShelterMainScreen();
       await $.pumpAndSettle();
 
-      await tester.AcceptApplication("Bobik");
+      await tester.acceptApplication("Bobik");
 
       await tester.tearDown();
     },
