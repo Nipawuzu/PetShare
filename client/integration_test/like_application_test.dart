@@ -5,7 +5,7 @@ import 'utils.dart';
 
 void main() {
   patrolTest('Liking an announcement', nativeAutomation: true, ($) async {
-    await AppSetup();
+    await appSetup();
     await $.pumpWidget(const PetShare());
     await $.pumpAndSettle();
 

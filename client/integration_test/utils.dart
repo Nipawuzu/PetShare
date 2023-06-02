@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:patrol/patrol.dart';
@@ -30,6 +32,7 @@ class IntegrationTestsHelper {
 
     print("Click on LOG IN, becuse I cannot");
     await Future.delayed(const Duration(seconds: 5));
+    await $.pumpAndSettle();
   }
 
   Future tearDown() async {
@@ -98,7 +101,7 @@ class IntegrationTestsHelper {
   Future applyForPet(String petName) async {
     expect($(AdopterMainScreen), findsOneWidget);
 
-    await $(petName).scrollTo().tap();
+    await $(petName).scrollTo(maxScrolls: 300).tap();
     await $("Aplikuj").tap();
     await $("Wróć do widoku głównego").tap();
     await $.pumpAndSettle();
@@ -120,7 +123,7 @@ class IntegrationTestsHelper {
   }
 
   Future acceptApplication(String petName) async {
-    await $(petName).scrollTo().tap();
+    await $(petName).scrollTo(maxScrolls: 300).tap();
     await $.pumpAndSettle();
 
     await $(Icons.person).scrollTo().tap();

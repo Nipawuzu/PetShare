@@ -6,7 +6,7 @@ import 'utils.dart';
 
 void main() {
   patrolTest('Go to settings', nativeAutomation: true, ($) async {
-    await AppSetup();
+    await appSetup();
     await $.pumpWidget(const PetShare());
     await $.pumpAndSettle();
 

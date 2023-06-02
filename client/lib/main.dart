@@ -6,11 +6,11 @@ import 'package:pet_share/app_gate.dart';
 import 'package:pet_share/environment.dart';
 
 Future main() async {
-  await AppSetup();
+  await appSetup();
   runApp(const PetShare());
 }
 
-Future AppSetup() async {
+Future appSetup() async {
   await dotenv.load(fileName: Environment.filename);
   HttpOverrides.global = PetShareHttpOverrides();
 }
