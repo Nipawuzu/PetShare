@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:pet_share/adopter/main_screen/cubit.dart';
-import 'package:pet_share/adopter/main_screen/filtering_category.dart';
+import 'package:pet_share/adopter/main_screen/filters_row.dart';
 import 'package:pet_share/announcements/announcement_grid/announcement_tile.dart';
 import 'package:pet_share/announcements/details/gate.dart';
 import 'package:pet_share/announcements/details/view.dart';
@@ -71,25 +71,18 @@ class _AdopterMainScreenState extends State<AdopterMainScreen>
               children: [
                 Expanded(child: _buildWelcomeText(context)),
                 Expanded(
-                  child: Image.asset(
-                    "images/dog_reading.jpg",
-                    fit: BoxFit.cover,
+                  child: Transform.scale(
+                    scale: 0.85,
+                    child: Image.asset(
+                      "images/dog_reading.png",
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
               ],
             ),
           ),
-          Expanded(
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: const [
-                FilteringCategory(category: "Koty"),
-                FilteringCategory(category: "Psy"),
-                FilteringCategory(category: "Inne"),
-                FilteringCategory(category: "..."),
-              ],
-            ),
-          )
+          const Expanded(child: FiltersRow())
         ],
       ),
     );
@@ -180,13 +173,18 @@ class _AdopterMainScreenState extends State<AdopterMainScreen>
   }
 
   Widget _buildBody(BuildContext context) {
-    return HeaderDataList(
-      headerToListRatio: 0.4,
-      errorScreenBuilder: _buildErrorScreen,
-      headerBuilder: _buildWelcome,
-      listBuilder: _buildAnnouncementsGrid,
-      loadingScreenBuilder: _buildLoadingScreen,
-      cubit: MainAdopterViewCubit(context.read()),
+    return BlocProvider(
+      create: (_) => MainAdopterViewCubit(context.read()),
+      child: Builder(builder: (context) {
+        return HeaderDataList(
+          headerToListRatio: 0.3,
+          errorScreenBuilder: _buildErrorScreen,
+          headerBuilder: _buildWelcome,
+          listBuilder: _buildAnnouncementsGrid,
+          loadingScreenBuilder: _buildLoadingScreen,
+          cubit: context.read<MainAdopterViewCubit>(),
+        );
+      }),
     );
   }
 

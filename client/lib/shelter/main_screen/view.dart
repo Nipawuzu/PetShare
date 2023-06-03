@@ -131,7 +131,7 @@ class _ShelterMainScreenState extends State<ShelterMainScreen>
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Image.asset(
-                      "images/dog_reading.jpg",
+                      "images/dog_reading.png",
                       fit: BoxFit.cover,
                     ),
                   ],

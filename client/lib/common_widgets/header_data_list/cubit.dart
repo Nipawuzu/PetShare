@@ -7,7 +7,6 @@ abstract class HeaderDataListCubit<H, L> extends Cubit<ListViewState<H, L>> {
   Future loadData();
   Future reloadData();
   Future nextPage();
-  Future useFilters();
 }
 
 class ListViewState<H, L> {}
