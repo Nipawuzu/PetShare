@@ -120,71 +120,63 @@ class _AdopterMainScreenState extends State<AdopterMainScreen>
   }
 
   Widget _buildLoadingScreen(BuildContext context, LoadingState state) {
-    return RefreshIndicator(
-      onRefresh:
-          context.read<HeaderDataListCubit<dynamic, Announcement>>().reloadData,
-      child: LayoutBuilder(builder: (context, constraint) {
-        return SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: ConstrainedBox(
-            constraints: BoxConstraints(maxHeight: constraint.maxHeight),
-            child: Column(
-              children: [
-                ConstrainedBox(
-                  constraints: const BoxConstraints(maxHeight: 300),
-                  child: _buildWelcome(context, null),
-                ),
-                Expanded(
-                  child: Center(
-                      child: Transform.scale(
-                    scale: 0.75,
-                    child: const CatProgressIndicator(
-                        text: TextWithBasicStyle(
-                      text: "Wczytywanie ogłoszeń...",
-                      textScaleFactor: 1.7,
-                    )),
+    return LayoutBuilder(builder: (context, constraint) {
+      return SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxHeight: constraint.maxHeight),
+          child: Column(
+            children: [
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxHeight: 300),
+                child: _buildWelcome(context, null),
+              ),
+              Expanded(
+                child: Center(
+                    child: Transform.scale(
+                  scale: 0.75,
+                  child: const CatProgressIndicator(
+                      text: TextWithBasicStyle(
+                    text: "Wczytywanie ogłoszeń...",
+                    textScaleFactor: 1.7,
                   )),
-                ),
-              ],
-            ),
+                )),
+              ),
+            ],
           ),
-        );
-      }),
-    );
+        ),
+      );
+    });
   }
 
   Widget _buildErrorScreen(BuildContext context, ErrorState state) {
-    return RefreshIndicator(
-      onRefresh:
-          context.read<HeaderDataListCubit<dynamic, Announcement>>().reloadData,
-      child: LayoutBuilder(builder: (context, constraint) {
-        return SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: ConstrainedBox(
-            constraints: BoxConstraints(maxHeight: constraint.maxHeight),
-            child: Column(
-              children: [
-                ConstrainedBox(
-                  constraints: const BoxConstraints(maxHeight: 300),
-                  child: _buildWelcome(context, null),
-                ),
-                Expanded(
-                  child: Center(
-                      child: Transform.scale(
-                    scale: 0.75,
-                    child: RabbitErrorScreen(
-                        text: TextWithBasicStyle(
-                      text: state.message,
-                      textScaleFactor: 1,
-                    )),
+    return LayoutBuilder(builder: (context, constraint) {
+      return SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxHeight: constraint.maxHeight),
+          child: Column(
+            children: [
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxHeight: 300),
+                child: _buildWelcome(context, null),
+              ),
+              Expanded(
+                child: Center(
+                    child: Transform.scale(
+                  scale: 0.75,
+                  child: RabbitErrorScreen(
+                      text: TextWithBasicStyle(
+                    text: state.message,
+                    textScaleFactor: 1,
                   )),
-                ),
-              ],
-            ),
+                )),
+              ),
+            ],
           ),
-        );
-      }),
-    );
+        ),
+      );
+    });
   }
 
   Widget _buildBody(BuildContext context) {
