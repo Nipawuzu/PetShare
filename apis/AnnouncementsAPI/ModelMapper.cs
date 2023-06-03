@@ -1,4 +1,7 @@
 ﻿using AnnouncementsAPI.Requests;
+using AnnouncementsAPI.Responses;
+using CommonDTOLibrary.Mappers;
+using CommonDTOLibrary.Models;
 using DatabaseContextLibrary.models;
 
 namespace AnnouncementsAPI
@@ -13,6 +16,22 @@ namespace AnnouncementsAPI
                 Description = announcementRequest.Description,
                 CreationDate = DateTime.Now,
                 Status = AnnouncementStatus.Open,
+            };
+        }
+
+        public static GetAnnouncementsWithFiltersResponse Map(this Announcement announcement)
+        {
+            return new GetAnnouncementsWithFiltersResponse()
+            {
+                Title = announcement.Title,
+                Description = announcement.Description,
+                ClosingDate = announcement.ClosingDate,
+                CreationDate = announcement.CreationDate,
+                Id = announcement.Id,
+                LastUpdateDate = announcement.LastUpdateDate,
+                Pet = announcement.Pet.MapDTO(),
+                Status = announcement.Status.MapDTO<AnnouncementStatusDTO>(),
+                IsLiked = false
             };
         }
 

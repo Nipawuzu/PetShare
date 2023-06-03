@@ -9,20 +9,25 @@ class GifView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTextStyle(
-      style: Theme.of(context).primaryTextTheme.bodyMedium!,
-      child: Container(
-        height: double.infinity,
-        width: double.infinity,
-        color: color ?? Theme.of(context).scaffoldBackgroundColor,
-        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Image.asset(asset),
-          if (text != null)
-            const SizedBox(
-              height: 32.0,
+    return Container(
+      height: double.infinity,
+      width: double.infinity,
+      color: color ?? Theme.of(context).scaffoldBackgroundColor,
+      child: FittedBox(
+        child: DefaultTextStyle(
+          style: Theme.of(context).primaryTextTheme.bodyMedium!,
+          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Image.asset(
+              asset,
+              fit: BoxFit.cover,
             ),
-          if (text != null) text!,
-        ]),
+            if (text != null)
+              const SizedBox(
+                height: 32.0,
+              ),
+            if (text != null) text!,
+          ]),
+        ),
       ),
     );
   }

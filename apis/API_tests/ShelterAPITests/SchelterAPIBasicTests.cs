@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using ShelterAPI;
 using ShelterAPI.Requests;
 using System.Net;
+using ShelterAPI.Responses;
 
 namespace APIs_tests.ShelterAPITests
 {
@@ -52,7 +53,7 @@ namespace APIs_tests.ShelterAPITests
         public async void GetAllShelters()
         {
             var getRequest = CreateRequest(HttpMethod.Get, Urls.Shelter, authToken: SHELTER_TOKEN);
-            await SendRequest<ShelterDTO[]>(getRequest);
+            await SendRequest<GetSheltersResponse>(getRequest);
         }
 
         [Theory]

@@ -4,15 +4,30 @@ using DatabaseContextLibrary.models;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using CommonDTOLibrary.Mappers;
+using AdopterAPI.Responses;
 
 namespace AdopterAPI.Endpoints
 {
     public static class AdopterEndpoints
     {
-        public static async Task<IResult> GetAdopters(DataContext dbContext)
+        private const int DEFAULT_PAGE_COUNT = 100;
+
+        public static async Task<IResult> GetAdopters(DataContext dbContext, int? pageNumber, int? pageCount)
         {
-            var adopters = await dbContext.Adopters.Include(nameof(Adopter.Address)).ToListAsync();
-            return Results.Ok(adopters.MapDTO().ToList());
+            int pageCountVal = pageCount ?? DEFAULT_PAGE_COUNT;
+            int pageNumberVal = pageNumber ?? 0;
+
+            var adopters = await dbContext.Adopters.Include(a => a.Address)
+                .Skip(pageNumberVal * pageCountVal)
+                .Take(pageCountVal)
+                .ToListAsync();
+
+            return Results.Ok(new GetAdoptersResponse()
+            { 
+                Adopters = adopters.MapDTO().ToArray(),
+                PageNumber = pageNumberVal,
+                Count = dbContext.Adopters.Count()
+            });
         }
 
         public static async Task<IResult> GetAdopter(DataContext dbContext, Guid adopterId, HttpContext httpContext)
@@ -32,7 +47,7 @@ namespace AdopterAPI.Endpoints
             }
 
 
-            var adopter = await dbContext.Adopters.Include(nameof(Adopter.Address)).FirstOrDefaultAsync(a => a.Id == adopterId);
+            var adopter = await dbContext.Adopters.Include(a => a.Address).FirstOrDefaultAsync(a => a.Id == adopterId);
             if (adopter is null) return Results.NotFound("Adopter doesn't exist.");
             return Results.Ok(adopter.MapDTO());
         }
@@ -56,7 +71,7 @@ namespace AdopterAPI.Endpoints
 
         public static async Task<IResult> PutAdopter(DataContext dbContext, Guid adopterId, PutAdopterRequest updatedAdopter)
         {
-            var adopter = await dbContext.Adopters.Include("Address").FirstOrDefaultAsync(a => a.Id == adopterId);
+            var adopter = await dbContext.Adopters.Include(a => a.Address).FirstOrDefaultAsync(a => a.Id == adopterId);
             if (adopter is null)
                 return Results.BadRequest("Adopter doesn't exist.");
 

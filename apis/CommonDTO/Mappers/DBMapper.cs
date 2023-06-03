@@ -110,5 +110,17 @@ namespace CommonDTOLibrary.Mappers
             foreach (var adopter in adopters)
                 yield return adopter.MapDTO();
         }
+
+        public static ReportDTO MapDTO(this Report report)
+        {
+            return new ReportDTO()
+            {
+                Id = report.Id,
+                TargetId = report.TargetId,
+                ReportType = report.ReportType.MapDTO<ReportTypeDTO>(),
+                Message = report.Message,
+                State = report.State.MapDTO<ReportStateDTO>(),
+            };
+        }
     }
 }

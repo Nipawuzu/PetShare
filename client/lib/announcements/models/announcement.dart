@@ -17,6 +17,7 @@ class Announcement {
   Pet pet;
   String title;
   String description;
+  bool? isLiked;
   AnnouncementStatus status;
   String? id;
 
@@ -29,5 +30,4 @@ enum AnnouncementStatus {
   Open,
   Closed,
   Deleted,
-  InVerification,
 }

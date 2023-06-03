@@ -32,7 +32,6 @@ class AfterAdoptionPage extends StatelessWidget {
             TextButton(
               onPressed: () => {
                 Navigator.pop(context),
-                Navigator.pop(context),
               },
               child: const TextWithBasicStyle(
                 text: "Wróć do widoku głównego",

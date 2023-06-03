@@ -10,13 +10,13 @@
         public DateTime LastUpdateDate { get; set; }
         public AnnouncementStatusDTO Status { get; set; }
         public PetDTO Pet { get; set; }
+        public bool? IsLiked { get; set; } 
     }
 
     public enum AnnouncementStatusDTO
     {
         Open,
         Closed,
-        DuringVerification,
         Deleted
     }
 }

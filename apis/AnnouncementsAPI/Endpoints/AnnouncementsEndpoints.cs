@@ -1,26 +1,41 @@
 ﻿using AnnouncementsAPI.Requests;
+using AnnouncementsAPI.Responses;
 using APIAuthCommonLibrary;
-using DatabaseContextLibrary.models;
-using Microsoft.EntityFrameworkCore;
 using CommonDTOLibrary.Mappers;
+using DatabaseContextLibrary.models;
+using DatabaseContextLibrary.Models;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace AnnouncementsAPI.Endpoints
 {
     public class AnnouncementsEndpoints : Endpoints
     {
+        private const int DEFAULT_PAGE_COUNT = 100;
+
         public static async Task<IResult> GetWithFilters(
             DataContext context,
+            int? pageNumber,
+            int? pageCount,
             string[]? species,
             string[]? breeds,
             string[]? locations,
             int? minAge,
             int? maxAge,
-            string[]? shelterNames)
+            string[]? shelterNames,
+            bool? isLiked,
+            HttpContext httpContext)
         {
+            var isAdopter = false;
+            if (AuthorizeUser(httpContext, out var role, out var adopterId) && role == Role.Adopter)
+            {
+                isAdopter = true;
+            }
+
             var announcements = context.Announcements
-                .Include(x => x.Pet)
-                .ThenInclude(x => x.Shelter)
-                .ThenInclude(x => x.Address)
+                .Include(a => a.Pet)
+                .ThenInclude(p => p!.Shelter)
+                .ThenInclude(s => s!.Address)
                 .AsQueryable();
 
             if (species != null && species.Any())
@@ -39,8 +54,39 @@ namespace AnnouncementsAPI.Endpoints
             if (shelterNames != null && shelterNames.Any())
                 announcements = announcements.Where(a => shelterNames.Contains(a.Pet.Shelter.FullShelterName));
 
-            var res = await announcements.Select(a => a.MapDTO()).ToListAsync();
-            return Results.Ok(res);
+            if (isAdopter && isLiked.HasValue)
+            {
+                if (isLiked.Value)
+                    announcements = announcements.Where(a => context.AdopterLikedAnnouncementsLinkingTables.Any(
+                            alalt => alalt.AnnouncementId == a.Id && alalt.AdopterId == adopterId));
+                else
+                    announcements = announcements.Where(a => !context.AdopterLikedAnnouncementsLinkingTables.Any(
+                        alalt => alalt.AnnouncementId == a.Id && alalt.AdopterId == adopterId));
+            }
+            int pageNumberVal = pageNumber ?? 0;
+            int pageCountVal = pageCount ?? DEFAULT_PAGE_COUNT;
+
+            int count = announcements.Count();
+
+            var res = await announcements
+                .Skip(pageNumberVal * pageCountVal).Take(pageCountVal)
+                .Select(a => a.MapDTO()).ToListAsync();
+
+            foreach (var a in res)
+            {
+                if (isAdopter)
+                {
+                    a.IsLiked = await context.AdopterLikedAnnouncementsLinkingTables.AnyAsync(
+                        alalt => alalt.AnnouncementId == a.Id && alalt.AdopterId == adopterId);
+                }
+            }
+
+            return Results.Ok(new GetAnnouncementsReponse()
+            {
+                Announcements = res.ToArray(),
+                PageNumber = pageNumberVal,
+                Count = count
+            });
         }
 
         public static async Task<IResult> GetById(
@@ -48,9 +94,9 @@ namespace AnnouncementsAPI.Endpoints
             Guid announcementId)
         {
             var announcement = await context.Announcements
-                .Include(x => x.Pet)
-                .ThenInclude(x => x.Shelter)
-                .ThenInclude(x => x.Address)
+                .Include(a => a.Pet)
+                .ThenInclude(p => p!.Shelter)
+                .ThenInclude(s => s!.Address)
                 .FirstOrDefaultAsync(a => a.Id == announcementId);
 
             if (announcement is null)
@@ -62,19 +108,34 @@ namespace AnnouncementsAPI.Endpoints
 
         public static async Task<IResult> GetForAuthorisedShelter(
             DataContext context,
-            HttpContext httpContext)
+            HttpContext httpContext,
+            int? pageNumber,
+            int? pageCount)
         {
             if (!AuthorizeUser(httpContext, out var role, out var userId) || role != Role.Shelter)
                 return Results.Unauthorized();
 
             var announcements = context.Announcements
-                .Include(x => x.Pet)
-                .ThenInclude(x => x.Shelter)
-                .ThenInclude(x => x.Address)
+                .Include(a => a.Pet)
+                .ThenInclude(p => p!.Shelter)
+                .ThenInclude(s => s!.Address)
                 .Where(x => x.Pet.ShelterId == userId);
 
-            var res = await announcements.Select(a => a.MapDTO()).ToListAsync();
-            return Results.Ok(res);
+            int pageNumberVal = pageNumber ?? 0;
+            int pageCountVal = pageCount ?? DEFAULT_PAGE_COUNT;
+
+            int count = announcements.Count();
+
+            var res = await announcements
+                .Skip(pageNumberVal * pageCountVal).Take(pageCountVal)
+                .Select(a => a.MapDTO()).ToListAsync();
+
+            return Results.Ok(new GetAnnouncementsReponse()
+            {
+                Announcements = res.ToArray(),
+                PageNumber = pageNumberVal,
+                Count = count
+            });
         }
 
         public static async Task<IResult> Post(
@@ -105,12 +166,16 @@ namespace AnnouncementsAPI.Endpoints
             Guid announcementId,
             HttpContext httpContext)
         {
-            var announcement = await context.Announcements.Include("Pet").FirstOrDefaultAsync(a => a.Id == announcementId);
+            var announcement = await context.Announcements
+                .Include(a => a.Pet)
+                .ThenInclude(p => p!.Shelter)
+                .ThenInclude(s => s!.Address)
+                .FirstOrDefaultAsync(a => a.Id == announcementId);
 
             if (announcement is null)
                 return Results.NotFound("Announcement doesn't exist.");
 
-            if(!AuthorizeUser(httpContext, out var role, out var userId))
+            if (!AuthorizeUser(httpContext, out var role, out var userId))
                 return Results.Unauthorized();
 
             Pet? announcementPet;
@@ -138,6 +203,50 @@ namespace AnnouncementsAPI.Endpoints
             announcement.LastUpdateDate = DateTime.Now;
 
             await context.SaveChangesAsync();
+
+            return Results.Ok();
+        }
+
+        public static async Task<IResult> PutLiked(DataContext dbContext, Guid announcementId, bool isLiked, HttpContext httpContext)
+        {
+            var identity = httpContext.User.Identity as ClaimsIdentity;
+            var issuerClaim = identity?.GetIssuer();
+
+            if (identity is null || issuerClaim is null)
+                return Results.Forbid();
+
+            var adopterId = Guid.Parse(issuerClaim);
+            var announcement = await dbContext.Announcements.FirstOrDefaultAsync(a => a.Id == announcementId);
+
+            if (announcement is null)
+                return Results.NotFound("Announcement doesn't exist.");
+
+            if (isLiked)
+            {
+                var liked = await dbContext.AdopterLikedAnnouncementsLinkingTables.FirstOrDefaultAsync(alalt =>
+                    alalt.AdopterId == adopterId && alalt.AnnouncementId == announcementId);
+
+                if (liked != null)
+                    return Results.Ok();
+
+                dbContext.AdopterLikedAnnouncementsLinkingTables.Add(new AdopterLikedAnnouncementsLinkingTable()
+                {
+                    AdopterId = adopterId,
+                    AnnouncementId = announcementId
+                });
+                await dbContext.SaveChangesAsync();
+            }
+            else
+            {
+                var liked = await dbContext.AdopterLikedAnnouncementsLinkingTables.FirstOrDefaultAsync(alalt =>
+                   alalt.AdopterId == adopterId && alalt.AnnouncementId == announcementId);
+
+                if (liked == null)
+                    return Results.Ok();
+
+                dbContext.AdopterLikedAnnouncementsLinkingTables.Remove(liked!);
+                await dbContext.SaveChangesAsync();
+            }
 
             return Results.Ok();
         }

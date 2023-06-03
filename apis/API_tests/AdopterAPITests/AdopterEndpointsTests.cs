@@ -1,5 +1,6 @@
 ﻿using AdopterAPI;
 using AdopterAPI.Requests;
+using AdopterAPI.Responses;
 using CommonDTOLibrary.Models;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
@@ -42,12 +43,13 @@ namespace APIs_tests.AdopterAPITests
             var resultID = await PostNewAdopter(adopterDTO);
 
             var getRequest = CreateRequest(HttpMethod.Get, Urls.Adopter, authToken: ADMIN_TOKEN);
-            var adopters = await SendRequest<AdopterDTO[]>(getRequest);
+            var adopters = await SendRequest<GetAdoptersResponse>(getRequest);
 
             Assert.NotNull(adopters);
-            Assert.NotEmpty(adopters);
+            Assert.NotNull(adopters.Adopters);
+            Assert.NotEmpty(adopters.Adopters);
 
-            var addedAdopter = adopters.First<AdopterDTO>(x => x.Id == resultID);
+            var addedAdopter = adopters.Adopters.First<AdopterDTO>(x => x.Id == resultID);
             addedAdopter.Should().BeEquivalentTo(adopterDTO, o => o.Excluding(x => x.Id).Excluding(x => x.Status));
         }
 

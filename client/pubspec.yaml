@@ -59,6 +59,7 @@ dependencies:
   flutter_launcher_icons: ^0.13.1
   collection: ^1.17.1
   image_picker_platform_interface: ^2.6.3
+  custom_refresh_indicator: ^2.0.1
 
 dev_dependencies:
   flutter_test:
@@ -70,6 +71,14 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
+  patrol: ^1.1.4
+
+patrol:
+  app_name: PetShare
+  android:
+    package_name: com.petshare.petshare
+  ios:
+    bundle_id: com.petshare.petshare
   
 flutter_launcher_icons:
   android: "launcher_icon"
