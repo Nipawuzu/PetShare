@@ -75,9 +75,4 @@ class MainShelterViewCubit
     _currentPage = 0;
     await loadData();
   }
-
-  @override
-  Future useFilters() {
-    return Future.delayed(const Duration(seconds: 1));
-  }
 }

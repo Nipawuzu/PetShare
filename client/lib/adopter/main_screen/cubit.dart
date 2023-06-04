@@ -1,3 +1,4 @@
+import 'package:pet_share/adopter/main_screen/announcement_filters.dart';
 import 'package:pet_share/announcements/models/announcement.dart';
 import 'package:pet_share/common_widgets/header_data_list/cubit.dart';
 import 'package:pet_share/services/announcements/service.dart';
@@ -43,8 +44,7 @@ class MainAdopterViewCubit extends HeaderDataListCubit<dynamic, Announcement> {
     await loadData();
   }
 
-  @override
-  Future useFilters() {
+  Future useFilters(AnnouncementFilters filters) {
     return Future.delayed(const Duration(seconds: 1));
   }
 }
