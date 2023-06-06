@@ -70,7 +70,7 @@ jobs:
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'petshare-${{inputs.project_name}}'
+          app-name: ${{env.APP_NAME}}
           slot-name: 'Production'
           publish-profile: ${{secrets.azure_app_service_publish_profile}}
           package: .
