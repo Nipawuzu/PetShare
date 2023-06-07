@@ -35,16 +35,19 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '7.0.x'
-      - name: Init user secrets
-        shell: bash
-        run: dotnet user-secrets -p FileStorageService init
-      - name: Add Google Cloud Bucket name
-        shell: bash
-        run: dotnet user-secrets -p FileStorageService set "GoogleCloud:BucketName" "${{ secrets.google_bucket_name }}"
-      - name: Add Google Cloud secrets
-        shell: bash
-        run: dotnet user-secrets -p FileStorageService set "GoogleCloud:Secret" "${{ secrets.google_secret }}"
+      # - name: Init user secrets
+      #   shell: bash
+      #   run: dotnet user-secrets -p FileStorageService init
+      # - name: Add Google Cloud Bucket name
+      #   shell: bash
+      #   run: dotnet user-secrets -p FileStorageService set "GoogleCloud:BucketName" "${{ secrets.google_bucket_name }}"
+      # - name: Add Google Cloud secrets
+      #   shell: bash
+      #   run: dotnet user-secrets -p FileStorageService set "GoogleCloud:Secret" "${{ secrets.google_secret }}"
       - name: Build with dotnet
+        env:
+          "GoogleCloud:BucketName": ${{ secrets.google_bucket_name }}
+          "GoogleCloud:Secret": ${{ secrets.google_secret }}
         run: dotnet build --configuration Release ${{inputs.project_name}}
       - name: dotnet publish
         run: dotnet publish ${{inputs.project_name}} -c Release -o ${{env.DOTNET_ROOT}}/${{inputs.project_name}}
