@@ -18,6 +18,8 @@ jobs:
       project_name: ShelterAPI
     secrets:
       azure_app_service_publish_profile: ${{ secrets.PUBLISH_PROFILE_SHELTER_API }}
+      google_bucket_name: ${{ secrets.GOOGLE_CLOUD_BUCKET_NAME }}
+      google_secret: ${{ secrets.GOOGLE_CLOUD_SECRET }}
   
   deploy_announcements_api:
     uses: ./.github/workflows/deploy_API.yml
@@ -25,6 +27,8 @@ jobs:
       project_name: AnnouncementsAPI
     secrets:
       azure_app_service_publish_profile: ${{ secrets.PUBLISH_PROFILE_ANNOUNCEMENT_API }}
+      google_bucket_name: ${{ secrets.GOOGLE_CLOUD_BUCKET_NAME }}
+      google_secret: ${{ secrets.GOOGLE_CLOUD_SECRET }}
   
   deploy_adopter_api:
     uses: ./.github/workflows/deploy_API.yml
@@ -32,3 +36,5 @@ jobs:
       project_name: AdopterAPI
     secrets:
       azure_app_service_publish_profile: ${{ secrets.PUBLISH_PROFILE_ADOPTER_API }}
+      google_bucket_name: ${{ secrets.GOOGLE_CLOUD_BUCKET_NAME }}
+      google_secret: ${{ secrets.GOOGLE_CLOUD_SECRET }}

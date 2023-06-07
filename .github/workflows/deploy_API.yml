@@ -16,6 +16,10 @@ on:
     secrets:
       azure_app_service_publish_profile:
         required: true
+      google_bucket_name:
+        required: true
+      google_secret:
+        required: true
 
 jobs:
   build:
@@ -31,11 +35,15 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '7.0.x'
-      - name: Secrets set up
-        uses: ./.github/actions/set_up_apis_secrets
-        with:
-          google_cloud_bucket_name: ${{ secrets.GOOGLE_CLOUD_BUCKET_NAME }}
-          google_cloud_secret: ${{ secrets.GOOGLE_CLOUD_SECRET }}
+      - name: Init user secrets
+        shell: bash
+        run: dotnet user-secrets -p FileStorageService init
+      - name: Add Google Cloud Bucket name
+        shell: bash
+        run: dotnet user-secrets -p FileStorageService set "GoogleCloud:BucketName" "${{ secrets.google_bucket_name }}"
+      - name: Add Google Cloud secrets
+        shell: bash
+        run: dotnet user-secrets -p FileStorageService set "GoogleCloud:Secret" "${{ secrets.google_secret }}"
       - name: Build with dotnet
         run: dotnet build --configuration Release ${{inputs.project_name}}
       - name: dotnet publish
