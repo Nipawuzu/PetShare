@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:pet_share/announcements/details/cubit.dart';
 import 'package:pet_share/announcements/models/announcement.dart';
-import 'package:pet_share/services/service_response.dart';
+import 'package:pet_share/common_widgets/dialogs.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AnnouncementAndPetDetails extends StatefulWidget {
@@ -94,89 +94,15 @@ class _AnnouncementAndPetDetailsState extends State<AnnouncementAndPetDetails>
       ],
       onSelected: (item) => {
         if (item == 0)
-          showDialogWhenDeletingAnnouncement(context, widget.announcement)
+          showAlertDialog(
+              context,
+              "usunąć",
+              TextSubject.announcement,
+              (Announcement announcement) => context
+                  .read<AnnouncementDetailsCubit>()
+                  .deleteAnnouncement(announcement),
+              widget.announcement)
       },
-    );
-  }
-
-  void showDialogWhenDeletingAnnouncement(
-      BuildContext context, Announcement announcement) {
-    showDialog<bool>(
-      context: context,
-      builder: (BuildContext context) => AlertDialog(
-        content: const TextWithBasicStyle(
-          text: 'Czy na pewno chcesz usunąć to ogłoszenie?',
-          textScaleFactor: 1.2,
-          align: TextAlign.center,
-        ),
-        actions: <Widget>[
-          Row(
-            children: [
-              _buildDeleteButton(context, 'Tak', true),
-              _buildDeleteButton(context, 'Anuluj', false)
-            ],
-          )
-        ],
-      ),
-    ).then((value) async => {
-          if (value != null && value)
-            {
-              checkAndActOnErrors(
-                await context
-                    .read<AnnouncementDetailsCubit>()
-                    .deleteAnnouncement(announcement),
-              )
-            }
-        });
-  }
-
-  void checkAndActOnErrors(ServiceResponse res) {
-    if (res.data != null) {
-      Navigator.pop(context);
-    } else {
-      if (res.error == ErrorType.unauthorized) {
-        showDialogWithError(
-            context, "Nie jesteś uprawniony do usunięcia tego ogloszenia");
-      } else if (res.error == ErrorType.badRequest) {
-        showDialogWithError(context, "Nie znaleziono wybranego ogłoszenia");
-      } else {
-        showDialogWithError(context, "Nie udało się usunąć ogłoszenia");
-      }
-    }
-  }
-
-  void showDialogWithError(BuildContext context, String error) {
-    showDialog<bool>(
-      context: context,
-      builder: (BuildContext context) => AlertDialog(
-        content: TextWithBasicStyle(
-          text: error,
-          textScaleFactor: 1.2,
-          align: TextAlign.center,
-        ),
-        actions: <Widget>[
-          Center(
-            child: TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const TextWithBasicStyle(
-                  text: 'OK',
-                )),
-          )
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDeleteButton(
-      BuildContext context, String text, bool doesDelete) {
-    return Expanded(
-      child: TextButton(
-        onPressed: () => {Navigator.pop(context, doesDelete)},
-        child: TextWithBasicStyle(
-          text: text,
-          textScaleFactor: 1.2,
-        ),
-      ),
     );
   }
 

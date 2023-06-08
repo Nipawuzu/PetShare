@@ -2,8 +2,11 @@ import 'dart:math';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pet_share/announcements/details/view.dart';
 import 'package:pet_share/applications/application.dart';
+import 'package:pet_share/common_widgets/dialogs.dart';
+import 'package:pet_share/services/adopter/service.dart';
 
 class ApplicationDetails extends StatelessWidget {
   const ApplicationDetails(this.application, {super.key});
@@ -197,7 +200,9 @@ class ApplicationDetails extends StatelessWidget {
       extendBodyBehindAppBar: true,
       appBar: _buildAppBar(context),
       body: _buildBody(context),
-      bottomNavigationBar: const ApplicationBottomAppBar(),
+      bottomNavigationBar: ApplicationBottomAppBar(
+        application: application,
+      ),
     );
   }
 }
@@ -205,7 +210,55 @@ class ApplicationDetails extends StatelessWidget {
 class ApplicationBottomAppBar extends StatelessWidget {
   const ApplicationBottomAppBar({
     super.key,
+    required this.application,
   });
+
+  final Application application;
+  _buildDecisionList(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            height: 4,
+            width: 100,
+            decoration: BoxDecoration(
+              color: Colors.orange,
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        ),
+        ElevatedButton(
+          onPressed: () => showAlertDialog(
+              context,
+              "zaakceptować",
+              TextSubject.application,
+              (String id) =>
+                  context.read<AdopterService>().acceptApplication(id),
+              application.id),
+          child: const TextWithBasicStyle(text: "Zaakceptuj wniosek"),
+        ),
+        ElevatedButton(
+          onPressed: () => showAlertDialog(
+              context,
+              "odrzucić",
+              TextSubject.application,
+              (String id) =>
+                  context.read<AdopterService>().rejectApplication(id),
+              application.id),
+          child: const TextWithBasicStyle(text: "Odrzuć wniosek"),
+        ),
+        TextButton(
+          child: const TextWithBasicStyle(
+            text: "Zamknij",
+            textScaleFactor: 1.2,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -233,7 +286,12 @@ class ApplicationBottomAppBar extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(4.0),
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    showModalBottomSheet(
+                      context: context,
+                      builder: (context) => _buildDecisionList(context),
+                    );
+                  },
                   child: const Text("Decyzja"),
                 ),
               ),
