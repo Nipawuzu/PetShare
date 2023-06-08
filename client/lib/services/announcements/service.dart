@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:http_status_code/http_status_code.dart';
+import 'package:pet_share/adopter/main_screen/announcement_filters.dart';
 import 'package:pet_share/announcements/models/announcement.dart';
 import 'package:pet_share/announcements/models/new_announcement.dart';
 import 'package:pet_share/announcements/models/new_pet.dart';
@@ -138,7 +139,9 @@ class AnnouncementService {
   }
 
   Future<ServiceResponse<List<Announcement>?>> getAnnouncements(
-      {int pageNumber = 0, int pageCount = 10}) async {
+      {int pageNumber = 0,
+      int pageCount = 10,
+      AnnouncementFilters? filters}) async {
     try {
       var response = await _dio.get("$_url/announcements",
           options: Options(
@@ -150,6 +153,12 @@ class AnnouncementService {
           queryParameters: {
             "pageNumber": pageNumber,
             "pageCount": pageCount,
+            "species": filters?.species,
+            "breeds": filters?.breeds,
+            "locations": filters?.cities,
+            "minAge": filters?.minAge,
+            "maxAge": filters?.maxAge,
+            "shelterNames": filters?.shelters,
           });
 
       if (response.statusCode == StatusCode.OK) {

@@ -9,13 +9,14 @@ class MainAdopterViewCubit extends HeaderDataListCubit<dynamic, Announcement> {
   final AnnouncementService _service;
   static const int _pageSize = 20;
   int _currentPage = 0;
+  AnnouncementFilters? filters;
 
   MainAdopterViewCubit(this._service);
 
   @override
   Future loadData() async {
     var response = await _service.getAnnouncements(
-        pageCount: _pageSize, pageNumber: _currentPage);
+        pageCount: _pageSize, pageNumber: _currentPage, filters: filters);
 
     if (response.data == null || response.error != ErrorType.none) {
       emit(ErrorState(message: "Wystąpił błąd podczas ładowania ogłoszeń"));
@@ -23,6 +24,11 @@ class MainAdopterViewCubit extends HeaderDataListCubit<dynamic, Announcement> {
     }
 
     _announcements = response.data!;
+    if (filters != null && filters!.withoutCatsAndDogs) {
+      _announcements.where((element) =>
+          element.pet.species != "kot" && element.pet.species != "pies");
+    }
+    
     emit(DataState(headerData: null, listData: _announcements));
   }
 
@@ -45,6 +51,7 @@ class MainAdopterViewCubit extends HeaderDataListCubit<dynamic, Announcement> {
   }
 
   Future useFilters(AnnouncementFilters filters) {
-    return Future.delayed(const Duration(seconds: 1));
+    this.filters = filters;
+    return loadData();
   }
 }
