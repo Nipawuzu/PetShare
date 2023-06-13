@@ -11,5 +11,6 @@ namespace AnnouncementsAPI.Requests
         public Sex Sex { get; set; }
         public DateTime Birthday { get; set; }
         public string Description { get; set; }
+        public string PhotoUrl { get; set; }
     }
 }
