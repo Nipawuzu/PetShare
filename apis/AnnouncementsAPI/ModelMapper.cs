@@ -16,6 +16,7 @@ namespace AnnouncementsAPI
                 Description = announcementRequest.Description,
                 CreationDate = DateTime.Now,
                 Status = AnnouncementStatus.Open,
+                LastUpdateDate = DateTime.Now
             };
         }
 
