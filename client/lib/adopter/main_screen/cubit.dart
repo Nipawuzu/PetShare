@@ -25,10 +25,13 @@ class MainAdopterViewCubit extends HeaderDataListCubit<dynamic, Announcement> {
 
     _announcements = response.data!;
     if (filters != null && filters!.withoutCatsAndDogs) {
-      _announcements.where((element) =>
-          element.pet.species != "kot" && element.pet.species != "pies");
+      _announcements = _announcements
+          .where((element) =>
+              element.pet.species.toLowerCase() != "kot" &&
+              element.pet.species.toLowerCase() != "pies")
+          .toList();
     }
-    
+
     emit(DataState(headerData: null, listData: _announcements));
   }
 

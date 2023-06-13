@@ -150,16 +150,11 @@ class AnnouncementService {
               "Authorization": _token
             },
           ),
-          queryParameters: {
-            "pageNumber": pageNumber,
-            "pageCount": pageCount,
-            "species": filters?.species,
-            "breeds": filters?.breeds,
-            "locations": filters?.cities,
-            "minAge": filters?.minAge,
-            "maxAge": filters?.maxAge,
-            "shelterNames": filters?.shelters,
-          });
+          queryParameters: createQueryParametersForFilters(
+            pageNumber,
+            pageCount,
+            filters,
+          ));
 
       if (response.statusCode == StatusCode.OK) {
         return ServiceResponse(
@@ -175,6 +170,27 @@ class AnnouncementService {
 
       return ServiceResponse(data: null, error: ErrorType.unknown);
     }
+  }
+
+  Map<String, dynamic> createQueryParametersForFilters(
+      int pageNumber, int pageCount, AnnouncementFilters? filters) {
+    var map = {
+      "pageNumber": pageNumber,
+      "pageCount": pageCount,
+      "species": filters?.species,
+      "breeds": filters?.breeds,
+      "locations": filters?.cities,
+      "shelterNames": filters?.shelters,
+    };
+
+    if (filters != null && filters.minAge != null) {
+      map["minAge"] = filters.minAge;
+    }
+    if (filters != null && filters.maxAge != null) {
+      map["maxAge"] = filters.maxAge;
+    }
+
+    return map;
   }
 
   Future<ServiceResponse<List<Announcement>?>>
