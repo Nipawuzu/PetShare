@@ -1,3 +1,6 @@
+import 'dart:ui';
+
+import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:pet_share/adopter.dart';
 import 'package:pet_share/announcements/models/announcement.dart';
@@ -29,3 +32,33 @@ class Application {
 
 // ignore: constant_identifier_names
 enum ApplicationStatusDTO { Created, Accepted, Rejected, Withdrawn, Deleted }
+
+String applicationStatusToString(ApplicationStatusDTO status) {
+  switch (status) {
+    case ApplicationStatusDTO.Created:
+      return "utworzone";
+    case ApplicationStatusDTO.Accepted:
+      return "zaakceptowane";
+    case ApplicationStatusDTO.Rejected:
+      return "odrzucone";
+    case ApplicationStatusDTO.Withdrawn:
+      return "wycofane";
+    case ApplicationStatusDTO.Deleted:
+      return "usunięte";
+  }
+}
+
+Color applicationStatusToColor(ApplicationStatusDTO status) {
+  switch (status) {
+    case ApplicationStatusDTO.Created:
+      return Colors.purple;
+    case ApplicationStatusDTO.Accepted:
+      return Colors.green;
+    case ApplicationStatusDTO.Rejected:
+      return Colors.red;
+    case ApplicationStatusDTO.Withdrawn:
+      return Colors.blue;
+    case ApplicationStatusDTO.Deleted:
+      return Colors.brown;
+  }
+}

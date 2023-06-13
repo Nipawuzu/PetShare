@@ -29,6 +29,7 @@ void showAlertDialog<T>(
     String action,
     TextSubject subject,
     Future<ServiceResponse<bool>> Function(T) afterYes,
+    Function(T) rollbackChanges,
     T data) {
   showDialog<bool>(
     context: context,
@@ -52,8 +53,14 @@ void showAlertDialog<T>(
         if (value != null && value)
           {
             afterYes(data).then(
-              (value) => checkAndActOnErrors(context, value, action,
-                  getTextSubjectForCheckAndActOnErrors(subject)),
+              (value) => checkAndActOnErrors(
+                context,
+                value,
+                action,
+                getTextSubjectForCheckAndActOnErrors(subject),
+                rollbackChanges,
+                data,
+              ),
             )
           }
       });
@@ -71,11 +78,12 @@ Widget buildAlertButton(BuildContext context, String text, bool doesDelete) {
   );
 }
 
-void checkAndActOnErrors(
-    BuildContext context, ServiceResponse res, String action, String subject) {
+void checkAndActOnErrors<T>(BuildContext context, ServiceResponse res,
+    String action, String subject, Function(T) rollbackChanges, T data) {
   if (res.data != null) {
     Navigator.pop(context);
   } else {
+    rollbackChanges(data);
     if (res.error == ErrorType.unauthorized) {
       showDialogWithError(
           context, "Nie jesteś uprawniony do $action tego $subject");

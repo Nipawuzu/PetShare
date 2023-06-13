@@ -7,12 +7,18 @@ import 'package:pet_share/announcements/details/view.dart';
 import 'package:pet_share/applications/application.dart';
 import 'package:pet_share/common_widgets/dialogs.dart';
 import 'package:pet_share/services/adopter/service.dart';
+import 'package:pet_share/utils/datetime_format.dart';
 
-class ApplicationDetails extends StatelessWidget {
+class ApplicationDetails extends StatefulWidget {
   const ApplicationDetails(this.application, {super.key});
 
   final Application application;
 
+  @override
+  State<ApplicationDetails> createState() => _ApplicationDetailsState();
+}
+
+class _ApplicationDetailsState extends State<ApplicationDetails> {
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
       iconTheme: const IconThemeData(color: Colors.white),
@@ -39,7 +45,7 @@ class ApplicationDetails extends StatelessWidget {
               color: Colors.grey.shade200,
             ),
             child: CachedNetworkImage(
-                imageUrl: application.announcement.pet.photoUrl ??
+                imageUrl: widget.application.announcement.pet.photoUrl ??
                     "https://cataas.com/cat?=3",
                 fit: BoxFit.cover),
           ),
@@ -78,19 +84,28 @@ class ApplicationDetails extends StatelessWidget {
                   runSpacing: -8.0,
                   children: [
                     Chip(
-                      label: Text("Imię: ${application.announcement.pet.name}"),
+                      label: Text(
+                          "Imię: ${widget.application.announcement.pet.name}"),
                     ),
+                    if (widget.application.announcement.pet.breed.isNotEmpty)
+                      Chip(
+                          label: Text(
+                              "Rasa: ${widget.application.announcement.pet.breed}")),
                     Chip(
                         label: Text(
-                            "Rasa: ${application.announcement.pet.breed}")),
+                            "Data wniosku: ${widget.application.creationDate.formatDay()}")),
                     Chip(
-                        label:
-                            Text("Data wniosku: ${application.creationDate}")),
+                      label: Text(
+                        "Status: ${applicationStatusToString(widget.application.applicationStatus)}",
+                      ),
+                      backgroundColor: applicationStatusToColor(
+                          widget.application.applicationStatus),
+                    ),
                     ActionChip(
                       onPressed: () => Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) => AnnouncementAndPetDetails(
-                              announcement: application.announcement),
+                              announcement: widget.application.announcement),
                         ),
                       ),
                       backgroundColor: Colors.grey.shade200,
@@ -140,7 +155,7 @@ class ApplicationDetails extends StatelessWidget {
                       height: 8.0,
                     ),
                     Text(
-                      application.adopter.userName,
+                      widget.application.adopter.userName,
                       style: Theme.of(context).primaryTextTheme.labelLarge,
                     ),
                   ],
@@ -169,7 +184,7 @@ class ApplicationDetails extends StatelessWidget {
                       height: 8.0,
                     ),
                     Text(
-                      application.adopter.address.toString(),
+                      widget.application.adopter.address.toString(),
                       style: Theme.of(context).primaryTextTheme.labelLarge,
                     ),
                   ],
@@ -182,38 +197,6 @@ class ApplicationDetails extends StatelessWidget {
     );
   }
 
-  Widget _buildBody(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildPetInfo(context),
-          _buildApplicationData(context),
-        ],
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: _buildAppBar(context),
-      body: _buildBody(context),
-      bottomNavigationBar: ApplicationBottomAppBar(
-        application: application,
-      ),
-    );
-  }
-}
-
-class ApplicationBottomAppBar extends StatelessWidget {
-  const ApplicationBottomAppBar({
-    super.key,
-    required this.application,
-  });
-
-  final Application application;
   _buildDecisionList(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -229,25 +212,58 @@ class ApplicationBottomAppBar extends StatelessWidget {
             ),
           ),
         ),
-        ElevatedButton(
-          onPressed: () => showAlertDialog(
-              context,
-              "zaakceptować",
-              TextSubject.application,
-              (String id) =>
-                  context.read<AdopterService>().acceptApplication(id),
-              application.id),
-          child: const TextWithBasicStyle(text: "Zaakceptuj wniosek"),
-        ),
-        ElevatedButton(
-          onPressed: () => showAlertDialog(
-              context,
-              "odrzucić",
-              TextSubject.application,
-              (String id) =>
-                  context.read<AdopterService>().rejectApplication(id),
-              application.id),
-          child: const TextWithBasicStyle(text: "Odrzuć wniosek"),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ElevatedButton(
+              style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.all(Colors.grey.shade100)),
+              onPressed: () => showAlertDialog(
+                context,
+                "zaakceptować",
+                TextSubject.application,
+                (Application application) {
+                  setState(() {
+                    application.applicationStatus =
+                        ApplicationStatusDTO.Accepted;
+                  });
+                  return context
+                      .read<AdopterService>()
+                      .acceptApplication(application.id);
+                },
+                (Application application) {
+                  application.applicationStatus = ApplicationStatusDTO.Created;
+                },
+                widget.application,
+              ),
+              child: const TextWithBasicStyle(text: "Zaakceptuj wniosek"),
+            ),
+            const SizedBox(
+              width: 16,
+            ),
+            ElevatedButton(
+              onPressed: () => showAlertDialog(
+                context,
+                "odrzucić",
+                TextSubject.application,
+                (Application application) {
+                  setState(() {
+                    application.applicationStatus =
+                        ApplicationStatusDTO.Rejected;
+                  });
+                  return context
+                      .read<AdopterService>()
+                      .rejectApplication(application.id);
+                },
+                (Application application) {
+                  application.applicationStatus = ApplicationStatusDTO.Created;
+                },
+                widget.application,
+              ),
+              child: const TextWithBasicStyle(text: "Odrzuć wniosek"),
+            ),
+          ],
         ),
         TextButton(
           child: const TextWithBasicStyle(
@@ -260,8 +276,7 @@ class ApplicationBottomAppBar extends StatelessWidget {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildApplicationBottomAppBar(BuildContext context) {
     return BottomAppBar(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 4),
@@ -286,12 +301,15 @@ class ApplicationBottomAppBar extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(4.0),
                 child: ElevatedButton(
-                  onPressed: () {
-                    showModalBottomSheet(
-                      context: context,
-                      builder: (context) => _buildDecisionList(context),
-                    );
-                  },
+                  onPressed: widget.application.applicationStatus !=
+                          ApplicationStatusDTO.Created
+                      ? null
+                      : () {
+                          showModalBottomSheet(
+                            context: context,
+                            builder: (context) => _buildDecisionList(context),
+                          );
+                        },
                   child: const Text("Decyzja"),
                 ),
               ),
@@ -299,6 +317,28 @@ class ApplicationBottomAppBar extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildBody(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildPetInfo(context),
+          _buildApplicationData(context),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: _buildAppBar(context),
+      body: _buildBody(context),
+      bottomNavigationBar: _buildApplicationBottomAppBar(context),
     );
   }
 }

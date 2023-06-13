@@ -101,7 +101,9 @@ class _AnnouncementAndPetDetailsState extends State<AnnouncementAndPetDetails>
               (Announcement announcement) => context
                   .read<AnnouncementDetailsCubit>()
                   .deleteAnnouncement(announcement),
-              widget.announcement)
+              (Announcement announcement) {
+            announcement.status = widget.announcement.status;
+          }, widget.announcement)
       },
     );
   }
