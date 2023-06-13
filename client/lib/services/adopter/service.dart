@@ -140,4 +140,60 @@ class AdopterService {
 
     return ServiceResponse(data: null, error: ErrorType.unknown);
   }
+
+  Future<ServiceResponse<bool>> rejectApplication(String applicationId) async {
+    try {
+      var response = await _dio.put(
+        "$_url/applications/$applicationId/reject",
+        options: Options(
+          headers: {
+            "Authorization": _token,
+            "HttpHeaders.contentTypeHeader": "application/json",
+          },
+        ),
+      );
+
+      if (response.statusCode == StatusCode.OK) {
+        return ServiceResponse(data: true);
+      } else {
+        return ServiceResponse(data: false, error: ErrorType.unknown);
+      }
+    } on DioError catch (e) {
+      if (e.response?.statusCode == StatusCode.UNAUTHORIZED) {
+        return ServiceResponse(data: false, error: ErrorType.unauthorized);
+      } else if (e.response?.statusCode == StatusCode.BAD_REQUEST) {
+        return ServiceResponse(data: false, error: ErrorType.badRequest);
+      }
+    }
+
+    return ServiceResponse(data: false, error: ErrorType.unknown);
+  }
+
+  Future<ServiceResponse<bool>> acceptApplication(String applicationId) async {
+    try {
+      var response = await _dio.put(
+        "$_url/applications/$applicationId/accept",
+        options: Options(
+          headers: {
+            "Authorization": _token,
+            "HttpHeaders.contentTypeHeader": "application/json",
+          },
+        ),
+      );
+
+      if (response.statusCode == StatusCode.OK) {
+        return ServiceResponse(data: true);
+      } else {
+        return ServiceResponse(data: false, error: ErrorType.unknown);
+      }
+    } on DioError catch (e) {
+      if (e.response?.statusCode == StatusCode.UNAUTHORIZED) {
+        return ServiceResponse(data: false, error: ErrorType.unauthorized);
+      } else if (e.response?.statusCode == StatusCode.BAD_REQUEST) {
+        return ServiceResponse(data: false, error: ErrorType.badRequest);
+      }
+    }
+
+    return ServiceResponse(data: false, error: ErrorType.unknown);
+  }
 }

@@ -29,6 +29,18 @@ extension AdopterAPIMock on Dio {
       );
     }, data: Matchers.any);
 
+    dioAdapter
+        .onPut("$url/applications/cb849fa2-1033-4d6b-7c88-08db36d6f10f/reject",
+            (request) {
+      request.reply(StatusCode.OK, true);
+    });
+
+    dioAdapter
+        .onPut("$url/applications/cb849fa2-1033-4d6b-7c88-08db36d6f10f/accept",
+            (request) {
+      request.reply(StatusCode.OK, true);
+    });
+
     return dio;
   }
 }

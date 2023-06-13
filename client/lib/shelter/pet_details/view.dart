@@ -5,10 +5,12 @@ import 'package:pet_share/announcements/details/view.dart';
 import 'package:pet_share/announcements/models/pet.dart';
 import 'package:pet_share/applications/application.dart';
 import 'package:pet_share/applications/details/view.dart';
+import 'package:pet_share/common_widgets/custom_text_field.dart';
 import 'package:pet_share/common_widgets/header_data_list/view.dart';
 import 'package:pet_share/common_widgets/interest_to_color.dart';
 import 'package:pet_share/shelter/pet_details/cubit.dart';
 import 'package:pet_share/shelter/pet_details/view_model.dart';
+import 'package:pet_share/utils/datetime_format.dart';
 
 class PetDetails extends StatefulWidget {
   const PetDetails(
@@ -108,7 +110,21 @@ class _PetDetailsState extends State<PetDetails> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [Icon(Icons.person)]),
           title: Text(applications[index].adopter.userName),
-          subtitle: Text("Data: ${applications[index].creationDate}"),
+          subtitle: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              CustomTextField(
+                firstText: "Status: ",
+                secondText: applicationStatusToString(
+                    applications[index].applicationStatus),
+                secondTextColor: applicationStatusToColor(
+                    applications[index].applicationStatus),
+                paddingSize: 0,
+              ),
+              const Spacer(),
+              Text(applications[index].creationDate.formatDay()),
+            ],
+          ),
           trailing: const Icon(Icons.arrow_forward_ios),
         );
       }),

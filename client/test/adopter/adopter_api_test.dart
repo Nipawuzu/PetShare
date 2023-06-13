@@ -34,5 +34,17 @@ void main() {
       var res = await service.sendAdopter(newAdopter);
       assert(res.data.isNotEmpty);
     });
+
+    test('Reject application', () async {
+      var res = await service
+          .rejectApplication("cb849fa2-1033-4d6b-7c88-08db36d6f10f");
+      assert(res.data);
+    });
+
+    test('Accept application', () async {
+      var res = await service
+          .acceptApplication("cb849fa2-1033-4d6b-7c88-08db36d6f10f");
+      assert(res.data);
+    });
   });
 }

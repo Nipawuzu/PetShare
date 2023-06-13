@@ -1,27 +1,28 @@
 import 'package:flutter/material.dart';
 
 class CustomTextField extends StatelessWidget {
-  const CustomTextField({
-    super.key,
-    required this.firstText,
-    required this.secondText,
-    this.isFirstTextInBold = false,
-    this.firstTextColor = Colors.black,
-    this.secondTextColor = Colors.black,
-    this.textScaleFactor = 1.0,
-    this.textAlign,
-  });
+  const CustomTextField(
+      {super.key,
+      required this.firstText,
+      required this.secondText,
+      this.isFirstTextInBold = false,
+      this.firstTextColor = Colors.black,
+      this.secondTextColor = Colors.black,
+      this.textScaleFactor = 1.0,
+      this.textAlign,
+      this.paddingSize = 4.0});
   final String firstText, secondText;
   final bool isFirstTextInBold;
   final Color firstTextColor;
   final Color secondTextColor;
   final double textScaleFactor;
   final TextAlign? textAlign;
+  final double paddingSize;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(4.0),
+      padding: EdgeInsets.all(paddingSize),
       child: Text.rich(
         TextSpan(
             text: firstText,
