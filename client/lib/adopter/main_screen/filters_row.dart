@@ -7,14 +7,22 @@ import 'package:pet_share/adopter/main_screen/filters_view.dart';
 import 'package:pet_share/common_widgets/pick_button.dart';
 
 class FiltersRow extends StatefulWidget {
-  const FiltersRow({super.key});
+  const FiltersRow({super.key, required this.filters});
+
+  final AnnouncementFilters filters;
 
   @override
   State<FiltersRow> createState() => _FiltersRowState();
 }
 
 class _FiltersRowState extends State<FiltersRow> {
-  final AnnouncementFilters _filters = AnnouncementFilters();
+  late AnnouncementFilters _filters;
+
+  @override
+  void initState() {
+    super.initState();
+    _filters = widget.filters;
+  }
 
   Widget _buildCatFilterCategory(BuildContext context) {
     return FilteringCategory(
@@ -31,7 +39,9 @@ class _FiltersRowState extends State<FiltersRow> {
         context.read<MainAdopterViewCubit>().useFilters(_filters);
       },
       category: "Koty",
-      image: Image.asset("images/cat_filter.png"),
+      image: Image.asset(
+        "images/cat_filter.png",
+      ),
     );
   }
 
@@ -92,14 +102,19 @@ class _FiltersRowState extends State<FiltersRow> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        _buildCatFilterCategory(context),
-        _buildDogFilterCategory(context),
-        _buildOtherPetsFilterCategory(context),
-        PickButton(
-          imageScale: 0.5,
-          onPressed: _showFiltersInBottomSheet,
-          color: Colors.grey.shade200,
-          image: Image.asset("images/filter.png"),
+        Expanded(child: _buildCatFilterCategory(context)),
+        const SizedBox(width: 8),
+        Expanded(child: _buildDogFilterCategory(context)),
+        const SizedBox(width: 8),
+        Expanded(child: _buildOtherPetsFilterCategory(context)),
+        const SizedBox(width: 8),
+        Expanded(
+          child: PickButton(
+            imageScale: 0.5,
+            onPressed: _showFiltersInBottomSheet,
+            color: Colors.grey.shade200,
+            image: Image.asset("images/filter.png"),
+          ),
         ),
       ],
     );

@@ -5,13 +5,11 @@ class FilteringCategory extends StatelessWidget {
   const FilteringCategory(
       {super.key,
       this.category,
-      this.size,
       required this.image,
       this.onPressed,
       this.picked = false});
 
   final String? category;
-  final double? size;
   final bool picked;
   final Function()? onPressed;
   final Widget image;

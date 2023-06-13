@@ -99,7 +99,8 @@ class _ApplicationDetailsState extends State<ApplicationDetails> {
                         "Status: ${applicationStatusToString(widget.application.applicationStatus)}",
                       ),
                       backgroundColor: applicationStatusToColor(
-                          widget.application.applicationStatus),
+                              widget.application.applicationStatus)
+                          .shade200,
                     ),
                     ActionChip(
                       onPressed: () => Navigator.of(context).push(

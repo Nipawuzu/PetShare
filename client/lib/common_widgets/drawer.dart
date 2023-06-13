@@ -5,7 +5,7 @@ import 'package:pet_share/login_register/cubit.dart';
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
 
-  Future<bool> showSignOutDialog(BuildContext context) async {
+  Future<bool?> showSignOutDialog(BuildContext context) async {
     return await showDialog(
       context: context,
       builder: (context) {
@@ -62,7 +62,7 @@ class AppDrawer extends StatelessWidget {
                       IconButton(
                         onPressed: () async {
                           await showSignOutDialog(context).then((value) {
-                            if (value) {
+                            if (value != null && value) {
                               context.read<AuthCubit>().signOut();
                             }
                           });

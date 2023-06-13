@@ -9,7 +9,7 @@ class MainAdopterViewCubit extends HeaderDataListCubit<dynamic, Announcement> {
   final AnnouncementService _service;
   static const int _pageSize = 20;
   int _currentPage = 0;
-  AnnouncementFilters? filters;
+  AnnouncementFilters filters = AnnouncementFilters();
 
   MainAdopterViewCubit(this._service);
 
@@ -24,11 +24,14 @@ class MainAdopterViewCubit extends HeaderDataListCubit<dynamic, Announcement> {
     }
 
     _announcements = response.data!;
-    if (filters != null && filters!.withoutCatsAndDogs) {
+    if (filters.withoutCatsAndDogs) {
+      var keepCats = filters.species.contains("kot");
+      var keepDogs = filters.species.contains("pies");
+
       _announcements = _announcements
           .where((element) =>
-              element.pet.species.toLowerCase() != "kot" &&
-              element.pet.species.toLowerCase() != "pies")
+              (element.pet.species.toLowerCase() != "kot" || keepCats) &&
+              (element.pet.species.toLowerCase() != "pies" || keepDogs))
           .toList();
     }
 
@@ -54,7 +57,8 @@ class MainAdopterViewCubit extends HeaderDataListCubit<dynamic, Announcement> {
   }
 
   Future useFilters(AnnouncementFilters filters) {
+    emit(LoadingState());
     this.filters = filters;
-    return loadData();
+    return reloadData();
   }
 }

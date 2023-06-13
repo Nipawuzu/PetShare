@@ -43,16 +43,19 @@ class _AdopterMainScreenState extends State<AdopterMainScreen>
   }
 
   Widget _buildWelcomeText(BuildContext context) {
-    return RichText(
-      text: TextSpan(
-        text: "Cześć!\n",
-        style: Theme.of(context).primaryTextTheme.headlineMedium,
-        children: [
-          TextSpan(
-            text: "Zobacz, jakie zwierzaki czekają na ciebie!",
-            style: Theme.of(context).primaryTextTheme.bodyMedium,
-          ),
-        ],
+    return FittedBox(
+      fit: BoxFit.fitWidth,
+      child: RichText(
+        text: TextSpan(
+          text: "Cześć!\n",
+          style: Theme.of(context).primaryTextTheme.headlineMedium,
+          children: [
+            TextSpan(
+              text: "Zobacz, jakie zwierzaki\nczekają na ciebie!",
+              style: Theme.of(context).primaryTextTheme.bodyMedium,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -82,7 +85,10 @@ class _AdopterMainScreenState extends State<AdopterMainScreen>
               ],
             ),
           ),
-          const Expanded(child: FiltersRow())
+          const SizedBox(height: 8),
+          Expanded(
+              child: FiltersRow(
+                  filters: context.read<MainAdopterViewCubit>().filters))
         ],
       ),
     );
