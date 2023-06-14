@@ -37,10 +37,8 @@ app.UseHttpsRedirection();
 
 app.MapGet("/announcements", AnnouncementsEndpoints.GetWithFilters)
 .WithOpenApi()
-.RequireAuthorization("Auth")
 .WithSummary("Gets all announcements filtered with query parameters")
-.Produces(200, typeof(GetAnnouncementsReponse))
-.Produces(401);
+.Produces(200, typeof(GetAnnouncementsReponse));
 
 app.MapGet("/announcements/{announcementId}", AnnouncementsEndpoints.GetById)
 .WithOpenApi()
