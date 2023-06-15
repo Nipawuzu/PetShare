@@ -46,7 +46,7 @@ String applicationStatusToString(ApplicationStatusDTO status) {
   }
 }
 
-Color applicationStatusToColor(ApplicationStatusDTO status) {
+MaterialColor applicationStatusToColor(ApplicationStatusDTO status) {
   switch (status) {
     case ApplicationStatusDTO.Created:
       return Colors.purple;

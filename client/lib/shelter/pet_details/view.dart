@@ -26,8 +26,12 @@ class PetDetails extends StatefulWidget {
 class _PetDetailsState extends State<PetDetails> {
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
+      iconTheme: const IconThemeData(color: Colors.white),
       backgroundColor: Colors.transparent,
-      title: Text(widget.pet.name),
+      title: Text(
+        widget.pet.name,
+        style: const TextStyle(color: Colors.white),
+      ),
     );
   }
 
@@ -99,12 +103,14 @@ class _PetDetailsState extends State<PetDetails> {
       delegate: SliverChildBuilderDelegate(childCount: applications.length,
           (context, index) {
         return ListTile(
-          onTap: () {
-            Navigator.of(context).push(
+          onTap: () async {
+            await Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) => ApplicationDetails(applications[index]),
               ),
             );
+
+            setState(() {});
           },
           leading: const Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -118,11 +124,14 @@ class _PetDetailsState extends State<PetDetails> {
                 secondText: applicationStatusToString(
                     applications[index].applicationStatus),
                 secondTextColor: applicationStatusToColor(
-                    applications[index].applicationStatus),
+                        applications[index].applicationStatus)
+                    .shade700,
                 paddingSize: 0,
+                textScaleFactor: 0.85,
               ),
               const Spacer(),
               Text(applications[index].creationDate.formatDay()),
+              const SizedBox(width: 8.0)
             ],
           ),
           trailing: const Icon(Icons.arrow_forward_ios),

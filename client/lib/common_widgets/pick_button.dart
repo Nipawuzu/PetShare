@@ -4,14 +4,12 @@ class PickButton extends StatelessWidget {
   const PickButton(
       {super.key,
       this.category,
-      this.size,
       this.color,
       this.onPressed,
       this.imageScale,
       required this.image});
 
   final String? category;
-  final double? size;
   final Color? color;
   final double? imageScale;
   final void Function()? onPressed;
@@ -20,6 +18,7 @@ class PickButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RawMaterialButton(
+        constraints: const BoxConstraints.expand(),
         onPressed: onPressed,
         elevation: 2.0,
         fillColor: color,

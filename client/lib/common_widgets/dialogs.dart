@@ -34,19 +34,16 @@ void showAlertDialog<T>(
   showDialog<bool>(
     context: context,
     builder: (BuildContext context) => AlertDialog(
-      content: TextWithBasicStyle(
-        text:
-            "Czy na pewno chcesz $action ten ${getTextSubjectForAlertDialog(subject)}?",
-        textScaleFactor: 1.2,
-        align: TextAlign.center,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
       ),
-      actions: <Widget>[
-        Row(
-          children: [
-            buildAlertButton(context, 'Tak', true),
-            buildAlertButton(context, 'Anuluj', false)
-          ],
-        )
+      contentPadding: const EdgeInsets.all(16.0),
+      title: Text(
+        "Czy na pewno chcesz $action ten ${getTextSubjectForAlertDialog(subject)}?",
+      ),
+      actions: [
+        buildAlertButton(context, 'Anuluj', false),
+        buildAlertButton(context, 'Tak', true),
       ],
     ),
   ).then((value) async => {
@@ -67,13 +64,17 @@ void showAlertDialog<T>(
 }
 
 Widget buildAlertButton(BuildContext context, String text, bool doesDelete) {
-  return Expanded(
-    child: TextButton(
-      onPressed: () => {Navigator.pop(context, doesDelete)},
-      child: TextWithBasicStyle(
-        text: text,
-        textScaleFactor: 1.2,
-      ),
+  return TextButton(
+    style: ButtonStyle(
+      foregroundColor: !doesDelete
+          ? MaterialStateProperty.all<Color>(
+              Colors.grey,
+            )
+          : null,
+    ),
+    onPressed: () => {Navigator.pop(context, doesDelete)},
+    child: Text(
+      text,
     ),
   );
 }

@@ -27,6 +27,15 @@ class _FiltersViewState extends State<FiltersView> {
     return (percentage * _maxAvailableAgeInYears).ceil() * 12;
   }
 
+  int _sliderValueToDays(double value) {
+    var moths = _sliderValueToMonths(value);
+    return moths * 30;
+  }
+
+  double _daysToSliderValue(int days) {
+    return _monthsToSliderValue(days ~/ 30);
+  }
+
   double _monthsToSliderValue(int months) {
     if (months < 12) {
       return months / 12 * _sliderValueMonthBoundary;
@@ -47,33 +56,58 @@ class _FiltersViewState extends State<FiltersView> {
     return "${months ~/ 12} lat";
   }
 
+  Widget _buildAgeError(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: SizedBox(
+          height: 16,
+          child: widget.filters.maxAge != null &&
+                  widget.filters.minAge != null &&
+                  widget.filters.maxAge! < widget.filters.minAge!
+              ? Text(
+                  "Maksymalny wiek nie może być mniejszy niż minimalny",
+                  style: Theme.of(context)
+                      .primaryTextTheme
+                      .labelMedium!
+                      .copyWith(color: Theme.of(context).colorScheme.error),
+                )
+              : null),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ConstrainedBox(
       constraints: const BoxConstraints.expand(),
       child: SingleChildScrollView(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             FilterSlider(
-              initialValue: _monthsToSliderValue(24),
-              value: widget.filters.minAge != null
-                  ? _monthsToSliderValue(widget.filters.minAge!)
-                  : null,
-              label: "Minimalny wiek",
-              labelFormatter: _sliderAgeFormatter,
-              onChanged: (newValue) => widget.filters.minAge =
-                  newValue != null ? _sliderValueToMonths(newValue) : null,
-            ),
+                initialValue: _monthsToSliderValue(24),
+                value: widget.filters.minAge != null
+                    ? _daysToSliderValue(widget.filters.minAge!)
+                    : null,
+                label: "Minimalny wiek",
+                labelFormatter: _sliderAgeFormatter,
+                onChanged: (newValue) => setState(
+                      () => widget.filters.minAge = newValue != null
+                          ? _sliderValueToDays(newValue)
+                          : null,
+                    )),
             FilterSlider(
-              initialValue: _monthsToSliderValue(120),
-              value: widget.filters.maxAge != null
-                  ? _monthsToSliderValue(widget.filters.maxAge!)
-                  : null,
-              label: "Maksymalny wiek",
-              labelFormatter: _sliderAgeFormatter,
-              onChanged: (newValue) => widget.filters.maxAge =
-                  newValue != null ? _sliderValueToMonths(newValue) : null,
-            ),
+                initialValue: _monthsToSliderValue(120),
+                value: widget.filters.maxAge != null
+                    ? _daysToSliderValue(widget.filters.maxAge!)
+                    : null,
+                label: "Maksymalny wiek",
+                labelFormatter: _sliderAgeFormatter,
+                onChanged: (newValue) => setState(
+                      () => widget.filters.maxAge = newValue != null
+                          ? _sliderValueToDays(newValue)
+                          : null,
+                    )),
+            _buildAgeError(context),
             ChipKeyboardInput(
               label: "Gatunek",
               hintText: "Dodaj gatunek",

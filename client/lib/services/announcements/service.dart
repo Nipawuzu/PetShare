@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:http_status_code/http_status_code.dart';
+import 'package:pet_share/adopter/main_screen/announcement_filters.dart';
 import 'package:pet_share/announcements/models/announcement.dart';
 import 'package:pet_share/announcements/models/new_announcement.dart';
 import 'package:pet_share/announcements/models/new_pet.dart';
@@ -138,7 +139,9 @@ class AnnouncementService {
   }
 
   Future<ServiceResponse<List<Announcement>?>> getAnnouncements(
-      {int pageNumber = 0, int pageCount = 10}) async {
+      {int pageNumber = 0,
+      int pageCount = 10,
+      AnnouncementFilters? filters}) async {
     try {
       var response = await _dio.get("$_url/announcements",
           options: Options(
@@ -147,10 +150,11 @@ class AnnouncementService {
               "Authorization": _token
             },
           ),
-          queryParameters: {
-            "pageNumber": pageNumber,
-            "pageCount": pageCount,
-          });
+          queryParameters: createQueryParametersForFilters(
+            pageNumber,
+            pageCount,
+            filters,
+          ));
 
       if (response.statusCode == StatusCode.OK) {
         return ServiceResponse(
@@ -166,6 +170,27 @@ class AnnouncementService {
 
       return ServiceResponse(data: null, error: ErrorType.unknown);
     }
+  }
+
+  Map<String, dynamic> createQueryParametersForFilters(
+      int pageNumber, int pageCount, AnnouncementFilters? filters) {
+    var map = {
+      "pageNumber": pageNumber,
+      "pageCount": pageCount,
+      "species": filters?.species,
+      "breeds": filters?.breeds,
+      "locations": filters?.cities,
+      "shelterNames": filters?.shelters,
+    };
+
+    if (filters != null && filters.minAge != null) {
+      map["minAge"] = filters.minAge;
+    }
+    if (filters != null && filters.maxAge != null) {
+      map["maxAge"] = filters.maxAge;
+    }
+
+    return map;
   }
 
   Future<ServiceResponse<List<Announcement>?>>
