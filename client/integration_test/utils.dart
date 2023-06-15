@@ -47,6 +47,8 @@ class IntegrationTestsHelper {
       await logOutFromMainScreen();
       await logInFromWelcomeScreen(MockShelter());
     }
+
+    await $.pumpAndSettle();
   }
 
   Future goToAdopterMainScreen() async {
@@ -56,6 +58,8 @@ class IntegrationTestsHelper {
       await logOutFromMainScreen();
       await logInFromWelcomeScreen(MockAdopter());
     }
+
+    await $.pumpAndSettle();
   }
 
   Future addNewAnnouncement(String newPetName) async {
