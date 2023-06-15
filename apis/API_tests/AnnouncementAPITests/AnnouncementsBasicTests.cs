@@ -33,7 +33,8 @@ namespace APIs_tests.AnnouncementAPITests
                 new KeyValuePair<string, string?>("minAge", "1"),
                 new KeyValuePair<string, string?>("maxAge", "5"),
                 new KeyValuePair<string, string?>("shelterNames", "Shelter A"),
-                new KeyValuePair<string, string?>("shelterNames", "Shelter B")
+                new KeyValuePair<string, string?>("shelterNames", "Shelter B"),
+                new KeyValuePair<string, string?>("status", AnnouncementStatus.Open.ToString())
             };
 
             var url = QueryHelpers.AddQueryString(Urls.Announcements, queryString);
