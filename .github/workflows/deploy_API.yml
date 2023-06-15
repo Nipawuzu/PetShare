@@ -35,24 +35,24 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '7.0.x'
-      - name: Create file storage json
-        id: file-storage-json
-        uses: jsdaniell/create-json@v1.2.2
-        with:
-          name: "files.json"
-          json: ${{ secrets.files_secrets }}
-          dir: /apis
-      - name: Set up Files secrets
-        run: type files.json | dotnet user-secrets set --project .\FileStorageService\
-      - name: Create adopter json
-        id: adopter-storage-json
-        uses: jsdaniell/create-json@v1.2.2
-        with:
-          name: "adopter.json"
-          json: ${{ secrets.adopter_api_secrets }}
-          dir: /apis
-      - name: Set up Adopter secrets
-        run: type adopter.json | dotnet user-secrets set --project .\AdopterAPI\
+      # - name: Create file storage json
+      #   id: file-storage-json
+      #   uses: jsdaniell/create-json@v1.2.2
+      #   with:
+      #     name: "files.json"
+      #     json: ${{ secrets.files_secrets }}
+      #     dir: /apis
+      # - name: Set up Files secrets
+      #   run: type files.json | dotnet user-secrets set --project .\FileStorageService\
+      # - name: Create adopter json
+      #   id: adopter-storage-json
+      #   uses: jsdaniell/create-json@v1.2.2
+      #   with:
+      #     name: "adopter.json"
+      #     json: ${{ secrets.adopter_api_secrets }}
+      #     dir: /apis
+      # - name: Set up Adopter secrets
+      #   run: type adopter.json | dotnet user-secrets set --project .\AdopterAPI\
       - name: Build with dotnet
         run: dotnet build --configuration Release ${{inputs.project_name}}
       - name: dotnet publish
