@@ -90,24 +90,28 @@ namespace FileStorageLibrary
         public string GetSecretJson()
         {
             var sb = new StringBuilder();
-            sb.AppendLine("{");
-            sb.AppendLine($"\t\"type\": \"{_config[$"{_secretKeyName}:type"]}\",");
-            sb.AppendLine($"\t\"project_id\": \"{_config[$"{_secretKeyName}:project_id"]}\",");
-            sb.AppendLine($"\t\"private_key_id\": \"{_config[$"{_secretKeyName}:private_key_id"]}\",");
+            //sb.AppendLine("{");
+            //sb.AppendLine($"\t\"type\": \"{_config[$"{_secretKeyName}:type"]}\",");
+            //sb.AppendLine($"\t\"project_id\": \"{_config[$"{_secretKeyName}:project_id"]}\",");
+            //sb.AppendLine($"\t\"private_key_id\": \"{_config[$"{_secretKeyName}:private_key_id"]}\",");
             
-            string? key = _config[$"{_secretKeyName}:private_key"];
-            if(key != null)
-                sb.AppendLine($"\t\"private_key\": \"{key.Replace("BEKSLESZEN", "\\n")}\",");
-            else
-                sb.AppendLine($"\t\"private_key\": \"{key}\",");
+            //string? key = _config[$"{_secretKeyName}:private_key"];
+            //if(key != null)
+            //    sb.AppendLine($"\t\"private_key\": \"{key.Replace("BEKSLESZEN", "\\n")}\",");
+            //else
+            //    sb.AppendLine($"\t\"private_key\": \"{key}\",");
 
-            sb.AppendLine($"\t\"client_email\": \"{_config[$"{_secretKeyName}:client_email"]}\",");
-            sb.AppendLine($"\t\"client_id\": \"{_config[$"{_secretKeyName}:client_id"]}\",");
-            sb.AppendLine($"\t\"auth_uri\": \"{_config[$"{_secretKeyName}:auth_uri"]}\",");
-            sb.AppendLine($"\t\"token_uri\": \"{_config[$"{_secretKeyName}:token_uri"]}\",");
-            sb.AppendLine($"\t\"auth_provider_x509_cert_url\": \"{_config[$"{_secretKeyName}:auth_provider_x509_cert_url"]}\",");
-            sb.AppendLine($"\t\"client_x509_cert_url\": \"{_config[$"{_secretKeyName}:client_x509_cert_url"]}\"");
-            sb.AppendLine("}");
+            //sb.AppendLine($"\t\"client_email\": \"{_config[$"{_secretKeyName}:client_email"]}\",");
+            //sb.AppendLine($"\t\"client_id\": \"{_config[$"{_secretKeyName}:client_id"]}\",");
+            //sb.AppendLine($"\t\"auth_uri\": \"{_config[$"{_secretKeyName}:auth_uri"]}\",");
+            //sb.AppendLine($"\t\"token_uri\": \"{_config[$"{_secretKeyName}:token_uri"]}\",");
+            //sb.AppendLine($"\t\"auth_provider_x509_cert_url\": \"{_config[$"{_secretKeyName}:auth_provider_x509_cert_url"]}\",");
+            //sb.AppendLine($"\t\"client_x509_cert_url\": \"{_config[$"{_secretKeyName}:client_x509_cert_url"]}\"");
+            //sb.AppendLine("}");
+            foreach(var val in _config.AsEnumerable())
+            {
+                sb.AppendLine(val.Key+ "=" + val.Value);
+            }
             return sb.ToString();
         }
     }
