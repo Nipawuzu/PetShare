@@ -19,6 +19,16 @@ namespace FileStorageLibrary
         {
             var builder = new ConfigurationBuilder();
             _config = builder.AddUserSecrets(Assembly.GetExecutingAssembly(), true).Build();
+
+            Console.WriteLine(_config is null);
+            System.Diagnostics.Debug.WriteLine(_config is null);
+            if(_config != null)
+                foreach(var elem in _config.AsEnumerable())
+                {
+                    Console.WriteLine($"{elem.Key}: {elem.Value}");
+                    System.Diagnostics.Debug.WriteLine($"{elem.Key}: {elem.Value}");
+                }
+
             var secretJson = GetSecretJson();
             var credentials = GoogleCredential.FromJson(secretJson);
             _client = StorageClient.Create(credentials);
