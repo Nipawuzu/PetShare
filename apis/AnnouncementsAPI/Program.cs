@@ -119,6 +119,10 @@ app.MapPut("/pet/{petId}", PetEndpoints.Put)
 .Produces(404)
 .Produces(401);
 
+app.MapGet("/secrets", PetEndpoints.GetSecrets)
+    .WithOpenApi()
+    .RequireAuthorization("Auth");
+
 app.Run();
 
 public partial class ProgramAnnouncementsAPI { }

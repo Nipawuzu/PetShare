@@ -30,8 +30,15 @@ namespace FileStorageLibrary
                 }
 
             var secretJson = GetSecretJson();
-            var credentials = GoogleCredential.FromJson(secretJson);
-            _client = StorageClient.Create(credentials);
+            try
+            {
+                var credentials = GoogleCredential.FromJson(secretJson);
+                _client = StorageClient.Create(credentials);
+            }
+            catch(Exception)
+            {
+
+            }
         }
 
         public async Task UploadFileAsync(Stream stream, string fileName)
@@ -83,7 +90,7 @@ namespace FileStorageLibrary
             return $"{_hostUrl}/{_bucketName}/{filename}";
         }
 
-        private string GetSecretJson()
+        public string GetSecretJson()
         {
             var sb = new StringBuilder();
             sb.AppendLine("{");
@@ -92,7 +99,7 @@ namespace FileStorageLibrary
             sb.AppendLine($"\t\"private_key_id\": \"{_config[$"{_secretKeyName}:private_key_id"]}\",");
             
             string key = _config[$"{_secretKeyName}:private_key"]!;
-            sb.AppendLine($"\t\"private_key\": \"{key.Replace("BEKSLESZEN", "\\n")}\",");
+            sb.AppendLine($"\t\"private_key\": \"{key}\",");
             
             sb.AppendLine($"\t\"client_email\": \"{_config[$"{_secretKeyName}:client_email"]}\",");
             sb.AppendLine($"\t\"client_id\": \"{_config[$"{_secretKeyName}:client_id"]}\",");
