@@ -86,7 +86,10 @@ namespace FileStorageLibrary
             sb.AppendLine($"\t\"type\": \"{_config[$"{_secretKeyName}:type"]}\",");
             sb.AppendLine($"\t\"project_id\": \"{_config[$"{_secretKeyName}:project_id"]}\",");
             sb.AppendLine($"\t\"private_key_id\": \"{_config[$"{_secretKeyName}:private_key_id"]}\",");
-            sb.AppendLine($"\t\"private_key\": \"{_config[$"{_secretKeyName}:private_key"]}\",");
+
+            string key = _config[$"{_secretKeyName}:private_key"]!;
+            sb.AppendLine($"\t\"private_key\": \"{key.Replace("BEKSLESZEN", "\n")}\",");
+
             sb.AppendLine($"\t\"client_email\": \"{_config[$"{_secretKeyName}:client_email"]}\",");
             sb.AppendLine($"\t\"client_id\": \"{_config[$"{_secretKeyName}:client_id"]}\",");
             sb.AppendLine($"\t\"auth_uri\": \"{_config[$"{_secretKeyName}:auth_uri"]}\",");
