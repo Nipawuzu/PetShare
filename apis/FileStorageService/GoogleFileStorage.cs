@@ -11,18 +11,14 @@ namespace FileStorageLibrary
         private const string _secretKeyName = "GoogleCloud:Secret";
         private const string _hostUrl = "https://storage.googleapis.com";
         private const string _bucketName = "petshare-6fe6e.appspot.com";
-        private static IConfiguration _config;
 
+        private IConfiguration _config;
         private readonly StorageClient _client;
-
-        static GoogleFileStorage()
-        {
-            var builder = new ConfigurationBuilder();
-            _config = builder.AddUserSecrets(Assembly.GetExecutingAssembly(), true).Build();
-        }
 
         public GoogleFileStorage()
         {
+            var builder = new ConfigurationBuilder();
+            _config = builder.AddUserSecrets(Assembly.GetExecutingAssembly(), true).Build();
             var secretJson = GetSecretJson();
             var credentials = GoogleCredential.FromJson(secretJson);
             _client = StorageClient.Create(credentials);
@@ -77,7 +73,7 @@ namespace FileStorageLibrary
             return $"{_hostUrl}/{_bucketName}/{filename}";
         }
 
-        private static string GetSecretJson()
+        private string GetSecretJson()
         {
             var sb = new StringBuilder();
             sb.AppendLine("{");
