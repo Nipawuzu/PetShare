@@ -9,9 +9,8 @@ namespace FileStorageLibrary
     public class GoogleFileStorage : IStorage
     {
         private const string _secretKeyName = "GoogleCloud:Secret";
-        private const string _bucketKeyName = "GoogleCloud:BucketName";
         private const string _hostUrl = "https://storage.googleapis.com";
-        private static readonly string _bucketName;
+        private const string _bucketName = "petshare-6fe6e.appspot.com";
         private static IConfiguration _config;
 
         private readonly StorageClient _client;
@@ -20,7 +19,6 @@ namespace FileStorageLibrary
         {
             var builder = new ConfigurationBuilder();
             _config = builder.AddUserSecrets(Assembly.GetExecutingAssembly(), true).Build();
-            _bucketName = _config[_bucketKeyName]!;
         }
 
         public GoogleFileStorage()
