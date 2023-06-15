@@ -30,8 +30,12 @@ namespace FileStorageLibrary
                 }
 
             var secretJson = GetSecretJson();
-            var credentials = GoogleCredential.FromJson(secretJson);
-            _client = StorageClient.Create(credentials);
+            try
+            {
+                var credentials = GoogleCredential.FromJson(secretJson);
+                _client = StorageClient.Create(credentials);
+            }
+            catch(Exception) { }
         }
 
         public async Task UploadFileAsync(Stream stream, string fileName)
