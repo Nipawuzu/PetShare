@@ -96,10 +96,5 @@ namespace AnnouncementsAPI.Endpoints
             await storage.UploadFileAsync(file.OpenReadStream(), petId.ToString());
             return Results.Ok();
         }
-
-        public static async Task<IResult> GetSecrets(IStorage storage)
-        {
-            return Results.Ok(storage.GetSecretJson());
-        }
     }
 }
