@@ -15,6 +15,17 @@ jobs:
     with:
       project_name: ShelterAPI
       dev_deploy: true
+      google_cloud_bucket_name: ${{ secrets.GOOGLE_CLOUD_BUCKET_NAME }}
+      google_cloud_secret_type: ${{ secrets.GOOGLE_CLOUD_SECRET_TYPE }}
+      google_cloud_secret_project_id: ${{ secrets.GOOGLE_CLOUD_SECRET_PROJECT_ID }}
+      google_cloud_secret_private_key_id: ${{ secrets.GOOGLE_CLOUD_SECRET_PRIVATE_KEY_ID }}
+      google_cloud_secret_private_key: ${{ secrets.GOOGLE_CLOUD_SECRET_PRIVATE_KEY }}
+      google_cloud_secret_client_email: ${{ secrets.GOOGLE_CLOUD_SECRET_CLIENT_EMAIL }}
+      google_cloud_secret_client_id: ${{ secrets.GOOGLE_CLOUD_SECRET_CLIENT_ID }}
+      google_cloud_secret_auth_uri: ${{ secrets.GOOGLE_CLOUD_SECRET_AUTH_URI }}
+      google_cloud_secret_token_uri: ${{ secrets.GOOGLE_CLOUD_SECRET_TOKEN_URI }}
+      google_cloud_secret_auth_provider_x509_cert_url: ${{ secrets.GOOGLE_CLOUD_SECRET_AUTH_PROVIDER_X509_CERT_URL }}
+      google_cloud_secret_client_x509_cert_url: ${{ secrets.GOOGLE_CLOUD_SECRET_CLIENT_X509_CERT_URL }}
     secrets:
       azure_app_service_publish_profile: ${{ secrets.PUBLISH_PROFILE_SHELTER_API_DEV }}
   
@@ -23,6 +34,17 @@ jobs:
     with:
       project_name: AnnouncementsAPI
       dev_deploy: true
+      google_cloud_bucket_name: ${{ secrets.GOOGLE_CLOUD_BUCKET_NAME }}
+      google_cloud_secret_type: ${{ secrets.GOOGLE_CLOUD_SECRET_TYPE }}
+      google_cloud_secret_project_id: ${{ secrets.GOOGLE_CLOUD_SECRET_PROJECT_ID }}
+      google_cloud_secret_private_key_id: ${{ secrets.GOOGLE_CLOUD_SECRET_PRIVATE_KEY_ID }}
+      google_cloud_secret_private_key: ${{ secrets.GOOGLE_CLOUD_SECRET_PRIVATE_KEY }}
+      google_cloud_secret_client_email: ${{ secrets.GOOGLE_CLOUD_SECRET_CLIENT_EMAIL }}
+      google_cloud_secret_client_id: ${{ secrets.GOOGLE_CLOUD_SECRET_CLIENT_ID }}
+      google_cloud_secret_auth_uri: ${{ secrets.GOOGLE_CLOUD_SECRET_AUTH_URI }}
+      google_cloud_secret_token_uri: ${{ secrets.GOOGLE_CLOUD_SECRET_TOKEN_URI }}
+      google_cloud_secret_auth_provider_x509_cert_url: ${{ secrets.GOOGLE_CLOUD_SECRET_AUTH_PROVIDER_X509_CERT_URL }}
+      google_cloud_secret_client_x509_cert_url: ${{ secrets.GOOGLE_CLOUD_SECRET_CLIENT_X509_CERT_URL }}
     secrets:
       azure_app_service_publish_profile: ${{ secrets.PUBLISH_PROFILE_ANNOUNCEMENT_API_DEV }}
   
@@ -31,5 +53,16 @@ jobs:
     with:
       project_name: AdopterAPI
       dev_deploy: true
+      google_cloud_bucket_name: ${{ secrets.GOOGLE_CLOUD_BUCKET_NAME }}
+      google_cloud_secret_type: ${{ secrets.GOOGLE_CLOUD_SECRET_TYPE }}
+      google_cloud_secret_project_id: ${{ secrets.GOOGLE_CLOUD_SECRET_PROJECT_ID }}
+      google_cloud_secret_private_key_id: ${{ secrets.GOOGLE_CLOUD_SECRET_PRIVATE_KEY_ID }}
+      google_cloud_secret_private_key: ${{ secrets.GOOGLE_CLOUD_SECRET_PRIVATE_KEY }}
+      google_cloud_secret_client_email: ${{ secrets.GOOGLE_CLOUD_SECRET_CLIENT_EMAIL }}
+      google_cloud_secret_client_id: ${{ secrets.GOOGLE_CLOUD_SECRET_CLIENT_ID }}
+      google_cloud_secret_auth_uri: ${{ secrets.GOOGLE_CLOUD_SECRET_AUTH_URI }}
+      google_cloud_secret_token_uri: ${{ secrets.GOOGLE_CLOUD_SECRET_TOKEN_URI }}
+      google_cloud_secret_auth_provider_x509_cert_url: ${{ secrets.GOOGLE_CLOUD_SECRET_AUTH_PROVIDER_X509_CERT_URL }}
+      google_cloud_secret_client_x509_cert_url: ${{ secrets.GOOGLE_CLOUD_SECRET_CLIENT_X509_CERT_URL }}
     secrets:
       azure_app_service_publish_profile: ${{ secrets.PUBLISH_PROFILE_ADOPTER_API_DEV }}

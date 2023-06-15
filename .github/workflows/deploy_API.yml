@@ -13,6 +13,50 @@ on:
         required: false
         type: boolean
         default: false
+      google_cloud_bucket_name:
+        type: string
+        description: Name of a Google Cloud bucket name. It is needed for file storage.
+        required: true
+      google_cloud_secret_type:
+        type: string
+        description: Google Cloud secret needed for file storage.
+        required: true
+      google_cloud_secret_project_id:
+        type: string
+        description: Google Cloud secret needed for file storage.
+        required: true
+      google_cloud_secret_private_key_id:
+        type: string
+        description: Google Cloud secret needed for file storage.
+        required: true
+      google_cloud_secret_private_key:
+        type: string
+        description: Google Cloud secret needed for file storage.
+        required: true
+      google_cloud_secret_client_email:
+        type: string
+        description: Google Cloud secret needed for file storage.
+        required: true
+      google_cloud_secret_client_id:
+        type: string
+        description: Google Cloud secret needed for file storage.
+        required: true
+      google_cloud_secret_auth_uri:
+        type: string
+        description: Google Cloud secret needed for file storage.
+        required: true
+      google_cloud_secret_token_uri:
+        type: string
+        description: Google Cloud secret needed for file storage.
+        required: true
+      google_cloud_secret_auth_provider_x509_cert_url:
+        type: string
+        description: Google Cloud secret needed for file storage.
+        required: true
+      google_cloud_secret_client_x509_cert_url:
+        type: string
+        description: Google Cloud secret needed for file storage.
+        required: true
     secrets:
       azure_app_service_publish_profile:
         required: true
@@ -34,17 +78,17 @@ jobs:
       - name: Secrets set up
         uses: ./.github/actions/set_up_apis_secrets
         with:
-          google_cloud_bucket_name: ${{ secrets.GOOGLE_CLOUD_BUCKET_NAME }}
-          google_cloud_secret_type: ${{ secrets.GOOGLE_CLOUD_SECRET_TYPE }}
-          google_cloud_secret_project_id: ${{ secrets.GOOGLE_CLOUD_SECRET_PROJECT_ID }}
-          google_cloud_secret_private_key_id: ${{ secrets.GOOGLE_CLOUD_SECRET_PRIVATE_KEY_ID }}
-          google_cloud_secret_private_key: ${{ secrets.GOOGLE_CLOUD_SECRET_PRIVATE_KEY }}
-          google_cloud_secret_client_email: ${{ secrets.GOOGLE_CLOUD_SECRET_CLIENT_EMAIL }}
-          google_cloud_secret_client_id: ${{ secrets.GOOGLE_CLOUD_SECRET_CLIENT_ID }}
-          google_cloud_secret_auth_uri: ${{ secrets.GOOGLE_CLOUD_SECRET_AUTH_URI }}
-          google_cloud_secret_token_uri: ${{ secrets.GOOGLE_CLOUD_SECRET_TOKEN_URI }}
-          google_cloud_secret_auth_provider_x509_cert_url: ${{ secrets.GOOGLE_CLOUD_SECRET_AUTH_PROVIDER_X509_CERT_URL }}
-          google_cloud_secret_client_x509_cert_url: ${{ secrets.GOOGLE_CLOUD_SECRET_CLIENT_X509_CERT_URL }}
+          google_cloud_bucket_name: ${{ google_cloud_bucket_name }}
+          google_cloud_secret_type: ${{ google_cloud_secret_type }}
+          google_cloud_secret_project_id: ${{ google_cloud_secret_project_id }}
+          google_cloud_secret_private_key_id: ${{ google_cloud_secret_private_key_id }}
+          google_cloud_secret_private_key: ${{ google_cloud_secret_private_key }}
+          google_cloud_secret_client_email: ${{ google_cloud_secret_client_email }}
+          google_cloud_secret_client_id: ${{ google_cloud_secret_client_id }}
+          google_cloud_secret_auth_uri: ${{ google_cloud_secret_auth_uri }}
+          google_cloud_secret_token_uri: ${{ google_cloud_secret_token_uri }}
+          google_cloud_secret_auth_provider_x509_cert_url: ${{ google_cloud_secret_auth_provider_x509_cert_url }}
+          google_cloud_secret_client_x509_cert_url: ${{ google_cloud_secret_client_x509_cert_url }}
       - name: Build with dotnet
         run: dotnet build --configuration Release ${{inputs.project_name}}
       - name: dotnet publish
