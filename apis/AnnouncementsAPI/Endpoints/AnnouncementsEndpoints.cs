@@ -24,6 +24,7 @@ namespace AnnouncementsAPI.Endpoints
             int? maxAge,
             string[]? shelterNames,
             bool? isLiked,
+            AnnouncementStatus? status,
             HttpContext httpContext)
         {
             var isAdopter = false;
@@ -53,6 +54,9 @@ namespace AnnouncementsAPI.Endpoints
 
             if (shelterNames != null && shelterNames.Any())
                 announcements = announcements.Where(a => shelterNames.Contains(a.Pet.Shelter.FullShelterName));
+
+            if (status != null)
+                announcements = announcements.Where(a => a.Status == status);
 
             if (isAdopter && isLiked.HasValue)
             {

@@ -181,6 +181,7 @@ class AnnouncementService {
       "breeds": filters?.breeds,
       "locations": filters?.cities,
       "shelterNames": filters?.shelters,
+      "status": AnnouncementStatus.Open.name,
     };
 
     if (filters != null && filters.minAge != null) {

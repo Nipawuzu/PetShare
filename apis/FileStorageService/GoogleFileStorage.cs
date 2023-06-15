@@ -9,9 +9,8 @@ namespace FileStorageLibrary
     public class GoogleFileStorage : IStorage
     {
         private const string _secretKeyName = "GoogleCloud:Secret";
-        private const string _bucketKeyName = "GoogleCloud:BucketName";
         private const string _hostUrl = "https://storage.googleapis.com";
-        private static readonly string _bucketName;
+        private const string _bucketName = "petshare-6fe6e.appspot.com";
         private static IConfiguration _config;
 
         private readonly StorageClient _client;
@@ -20,7 +19,6 @@ namespace FileStorageLibrary
         {
             var builder = new ConfigurationBuilder();
             _config = builder.AddUserSecrets(Assembly.GetExecutingAssembly(), true).Build();
-            _bucketName = _config[_bucketKeyName]!;
         }
 
         public GoogleFileStorage()
@@ -86,10 +84,10 @@ namespace FileStorageLibrary
             sb.AppendLine($"\t\"type\": \"{_config[$"{_secretKeyName}:type"]}\",");
             sb.AppendLine($"\t\"project_id\": \"{_config[$"{_secretKeyName}:project_id"]}\",");
             sb.AppendLine($"\t\"private_key_id\": \"{_config[$"{_secretKeyName}:private_key_id"]}\",");
-
+            
             string key = _config[$"{_secretKeyName}:private_key"]!;
             sb.AppendLine($"\t\"private_key\": \"{key.Replace("BEKSLESZEN", "\n")}\",");
-
+            
             sb.AppendLine($"\t\"client_email\": \"{_config[$"{_secretKeyName}:client_email"]}\",");
             sb.AppendLine($"\t\"client_id\": \"{_config[$"{_secretKeyName}:client_id"]}\",");
             sb.AppendLine($"\t\"auth_uri\": \"{_config[$"{_secretKeyName}:auth_uri"]}\",");
