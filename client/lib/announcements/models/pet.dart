@@ -2,6 +2,7 @@
 
 import 'package:json_annotation/json_annotation.dart';
 import 'package:pet_share/shelter.dart';
+import 'package:pet_share/utils/sex_converter.dart';
 
 part 'pet.g.dart';
 

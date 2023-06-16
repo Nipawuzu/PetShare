@@ -19,3 +19,40 @@ class AnnouncementStatusConverter
     return object.index;
   }
 }
+
+class AnnouncementStatusConverterToString
+    implements JsonConverter<AnnouncementStatus, String> {
+  const AnnouncementStatusConverterToString();
+
+  @override
+  AnnouncementStatus fromJson(String str) {
+    switch (str.toLowerCase()) {
+      case "open":
+        return AnnouncementStatus.Open;
+      case "closed":
+        return AnnouncementStatus.Closed;
+      case "deleted":
+        return AnnouncementStatus.Deleted;
+      default:
+        return AnnouncementStatus.Open;
+    }
+  }
+
+  @override
+  String toJson(AnnouncementStatus? object) {
+    if (object == null) {
+      return "Open";
+    }
+
+    switch (object) {
+      case AnnouncementStatus.Closed:
+        return "Closed";
+      case AnnouncementStatus.Deleted:
+        return "Deleted";
+      case AnnouncementStatus.Open:
+        return "Open";
+      default:
+        return "Open";
+    }
+  }
+}

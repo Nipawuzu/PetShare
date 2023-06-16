@@ -6,16 +6,19 @@ part of 'announcement.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-Announcement _$AnnouncementFromJson(Map<String, dynamic> json) => Announcement(
-      pet: Pet.fromJson(json['pet'] as Map<String, dynamic>),
-      title: json['title'] as String,
-      description: json['description'] as String,
-      status:
-          $enumDecodeNullable(_$AnnouncementStatusEnumMap, json['status']) ??
-              AnnouncementStatus.Open,
-    )
-      ..isLiked = json['isLiked'] as bool?
-      ..id = json['id'] as String?;
+Announcement _$AnnouncementFromJson(Map<String, dynamic> json) {
+  AnnouncementStatusConverterToString converter =
+      const AnnouncementStatusConverterToString();
+
+  return Announcement(
+    pet: Pet.fromJson(json['pet'] as Map<String, dynamic>),
+    title: json['title'] as String,
+    description: json['description'] as String,
+    status: converter.fromJson(json["status"]),
+  )
+    ..isLiked = json['isLiked'] as bool?
+    ..id = json['id'] as String?;
+}
 
 Map<String, dynamic> _$AnnouncementToJson(Announcement instance) =>
     <String, dynamic>{
