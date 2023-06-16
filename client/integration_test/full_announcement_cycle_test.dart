@@ -16,16 +16,16 @@ void main() {
       var tester = IntegrationTestsHelper($);
 
       await tester.goToShelterMainScreen();
-      await tester.addNewAnnouncement("Bobik");
+      await tester.addNewAnnouncement("Kulka");
 
       await tester.goToAdopterMainScreen();
       await $.pumpAndSettle();
-      await tester.applyForPet("Bobik");
+      await tester.applyForPet("Kulka");
 
       await tester.goToShelterMainScreen();
       await $.pumpAndSettle();
 
-      await tester.acceptApplication("Bobik");
+      await tester.acceptApplication("Kulka");
 
       await tester.tearDown();
     },

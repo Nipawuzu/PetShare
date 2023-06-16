@@ -22,8 +22,8 @@ Map<String, dynamic> _$PutAnnouncementRequestToJson(
       'petId': instance.petId,
       'title': instance.title,
       'description': instance.description,
-      'status': _$JsonConverterToJson<int, AnnouncementStatus>(
-          instance.status, const AnnouncementStatusConverter().toJson),
+      'status': _$JsonConverterToJson<String, AnnouncementStatus>(
+          instance.status, const AnnouncementStatusConverterToString().toJson),
     };
 
 Value? _$JsonConverterFromJson<Json, Value>(

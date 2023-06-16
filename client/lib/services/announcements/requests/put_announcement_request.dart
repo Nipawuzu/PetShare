@@ -16,7 +16,7 @@ class PutAnnouncementRequest {
   String? petId;
   String? title;
   String? description;
-  @AnnouncementStatusConverter()
+  @AnnouncementStatusConverterToString()
   AnnouncementStatus? status;
 
   Map<String, dynamic> toJson() => _$PutAnnouncementRequestToJson(this);

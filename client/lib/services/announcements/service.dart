@@ -44,9 +44,15 @@ class AnnouncementService {
       );
 
       var id = response.headers.value("location");
-      return response.statusCode == StatusCode.CREATED && id != null
-          ? ServiceResponse(data: id)
-          : ServiceResponse(data: "", error: ErrorType.unknown);
+      id ??= response.data["id"];
+
+      if ((response.statusCode == StatusCode.OK ||
+              response.statusCode == StatusCode.CREATED) &&
+          id != null) {
+        return ServiceResponse(data: id);
+      } else {
+        return ServiceResponse(data: "", error: ErrorType.unknown);
+      }
     } on DioError catch (e) {
       if (e.response?.statusCode == StatusCode.UNAUTHORIZED) {
         return ServiceResponse(data: "", error: ErrorType.unauthorized);
@@ -124,9 +130,15 @@ class AnnouncementService {
       );
 
       var id = response.headers.value("location");
-      return response.statusCode == StatusCode.CREATED && id != null
-          ? ServiceResponse(data: id)
-          : ServiceResponse(data: "", error: ErrorType.unknown);
+      id ??= response.data["id"];
+
+      if ((response.statusCode == StatusCode.OK ||
+              response.statusCode == StatusCode.CREATED) &&
+          id != null) {
+        return ServiceResponse(data: id);
+      } else {
+        return ServiceResponse(data: "", error: ErrorType.unknown);
+      }
     } on DioError catch (e) {
       if (e.response?.statusCode == StatusCode.UNAUTHORIZED) {
         return ServiceResponse(data: "", error: ErrorType.unauthorized);
