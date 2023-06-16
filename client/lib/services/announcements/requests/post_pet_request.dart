@@ -12,11 +12,13 @@ class PostPetRequest {
     this.sex = Sex.Unknown,
     this.breed = "",
     this.description = "",
+    this.photoUrl = "",
   });
 
   String name;
   String species;
   String breed;
+  String photoUrl;
   @SexConverter()
   Sex sex;
   DateTime? birthday;

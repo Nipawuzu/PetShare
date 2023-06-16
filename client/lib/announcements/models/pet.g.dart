@@ -6,18 +6,22 @@ part of 'pet.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-Pet _$PetFromJson(Map<String, dynamic> json) => Pet(
-      name: json['name'] as String? ?? "",
-      species: json['species'] as String? ?? "",
-      birthday: json['birthday'] == null
-          ? null
-          : DateTime.parse(json['birthday'] as String),
-      breed: json['breed'] as String? ?? "",
-      sex: $enumDecodeNullable(_$SexEnumMap, json['sex']) ?? Sex.Unknown,
-      description: json['description'] as String? ?? "",
-      photoUrl: json['photoUrl'] as String?,
-      shelter: Shelter.fromJson(json['shelter'] as Map<String, dynamic>),
-    )..id = json['id'] as String?;
+Pet _$PetFromJson(Map<String, dynamic> json) {
+  SexConverter converter = const SexConverter();
+
+  return Pet(
+    name: json['name'] as String? ?? "",
+    species: json['species'] as String? ?? "",
+    birthday: json['birthday'] == null
+        ? null
+        : DateTime.parse(json['birthday'] as String),
+    breed: json['breed'] as String? ?? "",
+    sex: converter.fromJson(json["sex"]),
+    description: json['description'] as String? ?? "",
+    photoUrl: json['photoUrl'] as String?,
+    shelter: Shelter.fromJson(json['shelter'] as Map<String, dynamic>),
+  )..id = json['id'] as String?;
+}
 
 Map<String, dynamic> _$PetToJson(Pet instance) => <String, dynamic>{
       'id': instance.id,

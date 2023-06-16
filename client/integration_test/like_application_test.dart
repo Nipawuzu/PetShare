@@ -13,7 +13,7 @@ void main() {
     var tester = IntegrationTestsHelper($);
 
     await tester.goToAdopterMainScreen();
-    await tester.likeAnnouncement("Bobik");
+    await tester.likeAnnouncement("Kulka");
 
     await tester.tearDown();
   });

@@ -115,13 +115,17 @@ flutter:
     - images/adoption.png
     - images/success.png
     - images/fail.png
-    - images/dog_reading.jpg
+    - images/dog_reading.png
     - images/running_cat.gif
     - images/you_shouldnot_be_here.gif # https://gifer.com/en/7D0L
     - images/error.gif # https://giphy.com/gifs/Fuzzballs-cute-kawaii-fuzzballs-IbrNETCZHjDjjpgKso
     - images/logo.png
     - icons/logo.ico
     - images/happy_dog.gif
+    - images/cat_filter.png # https://cdn-icons-png.flaticon.com/512/3479/3479853.png
+    - images/dog_filter.webp # https://cdn.iconscout.com/icon/free/png-256/free-dog-2198-1135748.png?f=webp
+    - images/other_pets_filter.png # https://cdn-icons-png.flaticon.com/512/4496/4496184.png
+    - images/filter.png # https://icons.veryicon.com/png/o/miscellaneous/alicloud-official-website/filter-32.png
   fonts:
     - family: Quicksand
       fonts:

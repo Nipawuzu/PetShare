@@ -1,24 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:pet_share/common_widgets/pick_button.dart';
 
 class FilteringCategory extends StatelessWidget {
-  const FilteringCategory({super.key, required this.category});
+  const FilteringCategory(
+      {super.key,
+      this.category,
+      required this.image,
+      this.onPressed,
+      this.picked = false});
 
-  final String category;
+  final String? category;
+  final bool picked;
+  final Function()? onPressed;
+  final Widget image;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 10),
-      child: RawMaterialButton(
-          onPressed: () {},
-          elevation: 2.0,
-          fillColor: const Color.fromARGB(255, 187, 187, 187),
-          padding: const EdgeInsets.all(15.0),
-          shape: const CircleBorder(),
-          child: Text(
-            category,
-            textScaleFactor: 1.2,
-          )),
-    );
+    return PickButton(
+        category: category,
+        color: picked ? Colors.green.shade200 : Colors.grey.shade200,
+        image: image,
+        onPressed: onPressed);
   }
 }

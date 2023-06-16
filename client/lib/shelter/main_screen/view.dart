@@ -131,7 +131,7 @@ class _ShelterMainScreenState extends State<ShelterMainScreen>
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Image.asset(
-                      "images/dog_reading.jpg",
+                      "images/dog_reading.png",
                       fit: BoxFit.cover,
                     ),
                   ],
@@ -201,13 +201,14 @@ class _ShelterMainScreenState extends State<ShelterMainScreen>
           childCount: petWithApplications.length, (context, index) {
         return Card(
           child: ListTile(
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute(
-                  builder: (context) => PetDetails(
-                        pet: petWithApplications[index].pet,
-                        applications: petWithApplications[index].applications,
-                      )),
-            ),
+            onTap: () => Navigator.of(context)
+                .push(MaterialPageRoute(
+                    builder: (context) => PetDetails(
+                          pet: petWithApplications[index].pet,
+                          applications: petWithApplications[index].applications,
+                        )))
+                .then((value) =>
+                    context.read<MainShelterViewCubit>().recountApplications()),
             contentPadding: const EdgeInsets.all(8.0),
             leading: SizedBox.square(
               dimension: 50,
@@ -301,13 +302,18 @@ class _ShelterMainScreenState extends State<ShelterMainScreen>
   }
 
   Widget _buildBody(BuildContext context) {
-    return HeaderDataList(
-      headerToListRatio: 0.2,
-      errorScreenBuilder: _buildError,
-      loadingScreenBuilder: _buildLoadingScreen,
-      headerBuilder: _buildHeader,
-      listBuilder: _buildPetList,
-      cubit: MainShelterViewCubit(context.read()),
+    return BlocProvider(
+      create: (_) => MainShelterViewCubit(context.read()),
+      child: Builder(builder: (context) {
+        return HeaderDataList(
+          headerToListRatio: 0.2,
+          errorScreenBuilder: _buildError,
+          loadingScreenBuilder: _buildLoadingScreen,
+          headerBuilder: _buildHeader,
+          listBuilder: _buildPetList,
+          cubit: context.read<MainShelterViewCubit>(),
+        );
+      }),
     );
   }
 

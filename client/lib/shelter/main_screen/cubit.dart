@@ -56,6 +56,20 @@ class MainShelterViewCubit
     }
   }
 
+  recountApplications() {
+    _newApplicationsCount = 0;
+    for (var viewModel in _petIdToViewModel.values) {
+      viewModel.waitingApplicationsCount = viewModel.applications
+          .where((a) => a.applicationStatus == ApplicationStatusDTO.Created)
+          .length;
+      _newApplicationsCount += viewModel.waitingApplicationsCount;
+    }
+
+    emit(DataState(
+        headerData: _newApplicationsCount,
+        listData: _petIdToViewModel.values.toList()));
+  }
+
   @override
   Future nextPage() async {
     _currentPage++;
@@ -74,10 +88,5 @@ class MainShelterViewCubit
   Future reloadData() async {
     _currentPage = 0;
     await loadData();
-  }
-
-  @override
-  Future useFilters() {
-    return Future.delayed(const Duration(seconds: 1));
   }
 }

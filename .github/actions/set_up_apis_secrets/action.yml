@@ -5,7 +5,34 @@ inputs:
   google_cloud_bucket_name:
     description: Name of a Google Cloud bucket name. It is needed for file storage.
     required: true
-  google_cloud_secret:
+  google_cloud_secret_type:
+    description: Google Cloud secret needed for file storage.
+    required: true
+  google_cloud_secret_project_id:
+    description: Google Cloud secret needed for file storage.
+    required: true
+  google_cloud_secret_private_key_id:
+    description: Google Cloud secret needed for file storage.
+    required: true
+  google_cloud_secret_private_key:
+    description: Google Cloud secret needed for file storage.
+    required: true
+  google_cloud_secret_client_email:
+    description: Google Cloud secret needed for file storage.
+    required: true
+  google_cloud_secret_client_id:
+    description: Google Cloud secret needed for file storage.
+    required: true
+  google_cloud_secret_auth_uri:
+    description: Google Cloud secret needed for file storage.
+    required: true
+  google_cloud_secret_token_uri:
+    description: Google Cloud secret needed for file storage.
+    required: true
+  google_cloud_secret_auth_provider_x509_cert_url:
+    description: Google Cloud secret needed for file storage.
+    required: true
+  google_cloud_secret_client_x509_cert_url:
     description: Google Cloud secret needed for file storage.
     required: true
 
@@ -20,8 +47,53 @@ runs:
       env:
         GOOGLE_CLOUD_BUCKET_NAME: ${{ inputs.google_cloud_bucket_name }}
       run: dotnet user-secrets -p apis/FileStorageService set "GoogleCloud:BucketName" "$GOOGLE_CLOUD_BUCKET_NAME"
-    - name: Add Google Cloud secrets
+    - name: Add Google Cloud secrets 1
       shell: bash
       env:
-        GOOGLE_CLOUD_SECRET: ${{ inputs.google_cloud_secret }}
-      run: dotnet user-secrets -p apis/FileStorageService set "GoogleCloud:Secret" "$GOOGLE_CLOUD_SECRET"
+        GOOGLE_CLOUD_SECRET_TYPE: ${{ inputs.google_cloud_secret_type }}
+      run: dotnet user-secrets -p apis/FileStorageService set "GoogleCloud:Secret:type" "$GOOGLE_CLOUD_SECRET_TYPE"
+    - name: Add Google Cloud secrets 2
+      shell: bash
+      env:
+        GOOGLE_CLOUD_SECRET_PROJECT_ID: ${{ inputs.google_cloud_secret_project_id }}
+      run: dotnet user-secrets -p apis/FileStorageService set "GoogleCloud:Secret:project_id" "$GOOGLE_CLOUD_SECRET_PROJECT_ID"
+    - name: Add Google Cloud secrets 3
+      shell: bash
+      env:
+        GOOGLE_CLOUD_SECRET_PRIVATE_KEY_ID: ${{ inputs.google_cloud_secret_private_key_id }}
+      run: dotnet user-secrets -p apis/FileStorageService set "GoogleCloud:Secret:private_key_id" "$GOOGLE_CLOUD_SECRET_PRIVATE_KEY_ID"
+    - name: Add Google Cloud secrets 4
+      shell: bash
+      env:
+        GOOGLE_CLOUD_SECRET_PRIVATE_KEY: ${{ inputs.google_cloud_secret_private_key }}
+      run: dotnet user-secrets -p apis/FileStorageService set "GoogleCloud:Secret:private_key" "$GOOGLE_CLOUD_SECRET_PRIVATE_KEY"
+    - name: Add Google Cloud secrets 5
+      shell: bash
+      env:
+        GOOGLE_CLOUD_SECRET_CLIENT_EMAIL: ${{ inputs.google_cloud_secret_client_email }}
+      run: dotnet user-secrets -p apis/FileStorageService set "GoogleCloud:Secret:client_email" "$GOOGLE_CLOUD_SECRET_CLIENT_EMAIL"
+    - name: Add Google Cloud secrets 6
+      shell: bash
+      env:
+        GOOGLE_CLOUD_SECRET_CLIENT_ID: ${{ inputs.google_cloud_secret_client_id }}
+      run: dotnet user-secrets -p apis/FileStorageService set "GoogleCloud:Secret:client_id" "$GOOGLE_CLOUD_SECRET_CLIENT_ID"
+    - name: Add Google Cloud secrets 7
+      shell: bash
+      env:
+        GOOGLE_CLOUD_SECRET_AUTH_URI: ${{ inputs.google_cloud_secret_auth_uri }}
+      run: dotnet user-secrets -p apis/FileStorageService set "GoogleCloud:Secret:auth_uri" "$GOOGLE_CLOUD_SECRET_AUTH_URI"
+    - name: Add Google Cloud secrets 8 
+      shell: bash
+      env:
+        GOOGLE_CLOUD_SECRET_TOKEN_URI: ${{ inputs.google_cloud_secret_token_uri }}
+      run: dotnet user-secrets -p apis/FileStorageService set "GoogleCloud:Secret:token_uri" "$GOOGLE_CLOUD_SECRET_TOKEN_URI"
+    - name: Add Google Cloud secrets 9
+      shell: bash
+      env:
+        GOOGLE_CLOUD_SECRET_AUTH_PROVIDER_X509_CERT_URL: ${{ inputs.google_cloud_secret_auth_provider_x509_cert_url }}
+      run: dotnet user-secrets -p apis/FileStorageService set "GoogleCloud:Secret:auth_provider_x509_cert_url" "$GOOGLE_CLOUD_SECRET_AUTH_PROVIDER_X509_CERT_URL"
+    - name: Add Google Cloud secrets 10
+      shell: bash
+      env:
+        GOOGLE_CLOUD_SECRET_CLIENT_X509_CERT_URL: ${{ inputs.google_cloud_secret_client_x509_cert_url }}
+      run: dotnet user-secrets -p apis/FileStorageService set "GoogleCloud:Secret:client_x509_cert_url" "$GOOGLE_CLOUD_SECRET_CLIENT_X509_CERT_URL"

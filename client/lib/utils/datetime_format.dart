@@ -6,6 +6,6 @@ extension DateTimeFormatting on DateTime {
     String day = this.day.toString().padLeft(2, '0');
     String month = this.month.toString().padLeft(2, '0');
 
-    return "$day-$month-$year";
+    return "$day.$month.$year";
   }
 }

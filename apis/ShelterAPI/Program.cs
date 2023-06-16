@@ -13,6 +13,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGenWithSecurity("ShelterAPI", "v1");
+builder.Services.AddControllersWithViews()
+                .AddJsonOptions(options =>
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 builder.Services.Configure<JsonOptions>(options =>
 {
     options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
@@ -23,6 +26,11 @@ builder.Services.AddCustomAuthentication(builder.Configuration["Auth0:Audience"]
 builder.Services.AddCustomAuthorization();
 
 var app = builder.Build();
+
+app.UseCors(options => options.AllowAnyMethod().
+                               AllowAnyHeader().
+                               SetIsOriginAllowed(_ => true).
+                               AllowCredentials());
 
 app.UseSwagger();
 app.UseSwaggerUI();

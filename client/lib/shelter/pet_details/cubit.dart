@@ -73,9 +73,4 @@ class PetDetailsCubit
 
     emit(DataState(headerData: _createViewModel(), listData: applications));
   }
-
-  @override
-  Future useFilters() {
-    return Future.delayed(const Duration(seconds: 1));
-  }
 }

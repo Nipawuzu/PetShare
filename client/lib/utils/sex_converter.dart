@@ -1,20 +1,38 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:pet_share/announcements/models/pet.dart';
 
-class SexConverter implements JsonConverter<Sex, int> {
+class SexConverter implements JsonConverter<Sex, String> {
   const SexConverter();
 
   @override
-  Sex fromJson(int json) {
-    return Sex.values[json];
+  Sex fromJson(String json) {
+    switch (json.toLowerCase()) {
+      case "male":
+        return Sex.Male;
+      case "female":
+        return Sex.Female;
+      case "doesnotapply":
+        return Sex.DoesNotApply;
+      default:
+        return Sex.Unknown;
+    }
   }
 
   @override
-  int toJson(Sex? object) {
+  String toJson(Sex? object) {
     if (object == null) {
-      return 0;
+      return "unknown";
     }
 
-    return object.index;
+    switch (object) {
+      case Sex.DoesNotApply:
+        return "doesNotApply";
+      case Sex.Female:
+        return "female";
+      case Sex.Male:
+        return "male";
+      default:
+        return "unknown";
+    }
   }
 }

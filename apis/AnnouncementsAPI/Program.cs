@@ -8,16 +8,21 @@ using Microsoft.AspNetCore.Http.Json;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 
+const string ConnectionString = "Server=tcp:petshareserver2.database.windows.net,1433;Initial Catalog=PetShareDatabase;Persist Security Info=False;User ID=azureuser;Password=kotysathebest123!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGenWithSecurity("AnnouncementsAPI", "v1");
+builder.Services.AddControllersWithViews()
+                .AddJsonOptions(options =>
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 builder.Services.Configure<JsonOptions>(options =>
 {
     options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
-builder.Services.AddDbContext<DataContext>(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("DataBase")));
+builder.Services.AddDbContext<DataContext>(opt => opt.UseSqlServer(ConnectionString));
 
 builder.Services.AddCustomAuthentication(builder.Configuration["Auth0:Audience"]!, builder.Configuration["Auth0:Authority"]!, builder.Configuration["Auth0:Secret"]!);
 
@@ -26,6 +31,11 @@ builder.Services.AddCustomAuthorization();
 builder.Services.AddSingleton<IStorage, GoogleFileStorage>();
 
 var app = builder.Build();
+
+app.UseCors(options => options.AllowAnyMethod().
+                               AllowAnyHeader().
+                               SetIsOriginAllowed(_ => true).
+                               AllowCredentials());
 
 app.UseSwagger();
 app.UseSwaggerUI();
@@ -37,10 +47,8 @@ app.UseHttpsRedirection();
 
 app.MapGet("/announcements", AnnouncementsEndpoints.GetWithFilters)
 .WithOpenApi()
-.RequireAuthorization("Auth")
 .WithSummary("Gets all announcements filtered with query parameters")
-.Produces(200, typeof(GetAnnouncementsReponse))
-.Produces(401);
+.Produces(200, typeof(GetAnnouncementsReponse));
 
 app.MapGet("/announcements/{announcementId}", AnnouncementsEndpoints.GetById)
 .WithOpenApi()
