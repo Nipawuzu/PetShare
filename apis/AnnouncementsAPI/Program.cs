@@ -32,6 +32,11 @@ builder.Services.AddSingleton<IStorage, GoogleFileStorage>();
 
 var app = builder.Build();
 
+app.UseCors(options => options.AllowAnyMethod().
+                               AllowAnyHeader().
+                               SetIsOriginAllowed(_ => true).
+                               AllowCredentials());
+
 app.UseSwagger();
 app.UseSwaggerUI();
 
