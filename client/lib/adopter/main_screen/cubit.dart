@@ -42,7 +42,7 @@ class MainAdopterViewCubit extends HeaderDataListCubit<dynamic, Announcement> {
   Future nextPage() async {
     _currentPage++;
     var response = await _service.getAnnouncements(
-        pageCount: _pageSize, pageNumber: _currentPage);
+        pageCount: _pageSize, pageNumber: _currentPage, filters: filters);
 
     if (response.data != null) {
       _announcements.addAll(response.data!);
