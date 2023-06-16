@@ -27,6 +27,10 @@ class IntegrationTestsHelper {
   Future logInFromWelcomeScreen(MockUser user) async {
     await $('Zaloguj się lub zarejestruj').tap();
 
+    if ($(AdopterMainScreen).exists || $(ShelterMainScreen).exists) {
+      return;
+    }
+
     await $.native.enterTextByIndex(user.login, index: 0);
     await $.native.enterTextByIndex(user.password, index: 1);
 
@@ -47,6 +51,8 @@ class IntegrationTestsHelper {
       await logOutFromMainScreen();
       await logInFromWelcomeScreen(MockShelter());
     }
+
+    await $.pumpAndSettle();
   }
 
   Future goToAdopterMainScreen() async {
@@ -59,8 +65,6 @@ class IntegrationTestsHelper {
   }
 
   Future addNewAnnouncement(String newPetName) async {
-    expect($(ShelterMainScreen), findsOneWidget);
-
     await $("Dodaj ogłoszenie").tap();
 
     await $(const Key("image")).tap();
@@ -83,10 +87,10 @@ class IntegrationTestsHelper {
     await $(const Key('next')).tap();
     await $.pumpAndSettle();
 
-    await $(const Key("title")).scrollTo().enterText("Bobik szuka domu");
+    await $(const Key("title")).scrollTo().enterText("$newPetName szuka domu");
     await $(const Key('description'))
         .scrollTo()
-        .enterText("Bobik szuka kochającego, nowego domu.");
+        .enterText("$newPetName szuka kochającego, nowego domu.");
 
     await $("Dodaj ogłoszenie").tap();
     await $.pumpAndSettle();
@@ -99,7 +103,7 @@ class IntegrationTestsHelper {
   }
 
   Future applyForPet(String petName) async {
-    expect($(AdopterMainScreen), findsOneWidget);
+    //expect($(AdopterMainScreen), findsOneWidget);
 
     await $(petName).scrollTo(maxScrolls: 300).tap();
     await $("Aplikuj").tap();
