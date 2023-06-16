@@ -14,8 +14,8 @@ void main() {
     var tester = IntegrationTestsHelper($);
 
     await tester.goToAdopterMainScreen();
-
-    await tester.goToAnnouncement("Bobik");
+    await $.pumpAndSettle();
+    await tester.goToAnnouncement("Kulka");
     await $("Kontakt").tap();
 
     expect($("Zadzwoń"), findsOneWidget);
