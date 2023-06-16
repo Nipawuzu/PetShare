@@ -5,6 +5,7 @@ using CommonDTOLibrary.Mappers;
 using DatabaseContextLibrary.models;
 using DatabaseContextLibrary.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 
 namespace AnnouncementsAPI.Endpoints
@@ -39,20 +40,20 @@ namespace AnnouncementsAPI.Endpoints
                 .ThenInclude(s => s!.Address)
                 .AsQueryable();
 
-            if (species != null && species.Any())
+            if (ShouldApplyFilter(species))
                 announcements = announcements.Where(a => species.Contains(a.Pet.Species));
 
-            if (breeds != null && breeds.Any())
+            if (ShouldApplyFilter(breeds))
                 announcements = announcements.Where(a => breeds.Contains(a.Pet.Breed));
 
-            if (locations != null && locations.Any())
+            if (ShouldApplyFilter(locations))
                 announcements = announcements.Where(a => locations.Contains(a.Pet.Shelter.Address.City));
 
             announcements = announcements.Where(
                 a => (minAge == null || a.Pet.Birthday <= DateTime.Now.AddDays(-(double)minAge))
                     && (maxAge == null || a.Pet.Birthday >= DateTime.Now.AddDays(-(double)maxAge)));
 
-            if (shelterNames != null && shelterNames.Any())
+            if (ShouldApplyFilter(shelterNames))
                 announcements = announcements.Where(a => shelterNames.Contains(a.Pet.Shelter.FullShelterName));
 
             if (status != null)
@@ -92,6 +93,9 @@ namespace AnnouncementsAPI.Endpoints
                 Count = count
             });
         }
+
+        private static bool ShouldApplyFilter(string[]? filter)
+            => (filter != null && filter.Any() && !filter.Where(a => !a.IsNullOrEmpty()).IsNullOrEmpty());
 
         public static async Task<IResult> GetById(
             DataContext context,
